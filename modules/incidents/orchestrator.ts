@@ -55,11 +55,13 @@ function scenarioFor(rootId: string, alarm: Alarm): string {
 }
 
 let seq = 0;
+const cascadeLogged = new Set<string>();
 
 /** Entry point: called for each new or updated alarm from the anomaly engine. */
 export function handleAlarms(alarms: Alarm[]) {
-  const st = useStore.getState();
   for (const alarm of alarms) {
+    // Fresh state per alarm: an incident created for the previous alarm in this batch must be visible.
+    const st = useStore.getState();
     // Update an existing open incident for this machine instead of creating a new one.
     st.clearArming(alarm.machineId); // any alarm on a machine means its fault has built up
     const open = Object.values(st.incidents).find((i) => i.machineId === alarm.machineId && i.status !== 'chiuso' && i.status !== 'rifiutato');
@@ -77,7 +79,12 @@ export function handleAlarms(alarms: Alarm[]) {
       (i) => i.status !== 'chiuso' && i.status !== 'rifiutato' && i.causalPath[0] === rc.rootCause && i.machineId !== alarm.machineId,
     );
     if (parent && rc.rootCause !== alarm.machineId) {
-      addLog(parent.id, entry('info', `Cascade: ${alarm.machineId} also in alarm`));
+      // Alarms repeat every tick while the anomaly lasts: log each cascaded machine once per incident.
+      const key = `${parent.id}|${alarm.machineId}`;
+      if (!cascadeLogged.has(key)) {
+        cascadeLogged.add(key);
+        addLog(parent.id, entry('info', `Cascade: ${alarm.machineId} also in alarm`));
+      }
       continue;
     }
     void createIncident(alarm);
@@ -262,7 +269,8 @@ export function executeAction(id: string, author: 'Gestore_Autonomia' | 'Respons
   const target = inc.causalPath[0]!;
   try {
     if (action === 'riduci_velocita') {
-      const prev = st.setDriftFactor(target, 0.4);
+      // Lower speed ⇒ lower thermal/mechanical load: the degradation stops progressing (avoids the trip).
+      const prev = st.setDriftFactor(target, 0);
       undoStack.set(id, () => useStore.getState().setDriftFactor(target, prev));
     } else {
       undoStack.set(id, () => undefined);
@@ -355,6 +363,10 @@ export async function closeWorkOrder(id: string, input: { realCause: string; fix
       workOrder: i.workOrder ? { ...i.workOrder, closedAt } : i.workOrder,
     }));
     addLog(id, entry('decisione', `Closed in ${input.durationMin} min · saved to memory${r.evolus ? ' (Evolus)' : ''}`, 'Tecnico'));
+    // The repair removes the fault; a line stopped by it restarts.
+    const wasStopped = !useStore.getState().line.running;
+    useStore.getState().repairMachine(root.id);
+    if (wasStopped && useStore.getState().line.running) addLog(id, entry('azione', `${root.id} repaired: line restarted`, 'Tecnico'));
     return {};
   } catch {
     return { _form: 'Could not save to memory, please retry' }; // Req 15.8

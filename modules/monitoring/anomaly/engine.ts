@@ -42,6 +42,7 @@ export class AnomalyEngine {
   private anomalyStart = new Map<string, number>();
   private openAlarms = new Map<string, Alarm>(); // key machine|sensor
   private alarmSeq = 0;
+  private stopped = new Set<string>();
   private zWarn: number;
   private zCrit: number;
 
@@ -59,6 +60,11 @@ export class AnomalyEngine {
     this.zWarn = warn;
     this.zCrit = crit;
     return { ok: true };
+  }
+
+  /** Machines whose samples are ignored while the line is stopped (empty = all running). */
+  setStopped(machineIds: readonly string[]): void {
+    this.stopped = new Set(machineIds);
   }
 
   getStatus(machineId: string): MachineStatus {
@@ -108,9 +114,14 @@ export class AnomalyEngine {
         this.sensors.set(key, st);
       }
 
+      // Stopped machines (protective trip) keep their state: their coasting values are not anomalies.
+      if (this.stopped.has(sample.machineId)) continue;
+
       const z = zScore(sample.value, st.ref);
       const absZ = z === null ? 0 : Math.abs(z);
-      const crit = (z !== null && absZ > this.zCrit) || sample.value > conf.crit;
+      // Red only above the absolute (ISO / manual) limit, which is what trips the line.
+      // The z-score is an early warning: at most yellow, but it already raises an alarm.
+      const crit = sample.value > conf.crit;
       const warn = !crit && ((z !== null && absZ > this.zWarn) || sample.value > conf.warn);
       st.level = crit ? 2 : warn ? 1 : 0;
       st.clean = st.level === 0 ? st.clean + 1 : 0;
@@ -122,8 +133,8 @@ export class AnomalyEngine {
         if (st.ref.length > WINDOW) st.ref.shift();
       }
 
-      if (crit) {
-        const threshold = sample.value > conf.crit ? conf.crit : this.zCrit;
+      if (crit || warn) {
+        const threshold = crit ? conf.crit : sample.value > conf.warn ? conf.warn : this.zWarn;
         const existing = this.openAlarms.get(key);
         const alarm: Alarm = {
           id: existing?.id ?? `alm-${sample.machineId}-${sample.sensorId}-${++this.alarmSeq}`,
@@ -132,7 +143,7 @@ export class AnomalyEngine {
           value: sample.value,
           zScore: Math.round((z ?? 0) * 1000) / 1000,
           threshold,
-          severity: 'rosso',
+          severity: crit ? 'rosso' : 'giallo',
           openedAt: existing?.openedAt ?? new Date(sample.ts).toISOString(),
           window: [...st.recent],
         };

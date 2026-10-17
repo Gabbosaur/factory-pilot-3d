@@ -5,7 +5,6 @@ import { useStore } from '@/modules/store';
 import { MachineList } from '@/modules/monitoring/panels/MachineList';
 import { MachineDetail } from '@/modules/monitoring/panels/MachineDetail';
 import { MapErrorBoundary } from '@/modules/monitoring/map3d/MapErrorBoundary';
-
 const FactoryMap = dynamic(() => import('@/modules/monitoring/map3d/FactoryMap'), {
   ssr: false,
   loading: () => <div className="flex h-full items-center justify-center text-sm text-slate-500">Loading 3D map…</div>,

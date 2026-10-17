@@ -13,10 +13,11 @@ import type { MachineConfig, MachineStatus } from '@/shared/types';
 import { STATUS_LABEL } from '@/modules/incidents/labels';
 import { computeLayout } from './layout';
 import { Conveyor, FloorPlan, Hall, SceneProp, TEXT_FONT } from './FactoryScene';
+import { useHistoryUi } from '@/modules/monitoring/panels/HistoryOverlay';
 
 const STATUS_COLOR: Record<MachineStatus, string> = { verde: '#22c55e', giallo: '#eab308', rosso: '#ef4444' };
 
-function MachineMesh({ m, status, running, selected, onPath, onSelect }: { m: MachineConfig; status: MachineStatus; running: boolean; selected: boolean; onPath: boolean; onSelect: () => void }) {
+function MachineMesh({ m, status, running, selected, onPath, onSelect, onMenu }: { m: MachineConfig; status: MachineStatus; running: boolean; selected: boolean; onPath: boolean; onSelect: () => void; onMenu: (x: number, y: number) => void }) {
   const mat = useRef<THREE.MeshStandardMaterial>(null);
   const halo = useRef<THREE.Mesh>(null);
   const spin = useRef<THREE.Group>(null); // rotating part (pump impeller / default rotor)
@@ -116,6 +117,11 @@ function MachineMesh({ m, status, running, selected, onPath, onSelect }: { m: Ma
       onClick={(e) => {
         e.stopPropagation();
         onSelect();
+      }}
+      onContextMenu={(e) => {
+        e.stopPropagation();
+        e.nativeEvent.preventDefault();
+        onMenu(e.nativeEvent.clientX, e.nativeEvent.clientY);
       }}
       onPointerOver={() => (document.body.style.cursor = 'pointer')}
       onPointerOut={() => (document.body.style.cursor = '')}
@@ -243,6 +249,8 @@ export default function FactoryMap() {
   const statuses = useStore((s) => s.statuses);
   const selected = useStore((s) => s.selectedMachine);
   const selectMachine = useStore((s) => s.selectMachine);
+  const openMenu = useHistoryUi((s) => s.openMenu);
+  const lineRunning = useStore((s) => s.line.running);
   const incidents = useStore((s) => s.incidents);
   const selectedIncident = useStore((s) => s.selectedIncident);
   const running = useStore((s) => s.running);
@@ -267,7 +275,6 @@ export default function FactoryMap() {
   const onPath = new Set(inc?.causalPath ?? []);
 
   const flow = useMemo(() => layout.flow.map((id) => new THREE.Vector3(byId.get(id)!.position[0], 1, byId.get(id)!.position[2])), [layout, byId]);
-  const anyRed = Object.values(statuses).some((s) => s === 'rosso');
   const span = Math.max(layout.hall.w, layout.hall.d) / 2;
 
   return (
@@ -318,7 +325,7 @@ export default function FactoryMap() {
         ))}
 
         {causal && <CausalPath points={causal.map((id) => center(id).add(new THREE.Vector3(0, 0.8, 0)))} />}
-        <Bottles path={flow} speed={running ? (anyRed ? 0.3 : 1) : 0} />
+        <Bottles path={flow} speed={running && lineRunning ? 1 : 0} />
 
         {factory.machines.map((m) => (
           <MachineMesh
@@ -329,6 +336,7 @@ export default function FactoryMap() {
             selected={selected === m.id}
             onPath={Boolean(causal) && onPath.has(m.id)}
             onSelect={() => selectMachine(m.id)}
+            onMenu={(x, y) => openMenu(m.id, x, y)}
           />
         ))}
 

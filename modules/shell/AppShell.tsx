@@ -10,6 +10,8 @@ import { useStore } from '@/modules/store';
 import { handleAlarms } from '@/modules/incidents/orchestrator';
 import { resetMemory } from '@/modules/incidents/memory/adapter';
 import { startTour, Tour } from '@/modules/tour/Tour';
+import { HistoryOverlay } from '@/modules/monitoring/panels/HistoryOverlay';
+import { LineBanner } from '@/modules/monitoring/panels/LineBanner';
 
 interface Health {
   amdKey: boolean;
@@ -206,8 +208,10 @@ export function AppShell({ children }: { children: ReactNode }) {
         ))}
       </div>
 
+      <LineBanner />
       <main className="min-h-0 flex-1 overflow-hidden">{children}</main>
 
+      <HistoryOverlay />
       <Tour />
     </div>
   );

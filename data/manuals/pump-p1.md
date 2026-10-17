@@ -13,7 +13,7 @@ Never work on rotating parts while the machine is energized. Bearing housings ca
 <!-- page: 3 -->
 ## Technical data
 Rated flow 12 m³/h, head 45 m, motor 7.5 kW, 2900 rpm.
-Rated current 18 A. Bearing operating temperature: 50–60 °C. Alarm above 70 °C, shutdown recommended above 85 °C.
+Rated current 14.5 A at 400 V (about 13 A at the duty point). Bearing operating temperature: 50–60 °C. Alarm above 70 °C, shutdown recommended above 85 °C.
 Bearings: coupling side 6309-2Z/C3, non-drive side 6308-2Z/C3.
 
 <!-- page: 4 -->
@@ -23,7 +23,7 @@ Too much or too little grease raises the bearing temperature. Degraded grease (d
 
 <!-- page: 5 -->
 ## Vibration: limits and causes
-Reference values (RMS vibration velocity, class II machine, ISO 10816-3 reference): up to 2.8 mm/s good; 2.8–4.5 mm/s acceptable; 4.5–7.1 mm/s not acceptable for prolonged operation; above 7.1 mm/s risk of damage, stop the pump.
+Reference values (RMS vibration velocity, small machine up to 15 kW, ISO 10816-1 class I): up to 0.71 mm/s new machine; 0.71–1.8 mm/s acceptable for unrestricted operation; 1.8–4.5 mm/s not acceptable for prolonged operation; above 4.5 mm/s risk of damage, stop the pump.
 A progressive increase in vibration together with a rising coupling-side bearing temperature indicates bearing wear or damage (raceways or rolling elements), often caused by insufficient lubrication.
 A sudden increase without a temperature change more likely indicates impeller imbalance or cavitation.
 
@@ -45,7 +45,7 @@ Estimated time: 60–90 minutes with two technicians.
 3. Pull out the bearing housing and remove the bearing with a puller.
 4. Fit the new bearing heated by induction (max 110 °C); never hammer on the raceways.
 5. Grease (p. 4), reassemble, laser-align the coupling (tolerance 0.05 mm).
-6. Start up and check vibration < 2.8 mm/s and stable temperature after 30 minutes.
+6. Start up and check vibration < 1.8 mm/s and stable temperature after 30 minutes.
 
 <!-- page: 8 -->
 ## Spare parts

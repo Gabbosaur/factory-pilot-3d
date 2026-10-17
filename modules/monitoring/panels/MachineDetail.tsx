@@ -3,6 +3,7 @@
 import { Line, LineChart, ReferenceLine, ResponsiveContainer, YAxis } from 'recharts';
 import { useStore } from '@/modules/store';
 import { INCIDENT_STATUS_LABEL, STATUS_LABEL, STATUS_PILL } from '@/modules/incidents/labels';
+import { useHistoryUi } from './HistoryOverlay';
 
 export function MachineDetail() {
   const id = useStore((s) => s.selectedMachine);
@@ -12,6 +13,7 @@ export function MachineDetail() {
   const incidents = useStore((s) => s.incidents);
   const running = useStore((s) => s.running);
   const selectIncident = useStore((s) => s.selectIncident);
+  const showHistory = useHistoryUi((s) => s.showHistory);
   const m = factory.machines.find((x) => x.id === id);
 
   if (!m) {
@@ -36,6 +38,9 @@ export function MachineDetail() {
         {status && <span className={`pill ${STATUS_PILL[status]}`}>{STATUS_LABEL[status]}</span>}
       </div>
       <div className="text-[11px] text-slate-500">{m.type.replace(/_/g, ' ')}{!running && ' · paused'}</div>
+      <button type="button" onClick={() => showHistory(m.id)} className="text-left text-xs text-sky-400 hover:underline">
+        History (48 h) · or right-click a machine
+      </button>
 
       <div className="grid grid-cols-1 gap-2">
         {m.sensors.map((s) => {
