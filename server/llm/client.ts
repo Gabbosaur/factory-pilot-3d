@@ -102,7 +102,7 @@ async function pickModel(agent: Agent): Promise<string | null> {
 
 function errMsg(err: unknown): string {
   if (err instanceof OpenAI.APIError) {
-    // Gateway errors: {error:{...}}; platform errors: {detail:{error:{...}}} — check both.
+    // Gateway errors: {error:{...}}; platform errors: {detail:{error:{...}}}; check both.
     const body = err.error as { message?: string; detail?: { error?: { message?: string } } } | undefined;
     return body?.detail?.error?.message ?? body?.message ?? err.message;
   }

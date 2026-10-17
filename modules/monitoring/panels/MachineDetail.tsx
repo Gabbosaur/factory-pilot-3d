@@ -47,7 +47,7 @@ export function MachineDetail() {
               <div className="flex items-baseline justify-between text-xs">
                 <span className="text-slate-300">{s.name}</span>
                 <span className="font-mono font-semibold" style={{ color }}>
-                  {last?.toFixed(2) ?? '–'} <span className="text-[10px] text-slate-500">{s.unit}</span>
+                  {last?.toFixed(2) ?? 'n/a'} <span className="text-[10px] text-slate-500">{s.unit}</span>
                 </span>
               </div>
               <div className="h-12" aria-hidden="true">

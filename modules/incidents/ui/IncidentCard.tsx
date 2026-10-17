@@ -79,14 +79,14 @@ export function IncidentCard({ inc }: { inc: Incident }) {
           <div className="font-semibold">{inc.impact.partsAtRiskPerMin}/min</div>
         </div>
         <div className="stat">
-          <div className="text-[10px] uppercase tracking-wide text-slate-500">Act-now saving</div>
+          <div className="text-[10px] uppercase tracking-wide text-slate-500">Saving if fixed now</div>
           <div className="font-semibold text-emerald-300">{formatEur(inc.impact.savingsEur)}</div>
         </div>
       </div>
 
       {inc.diagnosis === 'non_disponibile' && (
         <p className="rounded-lg bg-red-500/10 p-2 text-xs text-red-200 ring-1 ring-inset ring-red-500/20" role="alert">
-          AI diagnosis unavailable — forwarded to the manager.
+          AI diagnosis unavailable. Sent to the manager.
         </p>
       )}
 
@@ -138,7 +138,7 @@ export function IncidentCard({ inc }: { inc: Incident }) {
           ) : (
             <span className="font-semibold">Safe for autonomy</span>
           )}
-          {inc.autonomyMode && <span className="ml-1 text-slate-400">— {MODE_LABEL[inc.autonomyMode]}</span>}
+          {inc.autonomyMode && <span className="ml-1 text-slate-400">· {MODE_LABEL[inc.autonomyMode]}</span>}
         </div>
       )}
 
@@ -208,7 +208,7 @@ export function IncidentCard({ inc }: { inc: Incident }) {
             <dt className="text-slate-500">Parts</dt>
             <dd>{inc.workOrder.parts.length ? inc.workOrder.parts.join(', ') : 'none'}</dd>
             <dt className="text-slate-500">Manual</dt>
-            <dd>{inc.workOrder.manualPage ? `p. ${inc.workOrder.manualPage}` : '—'}</dd>
+            <dd>{inc.workOrder.manualPage ? `p. ${inc.workOrder.manualPage}` : 'n/a'}</dd>
             <dt className="text-slate-500">Assignee</dt>
             <dd>{inc.workOrder.assignee}</dd>
           </dl>

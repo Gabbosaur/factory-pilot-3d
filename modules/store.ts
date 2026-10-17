@@ -63,6 +63,8 @@ interface State {
   notifications: Notification[];
   llmLog: LlmCallMeta[];
   activeFaultIds: string[];
+  /** Faults injected but not yet alarmed (drives the "building up" badge). */
+  arming: Array<{ faultId: string; label: string; machineId: string; at: number }>;
   lastError: string | null;
   autonomyOverrides: Record<string, FactoryConfig['autonomy']>;
 }
@@ -72,6 +74,7 @@ interface Actions {
   addFactory(f: FactoryConfig): void;
   setRunning(running: boolean): void;
   injectFault(faultId: string): void;
+  clearArming(machineId: string): void;
   resetSim(): void;
   selectMachine(id: string | null): void;
   selectIncident(id: string | null): void;
@@ -168,6 +171,7 @@ export const useStore = create<State & Actions>((set, get) => {
     notifications: [],
     llmLog: [],
     activeFaultIds: [],
+    arming: [],
     lastError: null,
     autonomyOverrides: {},
 
@@ -191,6 +195,7 @@ export const useStore = create<State & Actions>((set, get) => {
         selectedMachine: null,
         selectedIncident: null,
         activeFaultIds: [],
+        arming: [],
       });
     },
     setRunning(running) {
@@ -215,11 +220,25 @@ export const useStore = create<State & Actions>((set, get) => {
     injectFault(faultId) {
       const r = sim?.inject(faultId);
       if (r && !r.ok) set({ lastError: r.reason });
-      else set({ activeFaultIds: sim?.activeFaults.map((f) => f.id) ?? [], lastError: null });
+      else {
+        const fault = get().factory.faults.find((f) => f.id === faultId);
+        set({
+          activeFaultIds: sim?.activeFaults.map((f) => f.id) ?? [],
+          lastError: null,
+          // Show a "building up" badge until this machine raises its first alarm.
+          arming: fault ? [...get().arming.filter((a) => a.machineId !== fault.machineId), { faultId, label: fault.label, machineId: fault.machineId, at: Date.now() }] : get().arming,
+        });
+        // Safety net: never let the badge linger if the alarm never fires.
+        if (fault) setTimeout(() => get().clearArming(fault.machineId), 60_000);
+      }
     },
     resetSim() {
       sim?.reset();
-      set({ activeFaultIds: [] });
+      set({ activeFaultIds: [], arming: [] });
+    },
+    clearArming(machineId) {
+      const next = get().arming.filter((a) => a.machineId !== machineId);
+      if (next.length !== get().arming.length) set({ arming: next });
     },
     selectMachine(id) {
       set({ selectedMachine: id });

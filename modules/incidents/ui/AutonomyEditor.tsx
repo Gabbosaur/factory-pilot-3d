@@ -42,7 +42,7 @@ export function AutonomyEditor() {
               {ACTIONS.map((a) => (
                 <td key={a} className="text-center">
                   <select
-                    aria-label={`Autonomy ${t} – ${ACTION_LABEL[a]}`}
+                    aria-label={`Autonomy ${t} ${ACTION_LABEL[a]}`}
                     className="rounded bg-slate-900 px-1"
                     value={autonomy[t]?.[a] ?? 'L0'}
                     onChange={(e) => setAutonomy(t, a, e.target.value)}

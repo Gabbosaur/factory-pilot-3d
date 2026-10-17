@@ -61,6 +61,7 @@ export function handleAlarms(alarms: Alarm[]) {
   const st = useStore.getState();
   for (const alarm of alarms) {
     // Update an existing open incident for this machine instead of creating a new one.
+    st.clearArming(alarm.machineId); // any alarm on a machine means its fault has built up
     const open = Object.values(st.incidents).find((i) => i.machineId === alarm.machineId && i.status !== 'chiuso' && i.status !== 'rifiutato');
     if (open) {
       if (!open.alarmIds.includes(alarm.id) || !open.sensorIds.includes(alarm.sensorId))
@@ -119,6 +120,8 @@ async function createIncident(alarm: Alarm) {
     llmCalls: 0,
   };
   st.upsertIncident(inc);
+  st.clearArming(alarm.machineId); // first alarm fired: hide the "building up" badge
+  st.clearArming(rc.rootCause);
   if (!st.selectedIncident) st.selectIncident(id);
 
   // Memory (Evolus RAG with local fallback) – sensors of the root cause machine.
@@ -267,7 +270,7 @@ export function executeAction(id: string, author: 'Gestore_Autonomia' | 'Respons
     st.patchIncident(id, { status: 'autonomo' });
     addLog(id, entry('azione', `${ACTION_LABEL[action]} on ${target} · done (${inc.autonomyLevel})`, author));
     if (author === 'Gestore_Autonomia')
-      st.notify({ kind: 'autonomia', incidentId: id, text: `Auto-fixed ${target}: ${ACTION_LABEL[action].toLowerCase()}` });
+      st.notify({ kind: 'autonomia', incidentId: id, text: `${target} fixed automatically: ${ACTION_LABEL[action].toLowerCase()}` });
   } catch (err) {
     addLog(id, entry('errore', `Action failed: ${err instanceof Error ? err.message : String(err)}`, author));
     st.notify({ kind: 'errore', incidentId: id, text: `${ACTION_LABEL[action]} failed on ${target}` });
@@ -293,7 +296,7 @@ export function canUndo(id: string) {
 }
 
 /** Req 11.2: approval generates a work order. */
-export function approve(id: string, assignee = 'Maintenance crew – shift A') {
+export function approve(id: string, assignee = 'Maintenance crew, shift A') {
   const inc = get(id);
   if (!inc) return;
   const d = inc.diagnosis && inc.diagnosis !== 'non_disponibile' ? inc.diagnosis : null;
@@ -309,7 +312,7 @@ export function approve(id: string, assignee = 'Maintenance crew – shift A') {
     createdAt: now(),
   };
   useStore.getState().patchIncident(id, { status: 'approvato', workOrder: wo });
-  addLog(id, entry('decisione', `Approved · work order ${wo.id} → ${assignee}`, 'Responsabile'));
+  addLog(id, entry('decisione', `Approved. Work order ${wo.id} to ${assignee}`, 'Responsabile'));
   if (d && (d.codice_azione === 'riduci_velocita' || d.codice_azione === 'apri_ticket' || d.codice_azione === 'pianifica_ispezione') && inc.autonomyMode === 'approva_un_clic')
     executeAction(id, 'Responsabile');
 }

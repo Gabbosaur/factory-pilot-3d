@@ -31,9 +31,9 @@ export function MetricsPanel() {
         Measured impact
       </h2>
       <div className="grid grid-cols-2 gap-2">
-        {cell('Alarm → diagnosis', avg === null ? '—' : `${avg.toFixed(1)}s`, 'text-sky-300', ref ? `vs ${Math.round(ref / 60)} min manual` : 'no reference')}
-        {cell('Downtime avoided', avoidedMin && diagnosed.length ? `${avoidedMin.toFixed(0)} min` : '—', 'text-emerald-300')}
-        {cell('Savings (est.)', savings && diagnosed.length ? formatEur(Math.round(savings)) : '—', 'text-emerald-300')}
+        {cell('Alarm to diagnosis', avg === null ? 'n/a' : `${avg.toFixed(1)}s`, 'text-sky-300', ref ? `vs ${Math.round(ref / 60)} min manual` : 'no reference')}
+        {cell('Downtime avoided', avoidedMin && diagnosed.length ? `${avoidedMin.toFixed(0)} min` : 'n/a', 'text-emerald-300')}
+        {cell('Savings (est.)', savings && diagnosed.length ? formatEur(Math.round(savings)) : 'n/a', 'text-emerald-300')}
         {cell('Auto / escalated', `${autonomous} / ${escalated}`, 'text-slate-100')}
       </div>
     </section>

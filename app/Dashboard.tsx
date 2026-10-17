@@ -11,6 +11,7 @@ import { MetricsPanel } from '@/modules/incidents/ui/MetricsPanel';
 import { AutonomyEditor } from '@/modules/incidents/ui/AutonomyEditor';
 import { handleAlarms } from '@/modules/incidents/orchestrator';
 import { resetMemory } from '@/modules/incidents/memory/adapter';
+import { startTour, Tour } from '@/modules/tour/Tour';
 
 const FactoryMap = dynamic(() => import('@/modules/monitoring/map3d/FactoryMap'), {
   ssr: false,
@@ -23,14 +24,36 @@ interface Health {
   replayDefault: boolean;
 }
 
+type Tab = 'incidents' | 'metrics' | 'settings';
+
 export function Dashboard() {
   const s = useStore();
   const [faultId, setFaultId] = useState('');
   const [health, setHealth] = useState<Health | null>(null);
+  const [tab, setTab] = useState<Tab>('incidents');
+
+  const needsYou = Object.values(s.incidents).filter((i) => i.status === 'in_coda' && i.escalation?.escalate).length;
 
   useEffect(() => {
     useStore.getState().hydrate();
     return useStore.getState().onAlarms(handleAlarms);
+  }, []);
+  // The tour switches to the right tab before it highlights that section.
+  useEffect(() => {
+    const onTab = (e: Event) => {
+      const t = (e as CustomEvent<Tab>).detail;
+      if (t === 'incidents' || t === 'metrics' || t === 'settings') setTab(t);
+    };
+    window.addEventListener('fp:tour-tab', onTab as EventListener);
+    return () => window.removeEventListener('fp:tour-tab', onTab as EventListener);
+  }, []);
+  // Pop open the Incidents tab when a notification links to an incident.
+  useEffect(() => {
+    let prev = useStore.getState().selectedIncident;
+    return useStore.subscribe((st) => {
+      if (st.selectedIncident && st.selectedIncident !== prev) setTab('incidents');
+      prev = st.selectedIncident;
+    });
   }, []);
   useEffect(() => {
     fetch('/api/health')
@@ -68,7 +91,7 @@ export function Dashboard() {
             </option>
           ))}
         </select>
-        <button type="button" className={s.running ? 'btn' : 'btn-primary'} onClick={() => s.setRunning(!s.running)}>
+        <button type="button" data-tour="start" className={s.running ? 'btn' : 'btn-primary'} onClick={() => s.setRunning(!s.running)}>
           {s.running ? '⏸ Pause' : '▶ Start'}
         </button>
 
@@ -84,7 +107,7 @@ export function Dashboard() {
             </option>
           ))}
         </select>
-        <button type="button" className="btn-danger" onClick={() => s.injectFault(faultId)} disabled={!s.running}>
+        <button type="button" data-tour="inject" className="btn-danger" onClick={() => s.injectFault(faultId)} disabled={!s.running}>
           ⚡ Inject fault
         </button>
         <button type="button" className="btn" onClick={() => s.resetSim()}>
@@ -104,6 +127,9 @@ export function Dashboard() {
         <Link href="/onboarding" className="btn-ghost">
           + New factory
         </Link>
+        <button type="button" className="btn-ghost" onClick={startTour} title="Guided walkthrough">
+          ? Tour
+        </button>
 
         {/* Status chips */}
         <div className="ml-auto flex flex-wrap items-center gap-2 text-xs">
@@ -125,6 +151,13 @@ export function Dashboard() {
           </span>
         </div>
       </header>
+
+      {s.arming.length > 0 && (
+        <div className="flex items-center gap-2 border-b border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-sm text-amber-200">
+          <span className="h-2 w-2 animate-ping rounded-full bg-amber-400" />
+          Fault injected on {s.arming.map((a) => a.machineId).join(', ')}. Building up until the sensor crosses its threshold…
+        </div>
+      )}
 
       {s.lastError && (
         <div role="alert" className="flex items-center justify-between gap-2 border-b border-red-500/30 bg-red-500/10 px-4 py-1.5 text-sm text-red-200">
@@ -163,7 +196,7 @@ export function Dashboard() {
           <MachineList />
           <MachineDetail />
         </aside>
-        <section className="relative min-h-[360px]" aria-label="3D factory map">
+        <section className="relative min-h-[360px]" aria-label="3D factory map" data-tour="map">
           {!s.running && (
             <div className="pointer-events-none absolute left-4 top-4 z-10 rounded-lg bg-slate-950/70 px-2.5 py-1 text-xs text-slate-300 ring-1 ring-inset ring-white/10 backdrop-blur">
               ⏸ Paused · tick {s.tick}
@@ -173,12 +206,47 @@ export function Dashboard() {
             <FactoryMap />
           </MapErrorBoundary>
         </section>
-        <aside className="flex flex-col gap-4 overflow-auto border-l border-white/10 p-3">
-          <MetricsPanel />
-          <IncidentPanel />
-          <AutonomyEditor />
+        <aside className="flex min-h-0 flex-col border-l border-white/10">
+          <nav className="flex gap-1 border-b border-white/10 px-2 pt-2" role="tablist" aria-label="Panels">
+            {([
+              ['incidents', 'Incidents'],
+              ['metrics', 'Metrics'],
+              ['settings', 'Settings'],
+            ] as const).map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                role="tab"
+                aria-selected={tab === id}
+                onClick={() => setTab(id)}
+                className={`relative rounded-t-lg px-3 py-1.5 text-sm font-medium transition ${
+                  tab === id ? 'bg-white/5 text-slate-100 ring-1 ring-inset ring-white/10' : 'text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                {label}
+                {id === 'incidents' && needsYou > 0 && (
+                  <span className="absolute -right-0.5 -top-0.5 grid h-4 min-w-4 place-items-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                    {needsYou}
+                  </span>
+                )}
+              </button>
+            ))}
+          </nav>
+          <div className="min-h-0 flex-1 overflow-auto p-3">
+            <div hidden={tab !== 'incidents'} data-tour="incidents">
+              <IncidentPanel />
+            </div>
+            <div hidden={tab !== 'metrics'} data-tour="metrics">
+              <MetricsPanel />
+            </div>
+            <div hidden={tab !== 'settings'}>
+              <AutonomyEditor />
+            </div>
+          </div>
         </aside>
       </main>
+
+      <Tour />
     </div>
   );
 }
