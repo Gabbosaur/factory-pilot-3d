@@ -4,7 +4,7 @@ Contents: 2 Gear motor · 3 Motor overheating · 4 Spare parts
 
 <!-- page: 2 -->
 ## Gear motor
-1.1 kW motor with cooling fan. Normal housing temperature 45–55 °C, alarm above 70 °C, stop above 80 °C.
+1.1 kW motor with cooling fan, rated current 2.6 A at 400 V (alarm above 3.0 A, stop above 3.4 A). Normal housing temperature 45–55 °C, alarm above 70 °C, stop above 80 °C.
 
 <!-- page: 3 -->
 ## Motor overheating

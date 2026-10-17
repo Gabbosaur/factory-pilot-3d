@@ -22,8 +22,8 @@
       "partsPerMin": 160,
       "manualRef": "pump-p1",
       "sensors": [
-        { "id": "vib", "name": "Vibration", "unit": "mm/s", "nominal": [2.0, 3.0], "warn": 4.5, "crit": 7.1, "noise": 0.25 },
-        { "id": "bearing_temp", "name": "Bearing temperature", "unit": "°C", "nominal": [52, 58], "warn": 70, "crit": 85, "noise": 1.0 }
+        { "id": "vib", "name": "Vibration", "unit": "mm/s", "nominal": [1.1, 1.5], "warn": 1.8, "crit": 4.5, "noise": 0.05 },
+        { "id": "bearing_temp", "name": "Bearing temperature", "unit": "°C", "nominal": [53, 57], "warn": 70, "crit": 85, "noise": 0.3 }
       ]
     },
     {
@@ -86,8 +86,8 @@
       "partsPerMin": 160,
       "manualRef": "conveyor-k1",
       "sensors": [
-        { "id": "motor_temp", "name": "Motor temperature", "unit": "°C", "nominal": [45, 52], "warn": 70, "crit": 80, "noise": 0.8 },
-        { "id": "current", "name": "Motor current", "unit": "A", "nominal": [5.5, 6.5], "warn": 8, "crit": 9.5, "noise": 0.15 }
+        { "id": "motor_temp", "name": "Motor temperature", "unit": "°C", "nominal": [46, 52], "warn": 70, "crit": 80, "noise": 0.3 },
+        { "id": "current", "name": "Motor current", "unit": "A", "nominal": [2.3, 2.7], "warn": 3.0, "crit": 3.4, "noise": 0.05 }
       ]
     }
   ],
@@ -98,12 +98,12 @@
       "machineId": "P1",
       "kind": "cascata",
       "effects": [
-        { "sensorId": "vib", "ratePerSec": 0.25 },
-        { "sensorId": "bearing_temp", "ratePerSec": 1.6 }
+        { "sensorId": "vib", "ratePerSec": 0.045 },
+        { "sensorId": "bearing_temp", "ratePerSec": 0.25 }
       ],
       "downstreamEffects": [
-        { "sensorId": "fill_rejects", "ratePerSec": 0.12 },
-        { "sensorId": "rejects", "ratePerSec": 0.06 }
+        { "sensorId": "fill_rejects", "ratePerSec": 0.03 },
+        { "sensorId": "rejects", "ratePerSec": 0.03 }
       ]
     },
     {
@@ -111,7 +111,7 @@
       "label": "Conveyor K1 motor overheating (local)",
       "machineId": "K1",
       "kind": "locale",
-      "effects": [{ "sensorId": "motor_temp", "ratePerSec": 1.4 }]
+      "effects": [{ "sensorId": "motor_temp", "ratePerSec": 0.7 }]
     }
   ]
 }

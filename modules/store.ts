@@ -36,6 +36,17 @@ function readCustomFactories(): FactoryConfig[] {
 
 export const HISTORY = 60;
 
+/** Protective trip of the serial line (red = absolute limit exceeded ⇒ everything stops). */
+export interface LineState {
+  running: boolean;
+  trippedBy: { machineId: string; sensorId: string; value: number; threshold: number } | null;
+  /** Seconds stopped in the current stop and since the last reset. */
+  stopSec: number;
+  totalDowntimeSec: number;
+}
+
+const LINE_RUNNING: LineState = { running: true, trippedBy: null, stopSec: 0, totalDowntimeSec: 0 };
+
 export interface Notification {
   id: string;
   ts: number;
@@ -65,6 +76,7 @@ interface State {
   activeFaultIds: string[];
   lastError: string | null;
   autonomyOverrides: Record<string, FactoryConfig['autonomy']>;
+  line: LineState;
 }
 
 interface Actions {
@@ -85,6 +97,10 @@ interface Actions {
   setMemorySource(s: 'evolus' | 'locale'): void;
   setError(e: string | null): void;
   setDriftFactor(machineId: string, factor: number): number;
+  /** Restart the line after a protective trip (it trips again if the fault is still there). */
+  restartLine(): void;
+  /** Repair completed on a machine: remove its fault and restart the line if it was the cause of the stop. */
+  repairMachine(machineId: string): void;
   setAutonomy(machineType: string, action: string, level: string): void;
   effectiveFactory(): FactoryConfig;
   onAlarms(cb: (alarms: Alarm[]) => void): () => void;
@@ -139,7 +155,22 @@ export const useStore = create<State & Actions>((set, get) => {
     }
     const nextStatuses = ev.statusChanges.length ? { ...statuses } : statuses;
     for (const ch of ev.statusChanges) nextStatuses[ch.machineId] = ch.status;
+
+    // Protective trip: the first absolute-limit (red) alarm stops the whole serial line.
+    let line = get().line;
+    const trip = line.running ? ev.alarms.find((a) => a.severity === 'rosso') : undefined;
+    if (trip) {
+      sim.setLineRunning(false);
+      engine.setStopped(get().factory.machines.map((m) => m.id));
+      line = { ...line, running: false, stopSec: 0, trippedBy: { machineId: trip.machineId, sensorId: trip.sensorId, value: trip.value, threshold: trip.threshold } };
+      const sensor = get().factory.machines.find((m) => m.id === trip.machineId)?.sensors.find((s) => s.id === trip.sensorId);
+      get().notify({ kind: 'errore', text: `Line stopped: protective trip on ${trip.machineId} – ${sensor?.name ?? trip.sensorId} ${trip.value} ${sensor?.unit ?? ''} above limit ${trip.threshold}` });
+    } else if (!line.running) {
+      line = { ...line, stopSec: line.stopSec + 1, totalDowntimeSec: line.totalDowntimeSec + 1 };
+    }
+
     set({
+      line,
       tick: sim.tick,
       history: nextHistory,
       statuses: nextStatuses,
@@ -170,6 +201,7 @@ export const useStore = create<State & Actions>((set, get) => {
     activeFaultIds: [],
     lastError: null,
     autonomyOverrides: {},
+    line: LINE_RUNNING,
 
     addFactory(f) {
       const custom = [...readCustomFactories().filter((x) => x.id !== f.id), f];
@@ -191,6 +223,7 @@ export const useStore = create<State & Actions>((set, get) => {
         selectedMachine: null,
         selectedIncident: null,
         activeFaultIds: [],
+        line: LINE_RUNNING,
       });
     },
     setRunning(running) {
@@ -219,7 +252,22 @@ export const useStore = create<State & Actions>((set, get) => {
     },
     resetSim() {
       sim?.reset();
-      set({ activeFaultIds: [] });
+      sim?.setLineRunning(true);
+      engine?.setStopped([]);
+      set({ activeFaultIds: [], line: LINE_RUNNING });
+    },
+    restartLine() {
+      if (get().line.running) return;
+      sim?.setLineRunning(true);
+      engine?.setStopped([]);
+      set((s) => ({ line: { ...s.line, running: true, trippedBy: null, stopSec: 0 } }));
+    },
+    repairMachine(machineId) {
+      sim?.clearFault(machineId);
+      set({ activeFaultIds: sim?.activeFaults.map((f) => f.id) ?? [] });
+      // Restart once nothing degrades the machine that tripped (directly or through a cascade).
+      const tripped = get().line.trippedBy?.machineId;
+      if (tripped && !sim?.affectedMachines().includes(tripped)) get().restartLine();
     },
     selectMachine(id) {
       set({ selectedMachine: id });

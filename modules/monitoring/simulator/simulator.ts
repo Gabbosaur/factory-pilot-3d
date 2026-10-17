@@ -23,7 +23,14 @@ interface ActiveEffect {
   sensorId: string;
   ratePerSec: number;
   startTick: number;
+  /** Drift accumulated so far: grows only while the line runs, scaled by the drift factor at each tick. */
+  drift: number;
 }
+
+/** Hall temperature the temperature sensors cool down to while the line is stopped. */
+const AMBIENT_C = 22;
+/** Cool-down time constant in ticks (compressed for the demo: real machines take 20–60 min). */
+const COOL_TAU = 90;
 
 interface ActiveFault {
   fault: FaultConfig;
@@ -38,8 +45,12 @@ export class Simulator {
   private rand: () => number;
   private tickIndex = 0;
   private faults: ActiveFault[] = [];
-  /** Per machine multiplier on fault drift (riduci_velocita sets 0.6). */
+  /** Per machine multiplier on fault drift (riduci_velocita lowers it). */
   private driftFactor = new Map<string, number>();
+  /** Serial line: a protective trip on one machine stops all of them. */
+  private lineRunning = true;
+  /** Last emitted value per machine|sensor, used to coast down while stopped. */
+  private last = new Map<string, number>();
 
   constructor(
     private config: FactoryConfig,
@@ -77,7 +88,7 @@ export class Simulator {
     const effects = new Map<string, ActiveEffect[]>();
     effects.set(
       fault.machineId,
-      fault.effects.map((e) => ({ ...e, startTick })),
+      fault.effects.map((e) => ({ ...e, startTick, drift: 0 })),
     );
 
     if (fault.kind === 'cascata') {
@@ -96,16 +107,11 @@ export class Simulator {
       for (const [mid, d] of depth) {
         if (d === 0) continue;
         const m = byId.get(mid)!;
-        // Use configured downstream effects when they match the machine's sensors, otherwise
-        // degrade the first sensor so it crosses its warn threshold (Req 2.4).
-        const configured = (fault.downstreamEffects ?? []).filter((e) => m.sensors.some((s) => s.id === e.sensorId));
-        const fallback = m.sensors[0]
-          ? [{ sensorId: m.sensors[0].id, ratePerSec: (m.sensors[0].crit - m.sensors[0].nominal[1]) / 20 }]
-          : [];
-        const list = (configured.length ? configured : fallback).map((e) => ({
-          ...e,
-          startTick: startTick + d * CASCADE_DELAY_TICKS,
-        }));
+        // Only configured downstream effects propagate: a machine with no physical link to the fault
+        // (e.g. the outfeed conveyor motor for a pump bearing) is not degraded.
+        const list = (fault.downstreamEffects ?? [])
+          .filter((e) => m.sensors.some((s) => s.id === e.sensorId))
+          .map((e) => ({ ...e, startTick: startTick + d * CASCADE_DELAY_TICKS, drift: 0 }));
         if (list.length) effects.set(mid, list);
       }
     }
@@ -117,6 +123,23 @@ export class Simulator {
   reset(): void {
     this.faults = [];
     this.driftFactor.clear();
+  }
+
+  /** Repair: remove the faults originating on a machine (and their cascade effects). */
+  clearFault(machineId: string): boolean {
+    const before = this.faults.length;
+    this.faults = this.faults.filter((f) => f.fault.machineId !== machineId);
+    this.driftFactor.delete(machineId);
+    return this.faults.length < before;
+  }
+
+  get isLineRunning(): boolean {
+    return this.lineRunning;
+  }
+
+  /** Protective trip (false) or restart (true) of the whole serial line. */
+  setLineRunning(running: boolean): void {
+    this.lineRunning = running;
   }
 
   /** Slow down fault drift on a machine (used by the riduci_velocita action). Returns previous factor. */
@@ -145,13 +168,25 @@ export class Simulator {
         const mid = (lo + hi) / 2;
         const half = (hi - lo) / 2;
         // Uniform noise, clamped inside the nominal range so healthy machines never cross warn.
+        // Drawn even while stopped so the random sequence does not depend on stops.
         const noise = (this.rand() * 2 - 1) * Math.min(s.noise, half);
-        let value = Math.min(hi, Math.max(lo, mid + noise));
-        for (const f of this.faults) {
-          for (const e of f.effects.get(m.id) ?? []) {
-            if (e.sensorId === s.id && t >= e.startTick) value += e.ratePerSec * (t - e.startTick) * factor;
+        const key = `${m.id}|${s.id}`;
+        let value: number;
+        if (this.lineRunning) {
+          value = Math.min(hi, Math.max(lo, mid + noise));
+          for (const f of this.faults) {
+            for (const e of f.effects.get(m.id) ?? []) {
+              if (e.sensorId !== s.id || t < e.startTick) continue;
+              e.drift += e.ratePerSec * factor; // the fault degrades only while the machine runs
+              value += e.drift;
+            }
           }
+        } else {
+          // Stopped: temperatures cool towards the hall (process temperatures below it stay), the rest drops to 0.
+          const prev = this.last.get(key) ?? mid;
+          value = s.unit === '°C' ? prev + (Math.min(mid, AMBIENT_C) - prev) / COOL_TAU : 0;
         }
+        this.last.set(key, value);
         out.push({ machineId: m.id, sensorId: s.id, value: Math.round(value * 1000) / 1000, ts });
       }
     }

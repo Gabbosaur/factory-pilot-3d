@@ -35,6 +35,7 @@ async function main() {
       prompt: MEMORY_AGENT_PROMPT,
       language: 'en',
       tags: ['factorypilot'],
+      modelKey: process.env.EVOLUS_MEMORY_MODEL_KEY || null,
     });
     console.log('Created agent', agent!.agentId);
   } else console.log('Agent exists', agent.agentId);

@@ -10,10 +10,11 @@ import * as THREE from 'three';
 import { useStore } from '@/modules/store';
 import type { MachineConfig, MachineStatus } from '@/shared/types';
 import { STATUS_LABEL } from '@/modules/incidents/labels';
+import { useHistoryUi } from '@/modules/monitoring/panels/HistoryOverlay';
 
 const STATUS_COLOR: Record<MachineStatus, string> = { verde: '#22c55e', giallo: '#eab308', rosso: '#ef4444' };
 
-function MachineMesh({ m, status, selected, onPath, onSelect }: { m: MachineConfig; status: MachineStatus; selected: boolean; onPath: boolean; onSelect: () => void }) {
+function MachineMesh({ m, status, selected, onPath, onSelect, onMenu }: { m: MachineConfig; status: MachineStatus; selected: boolean; onPath: boolean; onSelect: () => void; onMenu: (x: number, y: number) => void }) {
   const mat = useRef<THREE.MeshStandardMaterial>(null);
   const [w, h, d] = m.size;
   useFrame(({ clock }) => {
@@ -80,6 +81,11 @@ function MachineMesh({ m, status, selected, onPath, onSelect }: { m: MachineConf
         e.stopPropagation();
         onSelect();
       }}
+      onContextMenu={(e) => {
+        e.stopPropagation();
+        e.nativeEvent.preventDefault();
+        onMenu(e.nativeEvent.clientX, e.nativeEvent.clientY);
+      }}
       onPointerOver={() => (document.body.style.cursor = 'pointer')}
       onPointerOut={() => (document.body.style.cursor = '')}
     >
@@ -139,6 +145,8 @@ export default function FactoryMap() {
   const statuses = useStore((s) => s.statuses);
   const selected = useStore((s) => s.selectedMachine);
   const selectMachine = useStore((s) => s.selectMachine);
+  const openMenu = useHistoryUi((s) => s.openMenu);
+  const lineRunning = useStore((s) => s.line.running);
   const incidents = useStore((s) => s.incidents);
   const selectedIncident = useStore((s) => s.selectedIncident);
   const running = useStore((s) => s.running);
@@ -167,7 +175,6 @@ export default function FactoryMap() {
     }
     return out;
   }, [factory, byId]);
-  const anyRed = Object.values(statuses).some((s) => s === 'rosso');
 
   const span = Math.max(...factory.machines.map((m) => Math.abs(m.position[0]) + m.size[0]), 10);
 
@@ -185,7 +192,7 @@ export default function FactoryMap() {
         <Line key={`${a}-${b}`} points={[center(a), center(b)]} color="#475569" lineWidth={3} />
       ))}
       {causal && <CausalPath points={causal.map((id) => center(id).add(new THREE.Vector3(0, 0.6, 0)))} />}
-      <Bottles path={flow} speed={running ? (anyRed ? 0.3 : 1) : 0} />
+      <Bottles path={flow} speed={running && lineRunning ? 1 : 0} />
       {factory.machines.map((m) => (
         <MachineMesh
           key={m.id}
@@ -194,6 +201,7 @@ export default function FactoryMap() {
           selected={selected === m.id}
           onPath={Boolean(causal) && onPath.has(m.id)}
           onSelect={() => selectMachine(m.id)}
+          onMenu={(x, y) => openMenu(m.id, x, y)}
         />
       ))}
       <OrbitControls makeDefault maxPolarAngle={Math.PI / 2.15} minDistance={6} maxDistance={span * 3} enableDamping />

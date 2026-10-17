@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import { useStore } from '@/modules/store';
 import { MachineList } from '@/modules/monitoring/panels/MachineList';
 import { MachineDetail } from '@/modules/monitoring/panels/MachineDetail';
+import { HistoryOverlay } from '@/modules/monitoring/panels/HistoryOverlay';
+import { LineBanner } from '@/modules/monitoring/panels/LineBanner';
 import { MapErrorBoundary } from '@/modules/monitoring/map3d/MapErrorBoundary';
 import { IncidentPanel } from '@/modules/incidents/ui/IncidentPanel';
 import { MetricsPanel } from '@/modules/incidents/ui/MetricsPanel';
@@ -143,6 +145,7 @@ export function Dashboard() {
           {!s.running && (
             <div className="absolute left-3 top-3 z-10 rounded bg-slate-800/90 px-2 py-1 text-xs">Simulation paused · tick {s.tick}</div>
           )}
+          <LineBanner />
           <MapErrorBoundary>
             <FactoryMap />
           </MapErrorBoundary>
@@ -153,6 +156,7 @@ export function Dashboard() {
           <AutonomyEditor />
         </aside>
       </main>
+      <HistoryOverlay />
     </div>
   );
 }

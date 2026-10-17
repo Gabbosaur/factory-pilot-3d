@@ -104,23 +104,61 @@ describe('Anomaly engine (Req 3)', () => {
     );
   });
 
-  it('scenario A: P1 turns red first, then F1; alarms are valid', () => {
+  it('scenario A: z-score warns P1 first (yellow), then F1; red only above the absolute limit; alarms are valid', () => {
     const c = load(bottling);
     const s = new Simulator(c, 42, 0);
     const e = new AnomalyEngine(c);
     for (let t = 0; t < 70; t++) e.ingest(s.step());
     s.inject('p1-bearing');
-    const firstRed: Record<string, number> = {};
-    for (let t = 70; t < 130; t++) {
+    const first: Record<string, Record<string, number>> = { giallo: {}, rosso: {} };
+    let firstRedAlarm: { machineId: string; value: number; threshold: number } | null = null;
+    for (let t = 70; t < 200; t++) {
       const ev = e.ingest(s.step());
-      for (const ch of ev.statusChanges) if (ch.status === 'rosso' && !(ch.machineId in firstRed)) firstRed[ch.machineId] = t;
-      for (const a of ev.alarms) expect(AlarmSchema.safeParse(a).success).toBe(true);
+      for (const ch of ev.statusChanges) if (ch.status !== 'verde' && !(ch.machineId in first[ch.status]!)) first[ch.status]![ch.machineId] = t;
+      for (const a of ev.alarms) {
+        expect(AlarmSchema.safeParse(a).success).toBe(true);
+        if (a.severity === 'rosso' && !firstRedAlarm) firstRedAlarm = a;
+      }
     }
-    expect(firstRed.P1).toBeDefined();
-    expect(firstRed.F1).toBeDefined();
-    expect(firstRed.P1!).toBeLessThan(firstRed.F1!);
+    expect(first.giallo!.P1!).toBeLessThan(first.giallo!.F1!);
+    expect(first.giallo!.P1! - 70).toBeLessThan(10); // early warning within seconds
+    expect(first.rosso!.P1).toBeDefined();
+    expect(first.rosso!.P1! - first.giallo!.P1!).toBeGreaterThan(30); // red needs the real limit, much later
+    expect(firstRedAlarm?.machineId).toBe('P1');
+    expect(firstRedAlarm!.value).toBeGreaterThan(firstRedAlarm!.threshold);
+    expect(first.rosso!.F1 ?? Infinity).toBeGreaterThan(first.rosso!.P1!);
     const starts = e.getAnomalyStarts();
     expect(starts.P1!).toBeLessThan(starts.F1!);
+  });
+
+  it('protective trip: stopped line coasts down, the fault freezes, a repair removes it', () => {
+    const c = load(bottling);
+    const s = new Simulator(c, 1, 0);
+    for (let t = 0; t < 5; t++) s.step();
+    s.inject('p1-bearing');
+    for (let t = 0; t < 30; t++) s.step();
+    const val = (out: ReturnType<Simulator['step']>, m: string, id: string) => out.find((x) => x.machineId === m && x.sensorId === id)!.value;
+    const before = s.step();
+    s.setLineRunning(false);
+    let out = before;
+    for (let t = 0; t < 120; t++) out = s.step();
+    expect(val(out, 'P1', 'vib')).toBe(0);
+    expect(val(out, 'P1', 'current')).toBe(0);
+    expect(val(out, 'P1', 'bearing_temp')).toBeLessThan(val(before, 'P1', 'bearing_temp'));
+    // Restarting with the fault still there resumes from the frozen drift, not from 150 s of drift.
+    s.setLineRunning(true);
+    out = s.step();
+    expect(val(out, 'P1', 'vib')).toBeLessThan(val(before, 'P1', 'vib') + 0.2);
+    expect(s.clearFault('P1')).toBe(true);
+    out = s.step();
+    expect(val(out, 'P1', 'vib')).toBeLessThanOrEqual(c.machines[0]!.sensors[0]!.nominal[1]);
+  });
+
+  it('cascade reaches only machines with configured effects', () => {
+    const c = load(bottling);
+    const s = new Simulator(c, 1, 0);
+    s.inject('p1-bearing');
+    expect(s.affectedMachines().sort()).toEqual(['C1', 'F1', 'P1']);
   });
 
   it('drops invalid samples (Req 3.9) and rejects inconsistent z thresholds (Req 3.10)', () => {

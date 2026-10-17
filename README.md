@@ -50,7 +50,7 @@ npm test                     # unit + property-based tests (vitest + fast-check)
 
 **New factory in 5 minutes:** *+ New factory* → upload a manual PDF (text extracted in the browser) and a sensor CSV (`machine_id, sensor_name, unit[, machine_name]`, sample in `public/onboarding-sample.csv`) → the AI drafts machines, thresholds, links and 3D layout → edit and confirm.
 
-Demo script: **Start** → choose *Pump P1 bearing wear* → **Inject fault** → watch P1 then F1 turn red, the causal path P1 → F1 light up, the diagnosis cite the pump manual, Gemma rate the risk and the manager approve the work order. Then *Conveyor K1 motor overheating* shows an autonomous L3 action (speed reduced, undoable).
+Demo script: **Start** → choose *Pump P1 bearing wear* → **Inject fault** → P1 turns yellow at once (statistical early warning), F1 follows, the causal path P1 → F1 lights up, the diagnosis cites the pump manual and Gemma rates the risk. If nobody acts, P1 crosses the ISO vibration limit after ~70 s and the whole line stops (protective trip, downtime counter in €); closing the approved work order repairs the pump and restarts the line. Right-click a machine for its 48 h history or to inject its fault. Then *Conveyor K1 motor overheating* shows an autonomous L3 action (speed reduced, undoable).
 
 ### Replay mode
 
