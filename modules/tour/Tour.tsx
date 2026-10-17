@@ -5,6 +5,7 @@
  * Starts automatically on first visit (localStorage), re-openable from the header button.
  */
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import { useStore } from '@/modules/store';
 
 const SEEN_KEY = 'fp.tour.seen.v1';
@@ -24,8 +25,8 @@ interface Step {
   revealPlacement?: 'top' | 'bottom' | 'left' | 'right';
   revealTitle?: string;
   revealBody?: string;
-  /** Switch the right-column tab before highlighting (so the target is visible, not hidden). */
-  tab?: 'incidents' | 'metrics' | 'settings';
+  /** Navigate to this route before highlighting (so the target is on screen). */
+  route?: string;
 }
 
 const STEPS: Step[] = [
@@ -35,12 +36,14 @@ const STEPS: Step[] = [
   },
   {
     target: 'map',
+    route: '/',
     title: 'Your factory, live',
     body: 'A digital twin of the plant. Green means healthy, amber means warning, red means alarm. Drag to look around, or switch to Top view for the floor plan.',
     placement: 'left',
   },
   {
     target: 'start',
+    route: '/',
     title: 'Start the line',
     body: 'Press Start. Sensors begin streaming and bottles flow along the conveyor.',
     placement: 'bottom',
@@ -54,6 +57,7 @@ const STEPS: Step[] = [
   },
   {
     target: 'inject',
+    route: '/',
     title: 'Inject a fault',
     body: 'Trigger a worn pump bearing. Press it and watch FactoryPilot react.',
     placement: 'bottom',
@@ -68,30 +72,31 @@ const STEPS: Step[] = [
   },
   {
     target: 'map',
+    route: '/',
     title: 'Finds the real cause',
     body: 'The filler turns red first, but the cause is the pump upstream. FactoryPilot traces the path and fixes the cause, not the symptom.',
     placement: 'left',
   },
   {
-    target: 'incidents',
-    tab: 'incidents',
+    target: 'nav-incidents',
+    route: '/incidents',
     title: 'Explained with the manual',
-    body: 'Open the Incidents tab. Each incident shows the probable cause, the exact manual page, a confidence score, the safety risk, and the cost per minute.',
-    placement: 'left',
+    body: 'The Incidents page lists every case. Each one shows the probable cause, the exact manual page, a confidence score, the safety risk, and the cost per minute.',
+    placement: 'bottom',
   },
   {
-    target: 'incidents',
-    tab: 'incidents',
+    target: 'nav-incidents',
+    route: '/incidents',
     title: 'You stay in control',
     body: 'A rule in code, not the AI, sends risky cases to a human. Approve to issue a work order. Minor issues are fixed automatically with safe, reversible actions.',
-    placement: 'left',
+    placement: 'bottom',
   },
   {
-    target: 'metrics',
-    tab: 'metrics',
+    target: 'nav-metrics',
+    route: '/metrics',
     title: 'Measurable impact',
-    body: 'The Metrics tab tracks it: diagnosis in seconds instead of a long manual search. Downtime avoided and savings add up as you go.',
-    placement: 'left',
+    body: 'The Metrics page tracks it: diagnosis in seconds instead of a long manual search. Downtime avoided and savings add up as you go.',
+    placement: 'bottom',
   },
   {
     title: 'Your turn',
@@ -108,13 +113,15 @@ export function Tour() {
   const [canAdvance, setCanAdvance] = useState(true);
   const [revealed, setRevealed] = useState(false);
   const raf = useRef<number | null>(null);
+  const router = useRouter();
+  const pathname = usePathname();
 
   const step = STEPS[i]!;
 
-  // Switch the right-column tab before this step highlights its target.
+  // Navigate to the step's page before it highlights its target.
   useEffect(() => {
-    if (open && step.tab) window.dispatchEvent(new CustomEvent('fp:tour-tab', { detail: step.tab }));
-  }, [open, i, step.tab]);
+    if (open && step.route && pathname !== step.route) router.push(step.route);
+  }, [open, i, step.route, pathname, router]);
 
   const finish = useCallback(() => {
     setOpen(false);

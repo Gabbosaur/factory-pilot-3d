@@ -15,7 +15,7 @@ export function AutonomyEditor() {
   const types = [...new Set(factory.machines.map((m) => m.type))];
 
   return (
-    <details className="card p-3">
+    <details className="card p-3" open>
       <summary className="section-title cursor-pointer select-none">Autonomy levels</summary>
       <p className="my-1.5 text-[11px] leading-relaxed text-slate-500">
         L0 suggests · L1 drafts · L2 one click · L3 auto + notify. Risky actions always go to the manager. Applies to new incidents.

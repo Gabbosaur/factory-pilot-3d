@@ -55,7 +55,7 @@ export function IncidentPanel() {
 
   // List view
   return (
-    <section aria-labelledby="inc-h" className="space-y-2">
+    <section aria-label="Incident list" className="space-y-2">
       {all.length === 0 ? (
         <p className="card p-3 text-xs text-slate-500">No incidents yet. Press Start, then Inject fault to see FactoryPilot work.</p>
       ) : (
