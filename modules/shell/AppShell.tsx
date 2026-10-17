@@ -19,6 +19,7 @@ interface Health {
 
 const NAV: Array<{ href: string; label: string; tour?: string }> = [
   { href: '/', label: 'Overview', tour: 'nav-overview' },
+  { href: '/machines', label: 'Machines', tour: 'nav-machines' },
   { href: '/incidents', label: 'Incidents', tour: 'nav-incidents' },
   { href: '/metrics', label: 'Metrics', tour: 'nav-metrics' },
   { href: '/settings', label: 'Settings' },

@@ -78,6 +78,13 @@ const STEPS: Step[] = [
     placement: 'left',
   },
   {
+    target: 'nav-machines',
+    route: '/machines',
+    title: 'All your machines',
+    body: 'The Machines page lists every unit grouped by type, with a status summary per group. Click one to inspect it on the map.',
+    placement: 'bottom',
+  },
+  {
     target: 'nav-incidents',
     route: '/incidents',
     title: 'Explained with the manual',

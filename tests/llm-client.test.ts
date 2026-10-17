@@ -55,7 +55,7 @@ describe('Client_LLM', () => {
     expect(body.thinking).toBeUndefined();
     // DeepSeek-V4-Flash: omit reasoning_effort so the model does not think (predictable latency).
     expect(body.reasoning_effort).toBeUndefined();
-  });
+  }, 20_000); // dynamic import + fake-timer flush can be slow under load; keep headroom
 
   it('Gemma (safety) requests carry no reasoning_effort', async () => {
     const calls = mockFetch([ok('{"livello_rischio":"basso","motivazione":"x"}')]);
