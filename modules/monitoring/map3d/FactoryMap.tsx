@@ -14,6 +14,7 @@ import { STATUS_LABEL } from '@/modules/incidents/labels';
 import { computeLayout } from './layout';
 import { Conveyor, FloorPlan, Hall, SceneProp, TEXT_FONT } from './FactoryScene';
 import { useHistoryUi } from '@/modules/monitoring/panels/HistoryOverlay';
+import FactoryMap2D from './FactoryMap2D';
 
 const STATUS_COLOR: Record<MachineStatus, string> = { verde: '#22c55e', giallo: '#eab308', rosso: '#ef4444' };
 
@@ -254,7 +255,7 @@ export default function FactoryMap() {
   const incidents = useStore((s) => s.incidents);
   const selectedIncident = useStore((s) => s.selectedIncident);
   const running = useStore((s) => s.running);
-  const [view, setView] = useState<'3d' | 'top'>('3d');
+  const [view, setView] = useState<'3d' | '2d'>('3d');
   const [idle, setIdle] = useState(true);
   const idleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const wake = () => {
@@ -281,18 +282,21 @@ export default function FactoryMap() {
     <div className="relative h-full w-full">
       {/* View toggle */}
       <div className="absolute right-4 top-4 z-10 flex overflow-hidden rounded-lg ring-1 ring-inset ring-white/15 backdrop-blur">
-        {(['3d', 'top'] as const).map((v) => (
+        {(['3d', '2d'] as const).map((v) => (
           <button
             key={v}
             type="button"
             onClick={() => setView(v)}
             className={`px-3 py-1 text-xs font-semibold transition ${view === v ? 'bg-sky-500 text-white' : 'bg-slate-900/70 text-slate-300 hover:bg-slate-800'}`}
           >
-            {v === '3d' ? '3D' : 'Top view'}
+            {v === '3d' ? '3D' : '2D'}
           </button>
         ))}
       </div>
 
+      {view === '2d' ? (
+        <FactoryMap2D />
+      ) : (
       <Canvas
         shadows
         dpr={[1, 2]}
@@ -345,7 +349,7 @@ export default function FactoryMap() {
           <Vignette eskil={false} offset={0.25} darkness={0.7} />
         </EffectComposer>
 
-        <CameraRig view={view} span={span} idle={idle} />
+        <CameraRig view="3d" span={span} idle={idle} />
         <OrbitControls
           makeDefault
           enabled={view === '3d'}
@@ -356,6 +360,7 @@ export default function FactoryMap() {
           enableDamping
         />
       </Canvas>
+      )}
     </div>
   );
 }

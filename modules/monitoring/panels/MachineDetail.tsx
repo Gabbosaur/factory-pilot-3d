@@ -5,7 +5,7 @@ import { useStore } from '@/modules/store';
 import { INCIDENT_STATUS_LABEL, STATUS_LABEL, STATUS_PILL } from '@/modules/incidents/labels';
 import { useHistoryUi } from './HistoryOverlay';
 
-export function MachineDetail() {
+export function MachineDetail({ onClose }: { onClose?: () => void } = {}) {
   const id = useStore((s) => s.selectedMachine);
   const factory = useStore((s) => s.factory);
   const history = useStore((s) => s.history);
@@ -14,6 +14,9 @@ export function MachineDetail() {
   const running = useStore((s) => s.running);
   const selectIncident = useStore((s) => s.selectIncident);
   const showHistory = useHistoryUi((s) => s.showHistory);
+  const production = useStore((s) => s.production);
+  const lineRunning = useStore((s) => s.line.running);
+  const machineSpeed = useStore((s) => (id ? (s.speed[id] ?? 1) : 1));
   const m = factory.machines.find((x) => x.id === id);
 
   if (!m) {
@@ -25,6 +28,11 @@ export function MachineDetail() {
     );
   }
 
+  // Serial line: every bottle passes every stage; parallel machines of the same type share the flow.
+  const sameType = factory.machines.filter((x) => x.type === m.type).length || 1;
+  const processed = production.started / sameType;
+  const rejectedHere = production.rejects[m.id] ?? 0;
+
   const list = Object.values(incidents).filter((i) => i.machineId === m.id || i.causalPath[0] === m.id);
   const open = list.filter((i) => i.status !== 'chiuso').sort((a, b) => b.priority - a.priority);
   const closed = list.filter((i) => i.status === 'chiuso').slice(-20).reverse();
@@ -35,7 +43,14 @@ export function MachineDetail() {
         <h2 id="detail-h" className="truncate text-sm font-semibold">
           <span className="font-mono text-xs text-slate-500">{m.id}</span> {m.name}
         </h2>
-        {status && <span className={`pill ${STATUS_PILL[status]}`}>{STATUS_LABEL[status]}</span>}
+        <span className="flex shrink-0 items-center gap-2">
+          {status && <span className={`pill ${STATUS_PILL[status]}`}>{STATUS_LABEL[status]}</span>}
+          {onClose && (
+            <button type="button" onClick={onClose} aria-label="Close machine detail" className="rounded px-1.5 text-slate-400 hover:bg-white/10 hover:text-slate-100">
+              ✕
+            </button>
+          )}
+        </span>
       </div>
       <div className="text-[11px] text-slate-500">{m.type.replace(/_/g, ' ')}{!running && ' · paused'}</div>
       <button type="button" onClick={() => showHistory(m.id)} className="text-left text-xs text-sky-400 hover:underline">
@@ -68,6 +83,27 @@ export function MachineDetail() {
             </div>
           );
         })}
+      </div>
+
+      <div>
+        <h3 className="section-title mb-1">Production this shift</h3>
+        <dl className="grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
+          <dt className="text-slate-500">Bottles processed</dt>
+          <dd className="text-right font-mono">{Math.floor(processed).toLocaleString('en-GB')}</dd>
+          <dt className="text-slate-500">Rejected here</dt>
+          <dd className="text-right font-mono">
+            {Math.floor(rejectedHere).toLocaleString('en-GB')}
+            {processed > 0 && <span className="text-slate-500"> · {((rejectedHere / processed) * 100).toFixed(2)}%</span>}
+          </dd>
+          <dt className="text-slate-500">Nominal rate</dt>
+          <dd className="text-right font-mono">{(m.partsPerMin * 60).toLocaleString('en-GB')} /h</dd>
+          <dt className="text-slate-500">Speed</dt>
+          <dd className={`text-right font-mono ${!lineRunning ? 'text-red-400' : machineSpeed < 1 ? 'text-amber-300' : ''}`}>
+            {!lineRunning ? 'stopped' : `${Math.round(machineSpeed * 100)}%`}
+          </dd>
+          <dt className="text-slate-500">Downtime cost</dt>
+          <dd className="text-right font-mono">€{m.downtimeCostPerMin}/min</dd>
+        </dl>
       </div>
 
       <div>

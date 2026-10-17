@@ -7,6 +7,7 @@ import { ACTION_LABEL, MODE_LABEL } from '../autonomy';
 import { formatEur } from '../impact';
 import { AUTHOR_LABEL, RISK_LABEL, RISK_PILL } from '../labels';
 import { formatMemoryCitation } from '../memory/filter';
+import { causeOptions, OTHER_CAUSE } from '../causes';
 import { approve, canUndo, closeWorkOrder, executeAction, reject, undoAction } from '../orchestrator';
 import type { Incident } from '@/shared/types';
 
@@ -30,6 +31,10 @@ export function IncidentCard({ inc }: { inc: Incident }) {
   const [rejectErr, setRejectErr] = useState<string | null>(null);
   const [closing, setClosing] = useState(false);
   const [form, setForm] = useState({ realCause: '', fix: '', durationMin: '' });
+  // Not preselected: the technician confirms the real cause, which feeds the factory memory.
+  const [causeChoice, setCauseChoice] = useState('');
+  const rootType = factory.machines.find((m) => m.id === inc.causalPath[0])?.type ?? '';
+  const causes = causeOptions(rootType, d?.causa_probabile ?? null, inc.similar);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showLog, setShowLog] = useState(false);
 
@@ -237,7 +242,49 @@ export function IncidentCard({ inc }: { inc: Incident }) {
               <label className="section-title" htmlFor={`${inc.id}-${k}`}>
                 {label}
               </label>
-              {type === 'textarea' ? (
+              {k === 'realCause' ? (
+                <>
+                  <select
+                    id={`${inc.id}-${k}`}
+                    className="input"
+                    value={causeChoice}
+                    onChange={(e) => {
+                      setCauseChoice(e.target.value);
+                      setForm({ ...form, realCause: e.target.value === OTHER_CAUSE ? '' : e.target.value });
+                    }}
+                    aria-invalid={Boolean(errors[k])}
+                  >
+                    <option value="" disabled>
+                      Select the confirmed cause…
+                    </option>
+                    {(['ai', 'memory', 'manual'] as const).map((src) => {
+                      const opts = causes.filter((c) => c.source === src);
+                      if (!opts.length) return null;
+                      return (
+                        <optgroup key={src} label={src === 'ai' ? 'AI diagnosis' : src === 'memory' ? 'Confirmed before on this machine' : 'Typical causes (manual)'}>
+                          {opts.map((c) => (
+                            <option key={c.value} value={c.value}>
+                              {c.label}
+                            </option>
+                          ))}
+                        </optgroup>
+                      );
+                    })}
+                    <option value={OTHER_CAUSE}>Other (describe)…</option>
+                  </select>
+                  {causeChoice === OTHER_CAUSE && (
+                    <textarea
+                      aria-label="Describe the actual root cause"
+                      className="input mt-1"
+                      rows={2}
+                      autoFocus
+                      value={form.realCause}
+                      onChange={(e) => setForm({ ...form, realCause: e.target.value })}
+                      aria-invalid={Boolean(errors[k])}
+                    />
+                  )}
+                </>
+              ) : type === 'textarea' ? (
                 <textarea id={`${inc.id}-${k}`} className="input" rows={2} value={form[k]} onChange={(e) => setForm({ ...form, [k]: e.target.value })} aria-invalid={Boolean(errors[k])} />
               ) : (
                 <input id={`${inc.id}-${k}`} type="number" min={1} max={1440} className="input" value={form[k]} onChange={(e) => setForm({ ...form, [k]: e.target.value })} aria-invalid={Boolean(errors[k])} />

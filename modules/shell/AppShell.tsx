@@ -51,10 +51,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, []);
   useEffect(() => setFaultId(s.factory.faults[0]?.id ?? ''), [s.factory]);
   // When a notification opens an incident, route to the Incidents page.
+  // The Overview shows the incident in its own floating panel, so it stays put.
   useEffect(() => {
     let prev = useStore.getState().selectedIncident;
     return useStore.subscribe((st) => {
-      if (st.selectedIncident && st.selectedIncident !== prev && pathname !== '/incidents') router.push('/incidents');
+      if (st.selectedIncident && st.selectedIncident !== prev && pathname !== '/incidents' && pathname !== '/') router.push('/incidents');
       prev = st.selectedIncident;
     });
   }, [pathname, router]);

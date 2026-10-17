@@ -9,6 +9,7 @@ import twin from '@/data/factories/bottling-line-twin.json';
 import { parseConfigValue } from '@/modules/monitoring/config/parser';
 import { Simulator } from '@/modules/monitoring/simulator/simulator';
 import { AnomalyEngine } from '@/modules/monitoring/anomaly/engine';
+import { initProduction, REDUCED_SPEED, stepProduction, type ProductionState } from '@/modules/monitoring/production/production';
 import type { Alarm, FactoryConfig, Incident, LlmCallMeta, MachineStatus, Sample } from '@/shared/types';
 
 function load(raw: unknown): FactoryConfig {
@@ -79,6 +80,9 @@ interface State {
   lastError: string | null;
   autonomyOverrides: Record<string, FactoryConfig['autonomy']>;
   line: LineState;
+  production: ProductionState;
+  /** Speed factor per machine (riduci_velocita lowers it); the serial line runs at the slowest one. */
+  speed: Record<string, number>;
 }
 
 interface Actions {
@@ -171,8 +175,14 @@ export const useStore = create<State & Actions>((set, get) => {
       line = { ...line, stopSec: line.stopSec + 1, totalDowntimeSec: line.totalDowntimeSec + 1 };
     }
 
+    const values: Record<string, number> = {};
+    for (const smp of samples) values[`${smp.machineId}|${smp.sensorId}`] = smp.value;
+    const speed = Math.min(1, ...Object.values(get().speed));
+    const production = stepProduction(get().production, get().factory, { lineRunning: line.running, speed, values });
+
     set({
       line,
+      production,
       tick: sim.tick,
       history: nextHistory,
       statuses: nextStatuses,
@@ -205,6 +215,8 @@ export const useStore = create<State & Actions>((set, get) => {
     lastError: null,
     autonomyOverrides: {},
     line: LINE_RUNNING,
+    production: initProduction(),
+    speed: {},
 
     addFactory(f) {
       const custom = [...readCustomFactories().filter((x) => x.id !== f.id), f];
@@ -228,6 +240,8 @@ export const useStore = create<State & Actions>((set, get) => {
         activeFaultIds: [],
         arming: [],
         line: LINE_RUNNING,
+        production: initProduction(),
+        speed: {},
       });
     },
     setRunning(running) {
@@ -268,7 +282,8 @@ export const useStore = create<State & Actions>((set, get) => {
       sim?.reset();
       sim?.setLineRunning(true);
       engine?.setStopped([]);
-      set({ activeFaultIds: [], arming: [], line: LINE_RUNNING });
+      // Counters keep running (same shift); speed reductions are undone with the faults.
+      set({ activeFaultIds: [], arming: [], line: LINE_RUNNING, speed: {} });
     },
     clearArming(machineId) {
       const next = get().arming.filter((a) => a.machineId !== machineId);
@@ -327,6 +342,11 @@ export const useStore = create<State & Actions>((set, get) => {
       set({ lastError: e });
     },
     setDriftFactor(machineId, factor) {
+      // Drift factor < 1 comes from riduci_velocita: the machine (and so the line) runs slower.
+      const speed = { ...get().speed };
+      if (factor < 1) speed[machineId] = REDUCED_SPEED;
+      else delete speed[machineId];
+      set({ speed });
       return sim?.setDriftFactor(machineId, factor) ?? 1;
     },
     setAutonomy(machineType, action, level) {
