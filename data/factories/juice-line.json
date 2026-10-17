@@ -1,0 +1,354 @@
+{
+  "id": "juice-line",
+  "name": "Juice line – 4,000 bottles/h",
+  "manualSearchRefSec": 2700,
+  "impactHorizonMin": 60,
+  "confidenceThreshold": 0.7,
+  "zThresholds": {
+    "warn": 2.5,
+    "crit": 3.5
+  },
+  "autonomy": {
+    "conveyor": {
+      "riduci_velocita": "L3",
+      "apri_ticket": "L3",
+      "pianifica_ispezione": "L2"
+    },
+    "centrifugal_pump": {
+      "apri_ticket": "L2",
+      "pianifica_ispezione": "L2"
+    },
+    "filler": {
+      "apri_ticket": "L2"
+    },
+    "capper": {
+      "apri_ticket": "L2"
+    }
+  },
+  "machines": [
+    {
+      "id": "P1",
+      "name": "Centrifugal feed pump",
+      "type": "centrifugal_pump",
+      "position": [
+        -9,
+        0,
+        0
+      ],
+      "size": [
+        2,
+        1.6,
+        1.6
+      ],
+      "upstream": [],
+      "downstream": [
+        "F1"
+      ],
+      "downtimeCostPerMin": 60,
+      "partsPerMin": 67,
+      "manualRef": "pump-p1",
+      "sensors": [
+        {
+          "id": "vib",
+          "name": "Vibration",
+          "unit": "mm/s",
+          "nominal": [
+            1.1,
+            1.5
+          ],
+          "warn": 1.8,
+          "crit": 4.5,
+          "noise": 0.05
+        },
+        {
+          "id": "bearing_temp",
+          "name": "Bearing temperature",
+          "unit": "°C",
+          "nominal": [
+            53,
+            57
+          ],
+          "warn": 70,
+          "crit": 85,
+          "noise": 0.3
+        },
+        {
+          "id": "current",
+          "name": "Motor current",
+          "unit": "A",
+          "nominal": [
+            12.8,
+            13.6
+          ],
+          "warn": 14.5,
+          "crit": 16,
+          "noise": 0.15
+        }
+      ]
+    },
+    {
+      "id": "F1",
+      "name": "Rotary filler",
+      "type": "filler",
+      "position": [
+        -3,
+        0,
+        0
+      ],
+      "size": [
+        2.6,
+        2.4,
+        2.6
+      ],
+      "upstream": [
+        "P1"
+      ],
+      "downstream": [
+        "C1"
+      ],
+      "downtimeCostPerMin": 120,
+      "partsPerMin": 67,
+      "manualRef": "filler-f1",
+      "sensors": [
+        {
+          "id": "fill_rejects",
+          "name": "Fill-level rejects",
+          "unit": "%",
+          "nominal": [
+            0.3,
+            0.7
+          ],
+          "warn": 1.5,
+          "crit": 3,
+          "noise": 0.1
+        },
+        {
+          "id": "flow_var",
+          "name": "Inlet flow variation",
+          "unit": "%",
+          "nominal": [
+            0.5,
+            1.5
+          ],
+          "warn": 4,
+          "crit": 8,
+          "noise": 0.3
+        },
+        {
+          "id": "temp",
+          "name": "Product temperature",
+          "unit": "°C",
+          "nominal": [
+            15,
+            17
+          ],
+          "warn": 20,
+          "crit": 24,
+          "noise": 0.3
+        },
+        {
+          "id": "fill_level",
+          "name": "Fill volume",
+          "unit": "ml",
+          "nominal": [
+            499.2,
+            500.8
+          ],
+          "warn": 502,
+          "crit": 504,
+          "noise": 0.4,
+          "spec": {
+            "lsl": 497,
+            "usl": 503
+          }
+        }
+      ]
+    },
+    {
+      "id": "C1",
+      "name": "Capper",
+      "type": "capper",
+      "position": [
+        3,
+        0,
+        0
+      ],
+      "size": [
+        2,
+        2.2,
+        2
+      ],
+      "upstream": [
+        "F1"
+      ],
+      "downstream": [
+        "K1"
+      ],
+      "downtimeCostPerMin": 60,
+      "partsPerMin": 67,
+      "manualRef": "capper-c1",
+      "sensors": [
+        {
+          "id": "torque",
+          "name": "Capping torque",
+          "unit": "Nm",
+          "nominal": [
+            2,
+            2.4
+          ],
+          "warn": 2.8,
+          "crit": 3.2,
+          "noise": 0.05,
+          "spec": {
+            "lsl": 1.6,
+            "usl": 2.8
+          }
+        },
+        {
+          "id": "rejects",
+          "name": "Capping rejects",
+          "unit": "%",
+          "nominal": [
+            0.2,
+            0.5
+          ],
+          "warn": 1.5,
+          "crit": 3,
+          "noise": 0.08
+        },
+        {
+          "id": "vib",
+          "name": "Vibration",
+          "unit": "mm/s",
+          "nominal": [
+            1.5,
+            2.5
+          ],
+          "warn": 4.5,
+          "crit": 7.1,
+          "noise": 0.2
+        }
+      ]
+    },
+    {
+      "id": "K1",
+      "name": "Outfeed conveyor",
+      "type": "conveyor",
+      "position": [
+        9,
+        0,
+        0
+      ],
+      "size": [
+        4,
+        0.8,
+        1.2
+      ],
+      "upstream": [
+        "C1"
+      ],
+      "downstream": [],
+      "downtimeCostPerMin": 30,
+      "partsPerMin": 67,
+      "manualRef": "conveyor-k1",
+      "sensors": [
+        {
+          "id": "motor_temp",
+          "name": "Motor temperature",
+          "unit": "°C",
+          "nominal": [
+            46,
+            52
+          ],
+          "warn": 70,
+          "crit": 80,
+          "noise": 0.3
+        },
+        {
+          "id": "current",
+          "name": "Motor current",
+          "unit": "A",
+          "nominal": [
+            2.3,
+            2.7
+          ],
+          "warn": 3,
+          "crit": 3.4,
+          "noise": 0.05
+        }
+      ]
+    }
+  ],
+  "faults": [
+    {
+      "id": "p1-bearing",
+      "label": "Pump P1 bearing wear (cascading)",
+      "machineId": "P1",
+      "kind": "cascata",
+      "effects": [
+        {
+          "sensorId": "vib",
+          "ratePerSec": 0.045
+        },
+        {
+          "sensorId": "bearing_temp",
+          "ratePerSec": 0.25
+        }
+      ],
+      "downstreamEffects": [
+        {
+          "sensorId": "fill_rejects",
+          "ratePerSec": 0.03
+        },
+        {
+          "sensorId": "flow_var",
+          "ratePerSec": 0.08
+        },
+        {
+          "sensorId": "rejects",
+          "ratePerSec": 0.03
+        }
+      ]
+    },
+    {
+      "id": "k1-overheat",
+      "label": "Conveyor K1 motor overheating (local)",
+      "machineId": "K1",
+      "kind": "locale",
+      "effects": [
+        {
+          "sensorId": "motor_temp",
+          "ratePerSec": 0.7
+        },
+        {
+          "sensorId": "current",
+          "ratePerSec": 0.01
+        }
+      ]
+    },
+    {
+      "id": "c1-torque",
+      "label": "Capper C1 torque drift (local)",
+      "machineId": "C1",
+      "kind": "locale",
+      "effects": [
+        {
+          "sensorId": "torque",
+          "ratePerSec": 0.04
+        }
+      ]
+    },
+    {
+      "id": "f1-valve",
+      "label": "Filler F1 valve seal leak (local)",
+      "machineId": "F1",
+      "kind": "locale",
+      "effects": [
+        {
+          "sensorId": "fill_rejects",
+          "ratePerSec": 0.05
+        }
+      ]
+    }
+  ]
+}

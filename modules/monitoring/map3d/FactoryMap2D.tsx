@@ -6,7 +6,7 @@
  * Same interactions as the 3D map: click selects, right-click opens the machine menu.
  */
 import { useMemo } from 'react';
-import { useStore } from '@/modules/store';
+import { lineStateOf, useStore } from '@/modules/store';
 import { STATUS_LABEL } from '@/modules/incidents/labels';
 import { useHistoryUi } from '@/modules/monitoring/panels/HistoryOverlay';
 import type { MachineConfig, MachineStatus } from '@/shared/types';
@@ -35,8 +35,13 @@ function fmt(v: number | undefined, unit: string) {
   return `${v.toFixed(v >= 100 ? 0 : v >= 10 ? 1 : 2)} ${unit}`;
 }
 
-export default function FactoryMap2D() {
-  const factory = useStore((s) => s.factory);
+export default function FactoryMap2D({ machineIds }: { machineIds?: string[] } = {}) {
+  const fullFactory = useStore((s) => s.factory);
+  // Optional subset (e.g. one production line of the plant).
+  const factory = useMemo(
+    () => (machineIds ? { ...fullFactory, machines: fullFactory.machines.filter((m) => machineIds.includes(m.id)), faults: fullFactory.faults.filter((f) => machineIds.includes(f.machineId)) } : fullFactory),
+    [fullFactory, machineIds],
+  );
   const statuses = useStore((s) => s.statuses);
   const history = useStore((s) => s.history);
   const selected = useStore((s) => s.selectedMachine);
@@ -44,7 +49,11 @@ export default function FactoryMap2D() {
   const incidents = useStore((s) => s.incidents);
   const selectedIncident = useStore((s) => s.selectedIncident);
   const running = useStore((s) => s.running);
-  const line = useStore((s) => s.line);
+  const lines = useStore((s) => s.lines);
+  const plant = useStore((s) => s.plant);
+  const lineOf = (id: string) => lineStateOf({ plant, lines }, id);
+  const bypassed = useStore((s) => s.bypassed);
+  const rerouteTargets = new Set(Object.values(bypassed).map((b) => b.sibling));
   const openMenu = useHistoryUi((s) => s.openMenu);
 
   const layout = useMemo(() => computeLayout(factory), [factory]);
@@ -70,7 +79,7 @@ export default function FactoryMap2D() {
     const i = causal.indexOf(a);
     return i >= 0 && causal[i + 1] === b;
   };
-  const flowing = running && line.running;
+  const flowing = (machineId: string) => running && lineOf(machineId).running;
 
   return (
     <svg
@@ -119,7 +128,7 @@ export default function FactoryMap2D() {
 
       {/* Conveyors between machines, with bottles moving while the line runs */}
       {edges.map(([a, b]) => (
-        <ConveyorLink key={`${a}-${b}`} from={pos.get(a)!} to={pos.get(b)!} hot={onCausal(a, b)} flowing={flowing} />
+        <ConveyorLink key={`${a}-${b}`} from={pos.get(a)!} to={pos.get(b)!} hot={onCausal(a, b)} flowing={flowing(a) && !bypassed[a] && !bypassed[b]} mode={bypassed[a] || bypassed[b] ? 'off' : rerouteTargets.has(a) || rerouteTargets.has(b) ? 'reroute' : 'normal'} />
       ))}
 
       {factory.machines.map((m) => (
@@ -133,9 +142,10 @@ export default function FactoryMap2D() {
           trend={(m.sensors[0] && history[m.id]?.[m.sensors[0].id]?.map((smp) => smp.value)) ?? []}
           selected={selected === m.id}
           onPath={causal.includes(m.id)}
-          tripped={line.trippedBy?.machineId === m.id}
-          animate={flowing}
-          stopped={!line.running}
+          tripped={lineOf(m.id).trippedBy?.machineId === m.id}
+          animate={flowing(m.id)}
+          stopped={!lineOf(m.id).running}
+          bypassed={Boolean(bypassed[m.id])}
           onSelect={() => selectMachine(m.id)}
           onMenu={(cx, cy) => openMenu(m.id, cx, cy)}
         />
@@ -146,7 +156,8 @@ export default function FactoryMap2D() {
   );
 }
 
-function ConveyorLink({ from, to, hot, flowing }: { from: { x: number; y: number }; to: { x: number; y: number }; hot: boolean; flowing: boolean }) {
+/** off: leads to a bypassed machine (no flow); reroute: the twin that took over the flow. */
+function ConveyorLink({ from, to, hot, flowing, mode = 'normal' }: { from: { x: number; y: number }; to: { x: number; y: number }; hot: boolean; flowing: boolean; mode?: 'normal' | 'off' | 'reroute' }) {
   const dx = to.x - from.x;
   const dy = to.y - from.y;
   const len = Math.hypot(dx, dy) || 1;
@@ -164,12 +175,12 @@ function ConveyorLink({ from, to, hot, flowing }: { from: { x: number; y: number
   return (
     <g>
       {/* belt */}
-      <path d={d} stroke={hot ? PATH_COLOR : METAL_DARK} strokeWidth={16} strokeLinecap="round" fill="none" opacity={hot ? 0.9 : 1} />
-      <path d={d} stroke={hot ? '#fdba74' : METAL} strokeWidth={10} strokeLinecap="round" fill="none" strokeDasharray="2 8">
-        {flowing && <animate attributeName="stroke-dashoffset" from="10" to="0" dur="0.5s" repeatCount="indefinite" />}
+      <path d={d} stroke={mode === 'reroute' ? '#15803d' : hot ? PATH_COLOR : METAL_DARK} strokeWidth={18} strokeLinecap="butt" fill="none" opacity={mode === 'off' ? 0.35 : hot ? 0.9 : 1} strokeDasharray={mode === 'off' ? '6 6' : undefined} />
+      <path d={d} stroke={hot ? '#fdba74' : METAL} strokeWidth={12} strokeLinecap="butt" fill="none" strokeDasharray="7 3">
+        {flowing && <animate attributeName="stroke-dashoffset" from="10" to="0" dur="0.4s" repeatCount="indefinite" />}
       </path>
       {/* bottles */}
-      {Array.from({ length: Math.max(1, Math.floor(segLen / 34)) }, (_, n) => {
+      {mode !== 'off' && Array.from({ length: Math.max(1, Math.floor(segLen / 34)) }, (_, n) => {
         const t = (n + 0.5) / Math.max(1, Math.floor(segLen / 34));
         return (
           <g key={n} transform={flowing ? undefined : `translate(${x1 + (x2 - x1) * t} ${y1 + (y2 - y1) * t}) rotate(${angle})`}>
@@ -205,11 +216,13 @@ function MachineGlyph(props: {
   tripped: boolean;
   animate: boolean;
   stopped: boolean;
+  bypassed: boolean;
   onSelect: () => void;
   onMenu: (clientX: number, clientY: number) => void;
 }) {
-  const { m, x, y, status, values, trend, selected, onPath, tripped, animate, stopped, onSelect, onMenu } = props;
-  const accent = STATUS_COLOR[status];
+  const { m, x, y, status, values, trend, selected, onPath, tripped, animate, stopped, bypassed, onSelect, onMenu } = props;
+  // A stopped line is grey; only the machine that tripped it keeps its (red) status colour.
+  const accent = bypassed || (stopped && !tripped) ? '#64748b' : STATUS_COLOR[status];
   const shown = m.sensors.slice(0, 2);
   const main = m.sensors[0];
   const labelY = ICON_H / 2 + 18;
@@ -284,7 +297,7 @@ function MachineGlyph(props: {
       <g transform={`translate(0 ${labelY + 58})`}>
         <rect x={-30} y={-10} width={60} height={15} rx={7.5} fill={accent} fillOpacity={0.15} stroke={accent} strokeOpacity={0.6} />
         <text y={1} textAnchor="middle" fontSize={9.5} fontWeight={700} fill={accent}>
-          {STATUS_LABEL[status].toUpperCase()}
+          {bypassed ? 'BYPASSED' : stopped ? (tripped ? 'TRIPPED' : 'STOPPED') : STATUS_LABEL[status].toUpperCase()}
         </text>
       </g>
       {tripped && (
@@ -402,7 +415,7 @@ function Drawing({ type, accent, animate }: { type: string; accent: string; anim
           <rect key={lx} x={lx - 3} y={12} width={6} height={26} fill={METAL} stroke="none" />
         ))}
         {/* belt */}
-        <rect x={-62} y={-6} width={124} height={18} rx={9} fill={METAL_DARK} />
+        <rect x={-62} y={-6} width={124} height={18} rx={2} fill={METAL_DARK} />
         {rollers.map((rx) => (
           <g key={rx}>
             <circle cx={rx} cy={3} r={5} fill={METAL} />
@@ -458,7 +471,7 @@ function Sparkline({ data, warn, crit, y, stopped }: { data: number[]; warn: num
   if (data.length < 2) {
     return (
       <text y={y + 12} textAnchor="middle" fontSize={9} fill="#475569">
-        press Start for live data
+        collecting live data…
       </text>
     );
   }

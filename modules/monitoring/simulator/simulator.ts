@@ -47,8 +47,8 @@ export class Simulator {
   private faults: ActiveFault[] = [];
   /** Per machine multiplier on fault drift (riduci_velocita lowers it). */
   private driftFactor = new Map<string, number>();
-  /** Serial line: a protective trip on one machine stops all of them. */
-  private lineRunning = true;
+  /** Machines stopped by a protective trip (a serial line stops as a whole; other lines keep running). */
+  private stopped = new Set<string>();
   /** Last emitted value per machine|sensor, used to coast down while stopped. */
   private last = new Map<string, number>();
 
@@ -133,13 +133,17 @@ export class Simulator {
     return this.faults.length < before;
   }
 
+  /** True when no machine is stopped. */
   get isLineRunning(): boolean {
-    return this.lineRunning;
+    return this.stopped.size === 0;
   }
 
-  /** Protective trip (false) or restart (true) of the whole serial line. */
-  setLineRunning(running: boolean): void {
-    this.lineRunning = running;
+  /** Protective trip (false) or restart (true) of a line: the given machines, or all of them. */
+  setLineRunning(running: boolean, machineIds: readonly string[] = this.config.machines.map((m) => m.id)): void {
+    for (const id of machineIds) {
+      if (running) this.stopped.delete(id);
+      else this.stopped.add(id);
+    }
   }
 
   /** Slow down fault drift on a machine (used by the riduci_velocita action). Returns previous factor. */
@@ -172,7 +176,7 @@ export class Simulator {
         const noise = (this.rand() * 2 - 1) * Math.min(s.noise, half);
         const key = `${m.id}|${s.id}`;
         let value: number;
-        if (this.lineRunning) {
+        if (!this.stopped.has(m.id)) {
           value = Math.min(hi, Math.max(lo, mid + noise));
           for (const f of this.faults) {
             for (const e of f.effects.get(m.id) ?? []) {

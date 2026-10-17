@@ -1,0 +1,8 @@
+{
+  "agent": "sicurezza",
+  "scenarioId": "f1-valve",
+  "hash": "8a2b3c4d5e6f7082000000000000000000000000000000000000000000000001",
+  "model": "Gemma-4-31B-IT",
+  "content": "{\"livello_rischio\": \"medio\", \"motivazione\": \"The repair requires stopping the rotary filler and replacing pressurized valve seals with manual intervention.\"}",
+  "recordedAt": "2026-10-17T23:30:00.000Z"
+}

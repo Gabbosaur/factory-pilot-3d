@@ -7,6 +7,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CartesianGrid, Line, LineChart, ReferenceArea, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import type { MachineConfig } from '@/shared/types';
+import { baseId } from '@/modules/plant/plant';
 
 interface Dataset {
   machineId: string;
@@ -40,7 +41,8 @@ export function MachineHistory({ machine, large = false }: { machine: MachineCon
     if (cache.has(machine.id)) return setDs(cache.get(machine.id));
     let alive = true;
     setDs(undefined);
-    fetch(`/datasets/${machine.id}.json`)
+    // Lines of a plant share the per-type datasets: L2-P1 uses P1.
+    fetch(`/datasets/${baseId(machine.id)}.json`)
       .then((r) => (r.ok ? (r.json() as Promise<Dataset>) : null))
       .catch(() => null)
       .then((d) => {

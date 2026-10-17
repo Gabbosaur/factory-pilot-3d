@@ -35,7 +35,7 @@ export function MachinesByType() {
 
   const inspect = (id: string) => {
     select(id);
-    router.push('/');
+    router.push(`/machines/${id}`);
   };
 
   // Many machine types? Collapse groups by default so the page stays scannable.

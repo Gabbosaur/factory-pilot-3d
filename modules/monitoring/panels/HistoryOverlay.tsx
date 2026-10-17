@@ -4,6 +4,7 @@
  * UI-only state, kept out of the main store.
  */
 import { useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { create } from 'zustand';
 import { useStore } from '@/modules/store';
 import { MachineHistory } from './MachineHistory';
@@ -39,6 +40,7 @@ function MenuItem({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonE
 
 export function HistoryOverlay() {
   const { menu, open, closeMenu, showHistory } = useHistoryUi();
+  const router = useRouter();
   const factory = useStore((s) => s.factory);
   const selectMachine = useStore((s) => s.selectMachine);
   const selectedMachine = useStore((s) => s.selectedMachine);
@@ -97,6 +99,14 @@ export function HistoryOverlay() {
             {menuMachine.id} · {menuMachine.name}
           </div>
           <MenuItem onClick={() => showHistory(menuMachine.id)}>History (48 h)</MenuItem>
+          <MenuItem
+            onClick={() => {
+              closeMenu();
+              router.push(`/machines/${menuMachine.id}`);
+            }}
+          >
+            Open machine page
+          </MenuItem>
           {selectedMachine !== menuMachine.id && (
             <MenuItem
               onClick={() => {

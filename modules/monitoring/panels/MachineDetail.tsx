@@ -3,19 +3,22 @@
 import { Line, LineChart, ReferenceLine, ResponsiveContainer, YAxis } from 'recharts';
 import { useStore } from '@/modules/store';
 import { INCIDENT_STATUS_LABEL, STATUS_LABEL, STATUS_PILL } from '@/modules/incidents/labels';
+import Link from 'next/link';
 import { useHistoryUi } from './HistoryOverlay';
 
-export function MachineDetail({ onClose }: { onClose?: () => void } = {}) {
+export function MachineDetail({ onClose, onResetPosition }: { onClose?: () => void; onResetPosition?: () => void } = {}) {
   const id = useStore((s) => s.selectedMachine);
   const factory = useStore((s) => s.factory);
   const history = useStore((s) => s.history);
   const status = useStore((s) => (id ? s.statuses[id] : undefined));
   const incidents = useStore((s) => s.incidents);
-  const running = useStore((s) => s.running);
   const selectIncident = useStore((s) => s.selectIncident);
   const showHistory = useHistoryUi((s) => s.showHistory);
-  const production = useStore((s) => s.production);
-  const lineRunning = useStore((s) => s.line.running);
+  const lineId = useStore((s) => (id ? s.plant.lineOf[id] : undefined) ?? s.plant.lines[0]!.id);
+  const production = useStore((s) => s.productions[lineId]!);
+  const lineMachines = useStore((s) => s.plant.lines.find((l) => l.id === lineId)!.config.machines);
+  const lineRunning = useStore((s) => s.lines[lineId]?.running ?? true);
+  const bypass = useStore((s) => (id ? s.bypassed[id] : undefined));
   const machineSpeed = useStore((s) => (id ? (s.speed[id] ?? 1) : 1));
   const m = factory.machines.find((x) => x.id === id);
 
@@ -29,7 +32,7 @@ export function MachineDetail({ onClose }: { onClose?: () => void } = {}) {
   }
 
   // Serial line: every bottle passes every stage; parallel machines of the same type share the flow.
-  const sameType = factory.machines.filter((x) => x.type === m.type).length || 1;
+  const sameType = lineMachines.filter((x) => x.type === m.type).length || 1;
   const processed = production.started / sameType;
   const rejectedHere = production.rejects[m.id] ?? 0;
 
@@ -45,6 +48,17 @@ export function MachineDetail({ onClose }: { onClose?: () => void } = {}) {
         </h2>
         <span className="flex shrink-0 items-center gap-2">
           {status && <span className={`pill ${STATUS_PILL[status]}`}>{STATUS_LABEL[status]}</span>}
+          {onResetPosition && (
+            <button
+              type="button"
+              onClick={onResetPosition}
+              aria-label="Reset panel position"
+              title="Reset panel position to top-right"
+              className="rounded px-1.5 text-xs text-slate-400 hover:bg-white/10 hover:text-slate-100"
+            >
+              ↺
+            </button>
+          )}
           {onClose && (
             <button type="button" onClick={onClose} aria-label="Close machine detail" className="rounded px-1.5 text-slate-400 hover:bg-white/10 hover:text-slate-100">
               ✕
@@ -52,10 +66,15 @@ export function MachineDetail({ onClose }: { onClose?: () => void } = {}) {
           )}
         </span>
       </div>
-      <div className="text-[11px] text-slate-500">{m.type.replace(/_/g, ' ')}{!running && ' · paused'}</div>
-      <button type="button" onClick={() => showHistory(m.id)} className="text-left text-xs text-sky-400 hover:underline">
-        History (48 h) · or right-click a machine
-      </button>
+      <div className="text-[11px] text-slate-500">{m.type.replace(/_/g, ' ')}</div>
+      <div className="flex flex-wrap gap-x-3 text-xs">
+        <Link href={`/machines/${m.id}`} className="text-sky-400 hover:underline">
+          Machine page (SPC, MTBF) →
+        </Link>
+        <button type="button" onClick={() => showHistory(m.id)} className="text-sky-400 hover:underline">
+          History (48 h)
+        </button>
+      </div>
 
       <div className="grid grid-cols-1 gap-2">
         {m.sensors.map((s) => {
@@ -99,7 +118,7 @@ export function MachineDetail({ onClose }: { onClose?: () => void } = {}) {
           <dd className="text-right font-mono">{(m.partsPerMin * 60).toLocaleString('en-GB')} /h</dd>
           <dt className="text-slate-500">Speed</dt>
           <dd className={`text-right font-mono ${!lineRunning ? 'text-red-400' : machineSpeed < 1 ? 'text-amber-300' : ''}`}>
-            {!lineRunning ? 'stopped' : `${Math.round(machineSpeed * 100)}%`}
+            {bypass ? `bypassed → ${bypass.sibling}` : !lineRunning ? 'stopped' : `${Math.round(machineSpeed * 100)}%`}
           </dd>
           <dt className="text-slate-500">Downtime cost</dt>
           <dd className="text-right font-mono">€{m.downtimeCostPerMin}/min</dd>

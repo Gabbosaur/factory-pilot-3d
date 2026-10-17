@@ -7,6 +7,8 @@ import type { Alarm, FactoryConfig, MachineStatus, Sample } from '@/shared/types
 
 export const WINDOW = 60;
 export const CLEAR_STREAK = 10;
+/** A statistical (z-score) warning must persist this many samples: at 1 Hz, noise alone crosses 2.5σ now and then. */
+export const WARN_PERSIST = 3;
 
 interface SensorState {
   /** Healthy reference values used for mean/std (anomalous samples are excluded). */
@@ -15,6 +17,7 @@ interface SensorState {
   recent: Sample[];
   level: 0 | 1 | 2; // 0 ok, 1 warn, 2 crit (current sample)
   clean: number; // consecutive clean samples
+  warnRun: number; // consecutive samples above the z-score warning level
 }
 
 export interface EngineEvent {
@@ -110,7 +113,7 @@ export class AnomalyEngine {
       const key = `${sample.machineId}|${sample.sensorId}`;
       let st = this.sensors.get(key);
       if (!st) {
-        st = { ref: [], recent: [], level: 0, clean: 0 };
+        st = { ref: [], recent: [], level: 0, clean: 0, warnRun: 0 };
         this.sensors.set(key, st);
       }
 
@@ -122,13 +125,16 @@ export class AnomalyEngine {
       // Red only above the absolute (ISO / manual) limit, which is what trips the line.
       // The z-score is an early warning: at most yellow, but it already raises an alarm.
       const crit = sample.value > conf.crit;
-      const warn = !crit && ((z !== null && absZ > this.zWarn) || sample.value > conf.warn);
+      const zWarn = z !== null && absZ > this.zWarn;
+      st.warnRun = zWarn ? st.warnRun + 1 : 0;
+      const warn = !crit && ((zWarn && st.warnRun >= WARN_PERSIST) || sample.value > conf.warn);
       st.level = crit ? 2 : warn ? 1 : 0;
       st.clean = st.level === 0 ? st.clean + 1 : 0;
 
       st.recent.push(sample);
       if (st.recent.length > WINDOW) st.recent.shift();
-      if (st.level === 0) {
+      // Unconfirmed z-score excursions are kept out of the healthy reference too.
+      if (st.level === 0 && !zWarn) {
         st.ref.push(sample.value);
         if (st.ref.length > WINDOW) st.ref.shift();
       }

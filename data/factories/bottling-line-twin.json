@@ -39,7 +39,8 @@
       "manualRef": "filler-f1",
       "sensors": [
         { "id": "fill_rejects", "name": "Fill-level rejects", "unit": "%", "nominal": [0.3, 0.7], "warn": 1.5, "crit": 3.0, "noise": 0.1 },
-        { "id": "flow_var", "name": "Inlet flow variation", "unit": "%", "nominal": [0.5, 1.5], "warn": 4.0, "crit": 8.0, "noise": 0.3 }
+        { "id": "flow_var", "name": "Inlet flow variation", "unit": "%", "nominal": [0.5, 1.5], "warn": 4.0, "crit": 8.0, "noise": 0.3 },
+        { "id": "fill_level", "name": "Fill volume", "unit": "ml", "nominal": [499.2, 500.8], "warn": 502, "crit": 504, "noise": 0.4, "spec": { "lsl": 497, "usl": 503 } }
       ]
     },
     {
@@ -55,7 +56,8 @@
       "manualRef": "filler-f1",
       "sensors": [
         { "id": "fill_rejects", "name": "Fill-level rejects", "unit": "%", "nominal": [0.3, 0.7], "warn": 1.5, "crit": 3.0, "noise": 0.1 },
-        { "id": "flow_var", "name": "Inlet flow variation", "unit": "%", "nominal": [0.5, 1.5], "warn": 4.0, "crit": 8.0, "noise": 0.3 }
+        { "id": "flow_var", "name": "Inlet flow variation", "unit": "%", "nominal": [0.5, 1.5], "warn": 4.0, "crit": 8.0, "noise": 0.3 },
+        { "id": "fill_level", "name": "Fill volume", "unit": "ml", "nominal": [499.2, 500.8], "warn": 502, "crit": 504, "noise": 0.4, "spec": { "lsl": 497, "usl": 503 } }
       ]
     },
     {
@@ -70,7 +72,7 @@
       "partsPerMin": 160,
       "manualRef": "capper-c1",
       "sensors": [
-        { "id": "torque", "name": "Capping torque", "unit": "Nm", "nominal": [2.0, 2.4], "warn": 2.8, "crit": 3.2, "noise": 0.05 },
+        { "id": "torque", "name": "Capping torque", "unit": "Nm", "nominal": [2.0, 2.4], "warn": 2.8, "crit": 3.2, "noise": 0.05, "spec": { "lsl": 1.6, "usl": 2.8 } },
         { "id": "rejects", "name": "Capping rejects", "unit": "%", "nominal": [0.2, 0.5], "warn": 1.5, "crit": 3.0, "noise": 0.08 }
       ]
     },
@@ -112,6 +114,16 @@
       "machineId": "K1",
       "kind": "locale",
       "effects": [{ "sensorId": "motor_temp", "ratePerSec": 0.7 }]
+    },
+    {
+      "id": "f1-valve",
+      "label": "Filler A valve drift (local, twin filler available)",
+      "machineId": "F1",
+      "kind": "locale",
+      "effects": [
+        { "sensorId": "fill_rejects", "ratePerSec": 0.04 },
+        { "sensorId": "fill_level", "ratePerSec": -0.06 }
+      ]
     }
   ]
 }

@@ -90,11 +90,14 @@ export const SensorConfigSchema = z
     warn: finite,
     crit: finite,
     noise: finite.refine((n) => n >= 0, 'noise must be >= 0'),
+    /** Product quality characteristic (e.g. fill volume, capping torque): specification limits for Cpk. */
+    spec: z.object({ lsl: finite, usl: finite }).optional(),
   })
   .superRefine((s, ctx) => {
     if (s.nominal[0] > s.nominal[1]) ctx.addIssue({ code: 'custom', path: ['nominal'], message: 'min > max' });
     if (s.warn > s.crit) ctx.addIssue({ code: 'custom', path: ['warn'], message: 'warn threshold above crit' });
     if (s.nominal[1] > s.warn) ctx.addIssue({ code: 'custom', path: ['nominal'], message: 'nominal range exceeds warn threshold' });
+    if (s.spec && s.spec.lsl >= s.spec.usl) ctx.addIssue({ code: 'custom', path: ['spec'], message: 'lsl must be below usl' });
   });
 
 export const MachineConfigSchema = z.object({
@@ -109,6 +112,9 @@ export const MachineConfigSchema = z.object({
   partsPerMin: z.number().min(0).max(10_000),
   manualRef: z.string().min(1),
   sensors: z.array(SensorConfigSchema).max(20),
+  /** Plant hierarchy (optional): production line and process cluster. Derived when missing. */
+  line: z.string().min(1).max(50).optional(),
+  cluster: z.string().min(1).max(50).optional(),
 });
 
 export const FaultConfigSchema = z.object({
@@ -134,6 +140,8 @@ export const FactoryConfigSchema = z.object({
   autonomy: z.record(z.string(), z.partialRecord(ActionCodeSchema, AutonomyLevelSchema)).default({}),
   machines: z.array(MachineConfigSchema).min(1).max(50),
   faults: z.array(FaultConfigSchema).default([]),
+  /** Display names of the production lines of a multi-line plant (optional). */
+  lines: z.array(z.object({ id, name: z.string().min(1).max(100) })).optional(),
 });
 
 // ---------- Memory (Req 15) ----------

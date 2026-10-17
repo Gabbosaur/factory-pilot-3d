@@ -6,8 +6,9 @@ import type { MachineStatus } from '@/shared/types';
 import { STATUS_DOT, STATUS_LABEL, STATUS_PILL } from '@/modules/incidents/labels';
 import { useHistoryUi } from './HistoryOverlay';
 
-export function MachineList() {
+export function MachineList({ machineIds, title = 'Machines' }: { machineIds?: string[]; title?: string } = {}) {
   const factory = useStore((s) => s.factory);
+  const machines = machineIds ? factory.machines.filter((m) => machineIds.includes(m.id)) : factory.machines;
   const statuses = useStore((s) => s.statuses);
   const selected = useStore((s) => s.selectedMachine);
   const select = useStore((s) => s.selectMachine);
@@ -16,7 +17,7 @@ export function MachineList() {
   const prev = useRef<Record<string, MachineStatus>>({});
 
   useEffect(() => {
-    for (const m of factory.machines) {
+    for (const m of machines) {
       const st = statuses[m.id];
       if (st === 'rosso' && prev.current[m.id] !== 'rosso') setAnnounce(`${m.name} in alarm`);
     }
@@ -26,10 +27,10 @@ export function MachineList() {
   return (
     <section aria-labelledby="machines-h">
       <h2 id="machines-h" className="section-title mb-2">
-        Machines
+        {title}
       </h2>
       <ul role="list" className="space-y-1">
-        {factory.machines.map((m) => {
+        {machines.map((m) => {
           const st = statuses[m.id] ?? 'verde';
           const active = selected === m.id;
           return (

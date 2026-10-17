@@ -7,12 +7,14 @@ import type { ActionCode, AutonomyLevel } from '@/shared/types';
 const ACTIONS: ActionCode[] = ['riduci_velocita', 'apri_ticket', 'pianifica_ispezione'];
 const LEVELS: AutonomyLevel[] = ['L0', 'L1', 'L2', 'L3'];
 
-export function AutonomyEditor() {
+/** With machineType, only that type (the level applies to every machine of the type). */
+export function AutonomyEditor({ machineType }: { machineType?: string } = {}) {
   const factory = useStore((s) => s.factory);
   const overrides = useStore((s) => s.autonomyOverrides[s.factory.id]);
   const setAutonomy = useStore((s) => s.setAutonomy);
   const autonomy = overrides ?? factory.autonomy;
-  const types = [...new Set(factory.machines.map((m) => m.type))];
+  const types = machineType ? [machineType] : [...new Set(factory.machines.map((m) => m.type))];
+  const sameType = machineType ? factory.machines.filter((m) => m.type === machineType).map((m) => m.id) : [];
 
   return (
     <details className="card p-3" open>
@@ -20,6 +22,11 @@ export function AutonomyEditor() {
       <p className="my-1.5 text-[11px] leading-relaxed text-slate-500">
         L0 suggests · L1 drafts · L2 one click · L3 auto + notify. Risky actions always go to the manager. Applies to new incidents.
       </p>
+      {machineType && (
+        <p className="mb-1.5 text-[11px] text-amber-300/90">
+          Applies to every {machineType.replace(/_/g, ' ')} of the plant: {sameType.join(', ')}.
+        </p>
+      )}
       <table className="w-full text-xs">
         <thead>
           <tr className="text-slate-400">

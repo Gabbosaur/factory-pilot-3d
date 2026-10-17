@@ -6,9 +6,9 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Billboard, ContactShadows, Environment, Lightformer, Line, OrbitControls, SoftShadows, Text } from '@react-three/drei';
 import { Bloom, EffectComposer, Vignette } from '@react-three/postprocessing';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import * as THREE from 'three';
-import { useStore } from '@/modules/store';
+import { lineStateOf, useStore } from '@/modules/store';
 import type { MachineConfig, MachineStatus } from '@/shared/types';
 import { STATUS_LABEL } from '@/modules/incidents/labels';
 import { computeLayout } from './layout';
@@ -18,7 +18,8 @@ import FactoryMap2D from './FactoryMap2D';
 
 const STATUS_COLOR: Record<MachineStatus, string> = { verde: '#22c55e', giallo: '#eab308', rosso: '#ef4444' };
 
-function MachineMesh({ m, status, running, selected, onPath, onSelect, onMenu }: { m: MachineConfig; status: MachineStatus; running: boolean; selected: boolean; onPath: boolean; onSelect: () => void; onMenu: (x: number, y: number) => void }) {
+/** halt: the machine's line is stopped by a protective trip ("tripped" = the machine that caused it). */
+function MachineMesh({ m, status, running, halt, selected, onPath, onSelect, onMenu }: { m: MachineConfig; status: MachineStatus; running: boolean; halt: 'stopped' | 'tripped' | 'bypassed' | null; selected: boolean; onPath: boolean; onSelect: () => void; onMenu: (x: number, y: number) => void }) {
   const mat = useRef<THREE.MeshStandardMaterial>(null);
   const halo = useRef<THREE.Mesh>(null);
   const spin = useRef<THREE.Group>(null); // rotating part (pump impeller / default rotor)
@@ -30,7 +31,7 @@ function MachineMesh({ m, status, running, selected, onPath, onSelect, onMenu }:
   useFrame(({ clock }) => {
     const t = clock.elapsedTime;
     // High emissive on alarm so the Bloom effect makes red machines glow.
-    if (mat.current) mat.current.emissiveIntensity = status === 'rosso' ? 1.3 + 0.7 * Math.sin(t * 6) : status === 'giallo' ? 0.5 + 0.2 * Math.sin(t * 3) : 0.06;
+    if (mat.current) mat.current.emissiveIntensity = halt === 'stopped' || halt === 'bypassed' ? 0.02 : status === 'rosso' ? 1.3 + 0.7 * Math.sin(t * 6) : status === 'giallo' ? 0.5 + 0.2 * Math.sin(t * 3) : 0.06;
     if (halo.current) {
       const s = 1 + 0.18 * Math.sin(t * 3);
       halo.current.scale.set(s, s, s);
@@ -45,7 +46,8 @@ function MachineMesh({ m, status, running, selected, onPath, onSelect, onMenu }:
       body.current.position.x = running ? Math.sin(t * 40) * amp : 0;
     }
   });
-  const color = STATUS_COLOR[status];
+  // A stopped line is grey (only the machine that tripped it stays red).
+  const color = halt === 'stopped' || halt === 'bypassed' ? '#475569' : STATUS_COLOR[status];
   const inner = (() => {
     switch (m.type) {
       case 'centrifugal_pump':
@@ -129,7 +131,7 @@ function MachineMesh({ m, status, running, selected, onPath, onSelect, onMenu }:
     >
       <group ref={body}>{inner}</group>
       {/* Alarm halo visible from across the hall */}
-      {status === 'rosso' && (
+      {status === 'rosso' && halt !== 'bypassed' && (
         <mesh ref={halo} position={[0, 0.05, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <ringGeometry args={[radius, radius * 1.5, 40]} />
           <meshBasicMaterial color="#ef4444" transparent opacity={0.4} side={THREE.DoubleSide} />
@@ -145,23 +147,23 @@ function MachineMesh({ m, status, running, selected, onPath, onSelect, onMenu }:
         <Text
           font={TEXT_FONT}
           fontSize={0.5}
-          color={status === 'rosso' ? '#fecaca' : status === 'giallo' ? '#fde68a' : '#e2e8f0'}
+          color={halt === 'bypassed' ? '#fcd34d' : halt === 'stopped' ? '#94a3b8' : status === 'rosso' ? '#fecaca' : status === 'giallo' ? '#fde68a' : '#e2e8f0'}
           anchorX="center"
           anchorY="middle"
           outlineWidth={0.03}
           outlineColor="#060b16"
         >
-          {`${m.id} · ${STATUS_LABEL[status].toUpperCase()}`}
+          {`${m.id} · ${halt ? halt.toUpperCase() : STATUS_LABEL[status].toUpperCase()}`}
         </Text>
       </Billboard>
     </group>
   );
 }
 
-function CausalPath({ points }: { points: THREE.Vector3[] }) {
+function CausalPath({ points, moving }: { points: THREE.Vector3[]; moving: boolean }) {
   const ref = useRef<{ material: { dashOffset: number } } | null>(null);
   useFrame((_, dt) => {
-    if (ref.current) ref.current.material.dashOffset -= dt * 2;
+    if (ref.current && moving) ref.current.material.dashOffset -= dt * 2;
   });
   return <Line ref={ref as never} points={points} color="#f97316" lineWidth={6} dashed dashSize={0.6} gapSize={0.3} />;
 }
@@ -197,21 +199,12 @@ function Bottles({ path, speed }: { path: THREE.Vector3[]; speed: number }) {
  * In 3D it keeps a very slow orbital drift so the scene never looks frozen, but any user
  * interaction (OrbitControls) takes over immediately.
  */
-function CameraRig({ view, span, idle }: { view: '3d' | 'top'; span: number; idle: boolean }) {
+/** Gentle orbit around the hall centre while nobody is interacting with the map. */
+function CameraRig({ idle }: { idle: boolean }) {
   const { camera } = useThree();
   const controls = useThree((s) => s.controls) as { update?: () => void } | null;
-  const switching = useRef(0);
   useFrame((_, dt) => {
-    switching.current = Math.max(0, switching.current - dt);
-    if (view === 'top') {
-      camera.position.lerp(new THREE.Vector3(0, span * 1.7, 0.01), 0.08);
-      camera.lookAt(0, 0, 0);
-      controls?.update?.();
-    } else if (switching.current > 0) {
-      camera.position.lerp(new THREE.Vector3(span * 0.15, span * 0.85, span * 1.15), 0.08);
-      camera.lookAt(0, 0, 0);
-      controls?.update?.();
-    } else if (idle) {
+    if (idle) {
       // gentle orbit around the hall centre
       const r = Math.hypot(camera.position.x, camera.position.z);
       const a = Math.atan2(camera.position.z, camera.position.x) + dt * 0.03;
@@ -221,10 +214,6 @@ function CameraRig({ view, span, idle }: { view: '3d' | 'top'; span: number; idl
       controls?.update?.();
     }
   });
-  // When the view prop flips, run the lerp-to-pose for a moment.
-  useEffect(() => {
-    switching.current = 2;
-  }, [view]);
   return null;
 }
 
@@ -234,24 +223,39 @@ function OverheadLights({ span }: { span: number }) {
   useFrame(({ clock }) => {
     if (l.current) l.current.intensity = 0.5 + 0.08 * Math.sin(clock.elapsedTime * 2);
   });
-  return (
-    <>
-      <pointLight ref={l} position={[0, span * 0.9, 0]} intensity={0.5} color="#bae6fd" distance={span * 4} />
-      <mesh position={[0, span * 0.9, 0]}>
-        <boxGeometry args={[span * 1.2, 0.1, 0.5]} />
-        <meshStandardMaterial color="#1e293b" emissive="#bae6fd" emissiveIntensity={0.4} />
-      </mesh>
-    </>
-  );
+  return <pointLight ref={l} position={[0, span * 0.9, 0]} intensity={0.5} color="#bae6fd" distance={span * 4} />;
 }
 
-export default function FactoryMap() {
-  const factory = useStore((s) => s.factory);
+export default function FactoryMap({ machineIds }: { machineIds?: string[] } = {}) {
+  const fullFactory = useStore((s) => s.factory);
+  // Optional subset (e.g. one production line of the plant).
+  const factory = useMemo(() => {
+    const machines = machineIds ? fullFactory.machines.filter((m) => machineIds.includes(m.id)) : fullFactory.machines;
+    // The hall is drawn around the origin: centre the shown machines on it (a plant line can sit far from 0).
+    const xs = machines.map((m) => m.position[0]);
+    const zs = machines.map((m) => m.position[2]);
+    const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
+    const cz = (Math.min(...zs) + Math.max(...zs)) / 2;
+    return {
+      ...fullFactory,
+      machines: machines.map((m) => ({ ...m, position: [m.position[0] - cx, m.position[1], m.position[2] - cz] as [number, number, number] })),
+      faults: machineIds ? fullFactory.faults.filter((f) => machineIds.includes(f.machineId)) : fullFactory.faults,
+    };
+  }, [fullFactory, machineIds]);
   const statuses = useStore((s) => s.statuses);
   const selected = useStore((s) => s.selectedMachine);
   const selectMachine = useStore((s) => s.selectMachine);
   const openMenu = useHistoryUi((s) => s.openMenu);
-  const lineRunning = useStore((s) => s.line.running);
+  // Each machine (and the bottle flow) follows the protective-stop state of its own line.
+  const lines = useStore((s) => s.lines);
+  const plantModel = useStore((s) => s.plant);
+  const lineRunning = (machineId: string) => lineStateOf({ plant: plantModel, lines }, machineId).running;
+  const bypassed = useStore((s) => s.bypassed);
+  const haltOf = (machineId: string) => {
+    const ls = lineStateOf({ plant: plantModel, lines }, machineId);
+    if (bypassed[machineId]) return 'bypassed' as const;
+    return ls.running ? null : ls.trippedBy?.machineId === machineId ? ('tripped' as const) : ('stopped' as const);
+  };
   const incidents = useStore((s) => s.incidents);
   const selectedIncident = useStore((s) => s.selectedIncident);
   const running = useStore((s) => s.running);
@@ -275,7 +279,15 @@ export default function FactoryMap() {
   const causal = inc && inc.causalPath.length > 1 ? inc.causalPath : null;
   const onPath = new Set(inc?.causalPath ?? []);
 
-  const flow = useMemo(() => layout.flow.map((id) => new THREE.Vector3(byId.get(id)!.position[0], 1, byId.get(id)!.position[2])), [layout, byId]);
+  // Bottles take the twin of a bypassed machine (automatic reroute).
+  const flow = useMemo(
+    () =>
+      layout.flow
+        .map((id) => bypassed[id]?.sibling ?? id)
+        .filter((id) => byId.has(id))
+        .map((id) => new THREE.Vector3(byId.get(id)!.position[0], 1, byId.get(id)!.position[2])),
+    [layout, byId, bypassed],
+  );
   const span = Math.max(layout.hall.w, layout.hall.d) / 2;
 
   return (
@@ -295,7 +307,7 @@ export default function FactoryMap() {
       </div>
 
       {view === '2d' ? (
-        <FactoryMap2D />
+        <FactoryMap2D machineIds={machineIds} />
       ) : (
       <Canvas
         shadows
@@ -328,15 +340,16 @@ export default function FactoryMap() {
           <SceneProp key={i} prop={p} />
         ))}
 
-        {causal && <CausalPath points={causal.map((id) => center(id).add(new THREE.Vector3(0, 0.8, 0)))} />}
-        <Bottles path={flow} speed={running && lineRunning ? 1 : 0} />
+        {causal && <CausalPath points={causal.map((id) => center(id).add(new THREE.Vector3(0, 0.8, 0)))} moving={running && lineRunning(causal[0]!)} />}
+        <Bottles path={flow} speed={running && lineRunning(layout.flow[0] ?? '') ? 1 : 0} />
 
         {factory.machines.map((m) => (
           <MachineMesh
             key={m.id}
             m={m}
             status={statuses[m.id] ?? 'verde'}
-            running={running}
+            running={running && lineRunning(m.id)}
+            halt={haltOf(m.id)}
             selected={selected === m.id}
             onPath={Boolean(causal) && onPath.has(m.id)}
             onSelect={() => selectMachine(m.id)}
@@ -349,7 +362,7 @@ export default function FactoryMap() {
           <Vignette eskil={false} offset={0.25} darkness={0.7} />
         </EffectComposer>
 
-        <CameraRig view="3d" span={span} idle={idle} />
+        <CameraRig idle={idle} />
         <OrbitControls
           makeDefault
           enabled={view === '3d'}

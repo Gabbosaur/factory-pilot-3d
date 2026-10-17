@@ -1,0 +1,8 @@
+{
+  "agent": "diagnosi",
+  "scenarioId": "f1-valve",
+  "hash": "7a1b2c3d4e5f6071000000000000000000000000000000000000000000000001",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\n  \"causa_probabile\": \"Worn filling valve seal on rotary filler causing fill-level rejects exceeding normal tolerance\",\n  \"pagina_manuale\": 3,\n  \"citazione\": \"If rejects concern a single valve, check that valve's seal (p. 4).\",\n  \"confidenza\": 0.85,\n  \"azione_raccomandata\": \"Stop the filler, lock out/tag out the machine and depressurize the manifold. Inspect and replace the defective valve seal kit (code RF24-V02) as described on p. 4.\",\n  \"codice_azione\": \"intervento_manutentivo\",\n  \"ricambi\": [\"RF24-V02\"]\n}",
+  "recordedAt": "2026-10-17T23:30:00.000Z"
+}

@@ -1,5 +1,5 @@
 /**
- * Exact similarity filter for Memoria_Fabbrica (Req 15.2). Applied to both local and Evolus results.
+ * Exact similarity filter for Memoria_Fabbrica (Req 15.2).
  */
 import type { MemoryEntry } from '@/shared/types';
 

@@ -32,12 +32,12 @@ SKAB has no bearing-wear experiment: the `p1-bearing` vibration ramp reuses the 
 
 ## Resulting timeline (from fault injection)
 
-Yellow is the statistical early warning (|z| > 2.5 or above the warning limit): it already opens the incident and starts the AI analysis. Red means the absolute (ISO / manual) limit is exceeded and triggers a **protective trip of the whole serial line**, which restarts when the work order is closed (repair) or manually. Measured with the simulator + anomaly engine (seed 7):
+Yellow is the statistical early warning (|z| > 2.5 for 3 consecutive samples, or above the warning limit; the persistence removes false alarms from noise: 0 in 300 × 10 min healthy runs): it already opens the incident and starts the AI analysis. Red means the absolute (ISO / manual) limit is exceeded and triggers a **protective trip of that serial line** (the other line of the plant keeps running), which restarts when the work order is closed (repair) or manually. Measured with the simulator + anomaly engine (seed 7):
 
 | Fault | Yellow (early warning) | Red ⇒ line stop |
 | --- | --- | --- |
-| `p1-bearing` | P1 at 0–2 s, F1 at 10 s, C1 at 18 s (cascade) | P1 vibration > 4.5 mm/s at ~70 s |
-| `k1-overheat` | K1 at 0–2 s | > 80 °C at ~44 s, avoided if the autonomous "reduce speed" runs first |
-| `c1-torque` | C1 at 2 s | > 3.2 Nm at ~25 s |
+| `p1-bearing` | P1 at 2 s, F1 at 14 s, C1 at 22 s (cascade) | P1 vibration > 4.5 mm/s at ~70 s |
+| `k1-overheat` | K1 at 2 s | > 80 °C at ~44 s, avoided if the autonomous "reduce speed" runs first |
+| `c1-torque` | C1 at 4 s | > 3.2 Nm at ~25 s |
 
 Pitch line: the AI diagnosis is ready about 60 s before the pump would trip the line; approving and repairing in that window avoids the stop (190 €/min for the whole line).

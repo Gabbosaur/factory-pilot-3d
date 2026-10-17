@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { useStore } from '@/modules/store';
 import { kpis, rejectSensors } from '@/modules/monitoring/production/production';
+import { capacityFactor } from '@/modules/plant/plant';
 
 const int = (n: number) => Math.floor(n).toLocaleString('en-GB');
 const pct = (x: number) => `${(x * 100).toFixed(1)}%`;
@@ -18,11 +19,15 @@ function Cell({ label, value, sub, tone = 'text-slate-100', title }: { label: st
   );
 }
 
-export function ProductionBar() {
-  const production = useStore((s) => s.production);
-  const factory = useStore((s) => s.factory);
-  const line = useStore((s) => s.line);
-  const speed = useStore((s) => Math.min(1, ...Object.values(s.speed)));
+/** KPIs of one production line of the plant. */
+export function ProductionBar({ lineId }: { lineId?: string } = {}) {
+  const plantLine = useStore((s) => (lineId ? s.plant.lines.find((l) => l.id === lineId) : undefined) ?? s.plant.lines[0]!);
+  const production = useStore((s) => (plantLine ? s.productions[plantLine.id] : undefined) ?? s.productions[s.plant.lines[0]?.id ?? '']!);
+  const factory = plantLine?.config ?? useStore.getState().factory;
+  const line = useStore((s) => s.lines[plantLine.id]!);
+  const speed = useStore((s) => Math.min(1, ...plantLine.machineIds.map((id) => s.speed[id] ?? 1)));
+  // A machine bypassed to its twin lowers the line capacity without stopping it.
+  const capacity = useStore((s) => capacityFactor(plantLine.config, new Set(plantLine.machineIds.filter((id) => s.bypassed[id]))));
   const k = useMemo(() => kpis(production, factory), [production, factory]);
   const stations = useMemo(() => rejectSensors(factory), [factory]);
   const costPerMin = factory.machines.reduce((s, m) => s + m.downtimeCostPerMin, 0);
@@ -37,9 +42,9 @@ export function ProductionBar() {
     <section aria-label="Shift production" className="grid grid-cols-2 divide-white/5 border-b border-white/10 bg-slate-950/80 sm:grid-cols-3 lg:grid-cols-6 lg:divide-x">
       <Cell
         label="Line"
-        value={!line.running ? '⛔ Stopped' : speed < 1 ? `▶ ${Math.round(speed * 100)}% speed` : '▶ Running'}
+        value={!line.running ? '⛔ Stopped' : capacity < 1 ? `↪ Rerouted · ${Math.round(capacity * 100)}%` : speed < 1 ? `▶ ${Math.round(speed * 100)}% speed` : '▶ Running'}
         sub={`shift ${mmss(production.plannedSec)}`}
-        tone={!line.running ? 'text-red-400' : speed < 1 ? 'text-amber-300' : 'text-emerald-300'}
+        tone={!line.running ? 'text-red-400' : speed < 1 || capacity < 1 ? 'text-amber-300' : 'text-emerald-300'}
       />
       <Cell label="Good bottles" value={int(k.good)} sub={`${int(k.started)} started`} />
       <Cell

@@ -8,7 +8,8 @@
 import { MANUALS } from '@/data/manuals.generated';
 import { DiagnosisSchema, RiskAssessmentSchema } from '@/shared/schemas';
 import type { Alarm, Diagnosis, Incident, IncidentLogEntry, MemoryEntry, RiskAssessment, WorkOrder } from '@/shared/types';
-import { useStore } from '@/modules/store';
+import { lineStateOf, useStore } from '@/modules/store';
+import { baseId } from '@/modules/plant/plant';
 import { rootCause } from './rootCause';
 import { computeImpact, priorityScore } from './impact';
 import { escalation, REASON_LABEL } from './escalation';
@@ -51,7 +52,8 @@ function get(id: string): Incident | undefined {
 function scenarioFor(rootId: string, alarm: Alarm): string {
   const st = useStore.getState();
   const fault = st.factory.faults.find((f) => st.activeFaultIds.includes(f.id) && f.machineId === rootId);
-  return fault?.id ?? `${alarm.machineId}-${alarm.sensorId}`;
+  // Lines of a plant share recordings: "l2-p1-bearing" replays as "p1-bearing".
+  return fault ? fault.id.replace(/^l\d+-/, '') : `${baseId(alarm.machineId)}-${alarm.sensorId}`;
 }
 
 let seq = 0;
@@ -131,7 +133,7 @@ async function createIncident(alarm: Alarm) {
   st.clearArming(rc.rootCause);
   if (!st.selectedIncident) st.selectIncident(id);
 
-  // Memory (Evolus RAG with local fallback) – sensors of the root cause machine.
+  // Factory memory (closed interventions) – sensors of the root cause machine.
   const rootSensors = rc.rootCause === alarm.machineId ? [alarm.sensorId] : root.sensors.map((s) => s.id);
   const symptom = `${alarm.sensorId} ${alarm.value} above threshold ${alarm.threshold}; path ${rc.path.join('→')}`;
   const mem = await searchMemory({ machineId: root.id, machineType: root.type, sensorIds: rootSensors, symptom });
@@ -362,11 +364,11 @@ export async function closeWorkOrder(id: string, input: { realCause: string; fix
       status: 'chiuso',
       workOrder: i.workOrder ? { ...i.workOrder, closedAt } : i.workOrder,
     }));
-    addLog(id, entry('decisione', `Closed in ${input.durationMin} min · saved to memory${r.evolus ? ' (Evolus)' : ''}`, 'Tecnico'));
+    addLog(id, entry('decisione', `Closed in ${input.durationMin} min · saved to memory`, 'Tecnico'));
     // The repair removes the fault; a line stopped by it restarts.
-    const wasStopped = !useStore.getState().line.running;
+    const wasStopped = !lineStateOf(useStore.getState(), root.id).running;
     useStore.getState().repairMachine(root.id);
-    if (wasStopped && useStore.getState().line.running) addLog(id, entry('azione', `${root.id} repaired: line restarted`, 'Tecnico'));
+    if (wasStopped && lineStateOf(useStore.getState(), root.id).running) addLog(id, entry('azione', `${root.id} repaired: line restarted`, 'Tecnico'));
     return {};
   } catch {
     return { _form: 'Could not save to memory, please retry' }; // Req 15.8

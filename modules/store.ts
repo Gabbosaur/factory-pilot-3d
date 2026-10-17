@@ -6,10 +6,13 @@
 import { create } from 'zustand';
 import bottling from '@/data/factories/bottling-line.json';
 import twin from '@/data/factories/bottling-line-twin.json';
+import juice from '@/data/factories/juice-line.json';
 import { parseConfigValue } from '@/modules/monitoring/config/parser';
 import { Simulator } from '@/modules/monitoring/simulator/simulator';
 import { AnomalyEngine } from '@/modules/monitoring/anomaly/engine';
-import { initProduction, REDUCED_SPEED, stepProduction, type ProductionState } from '@/modules/monitoring/production/production';
+import { initProduction, kpis, REDUCED_SPEED, stepProduction, type ProductionState } from '@/modules/monitoring/production/production';
+import { buildPlant, capacityFactor, plantModel, siblingsOf, type PlantModel } from '@/modules/plant/plant';
+import { isQualitySensor, stepHolds, type QualityHold } from '@/modules/quality/holds';
 import type { Alarm, FactoryConfig, Incident, LlmCallMeta, MachineStatus, Sample } from '@/shared/types';
 
 function load(raw: unknown): FactoryConfig {
@@ -18,7 +21,14 @@ function load(raw: unknown): FactoryConfig {
   return r.config;
 }
 
-export const BUILTIN_FACTORIES: FactoryConfig[] = [load(bottling), load(twin)];
+/**
+ * Plants (the global filter of the app). Built-in: one plant with two bottling lines simulated together;
+ * lines live inside the plant. Factories created with onboarding are added as single-line plants.
+ */
+export const BUILTIN_FACTORIES: FactoryConfig[] = [
+  buildPlant('milan-plant', 'Milan plant – 2 water lines', [load(bottling), load(twin)]),
+  buildPlant('imperia-plant', 'Imperia plant – juice line', [load(juice)]),
+];
 /** Kept for backwards compatibility; prefer useStore(s => s.factories). */
 export const FACTORIES = BUILTIN_FACTORIES;
 
@@ -37,7 +47,7 @@ function readCustomFactories(): FactoryConfig[] {
 
 export const HISTORY = 60;
 
-/** Protective trip of the serial line (red = absolute limit exceeded ⇒ everything stops). */
+/** Protective trip of a serial line (red = absolute limit exceeded ⇒ that line stops; other lines keep running). */
 export interface LineState {
   running: boolean;
   trippedBy: { machineId: string; sensorId: string; value: number; threshold: number } | null;
@@ -47,6 +57,47 @@ export interface LineState {
 }
 
 const LINE_RUNNING: LineState = { running: true, trippedBy: null, stopSec: 0, totalDowntimeSec: 0 };
+
+/** One protective stop, for the downtime Pareto. */
+export interface StopRecord {
+  lineId: string;
+  machineId: string;
+  sensorId: string;
+  startTick: number;
+  endTick: number | null;
+}
+
+/** A machine taken out of the flow because a redundant twin can take over (the line keeps running). */
+export interface Bypass {
+  lineId: string;
+  sibling: string;
+  sensorId: string;
+  value: number;
+  threshold: number;
+  tick: number;
+}
+
+/** Shift trend sample (every TREND_EVERY seconds). */
+export interface TrendPoint {
+  tick: number;
+  lines: Record<string, { oee: number; good: number }>;
+}
+
+const TREND_EVERY = 30;
+
+/** Machines whose samples the anomaly engine ignores: stopped lines and bypassed machines. */
+function stoppedIds(plant: PlantModel, lines: Record<string, LineState>, bypassed: Record<string, Bypass>): string[] {
+  return [...new Set([...plant.lines.filter((l) => !lines[l.id]?.running).flatMap((l) => l.machineIds), ...Object.keys(bypassed)])];
+}
+
+function perLine<T>(plant: PlantModel, make: () => T): Record<string, T> {
+  return Object.fromEntries(plant.lines.map((l) => [l.id, make()]));
+}
+
+/** Line state of the line a machine belongs to. */
+export function lineStateOf(s: { plant: PlantModel; lines: Record<string, LineState> }, machineId: string): LineState {
+  return s.lines[s.plant.lineOf[machineId] ?? ''] ?? LINE_RUNNING;
+}
 
 export interface Notification {
   id: string;
@@ -71,7 +122,7 @@ interface State {
   selectedIncident: string | null;
   replay: boolean;
   aiReachable: boolean;
-  memorySource: 'evolus' | 'locale' | null;
+  memorySource: 'locale' | null;
   notifications: Notification[];
   llmLog: LlmCallMeta[];
   activeFaultIds: string[];
@@ -79,8 +130,15 @@ interface State {
   arming: Array<{ faultId: string; label: string; machineId: string; at: number }>;
   lastError: string | null;
   autonomyOverrides: Record<string, FactoryConfig['autonomy']>;
-  line: LineState;
-  production: ProductionState;
+  plant: PlantModel;
+  lines: Record<string, LineState>;
+  productions: Record<string, ProductionState>;
+  stops: StopRecord[];
+  /** machineId -> automatic bypass to its redundant twin. */
+  bypassed: Record<string, Bypass>;
+  /** Lots of suspect bottles produced while a product quality signal was abnormal. */
+  holds: QualityHold[];
+  trend: TrendPoint[];
   /** Speed factor per machine (riduci_velocita lowers it); the serial line runs at the slowest one. */
   speed: Record<string, number>;
 }
@@ -101,13 +159,15 @@ interface Actions {
   dismiss(id: string): void;
   logLlm(meta: LlmCallMeta): void;
   setAiReachable(ok: boolean): void;
-  setMemorySource(s: 'evolus' | 'locale'): void;
+  setMemorySource(s: 'locale'): void;
   setError(e: string | null): void;
   setDriftFactor(machineId: string, factor: number): number;
-  /** Restart the line after a protective trip (it trips again if the fault is still there). */
-  restartLine(): void;
+  /** Restart a line after a protective trip (all stopped lines when omitted); it trips again if the fault is still there. */
+  restartLine(lineId?: string): void;
   /** Repair completed on a machine: remove its fault and restart the line if it was the cause of the stop. */
   repairMachine(machineId: string): void;
+  /** Quality decision on a quarantined lot: released after inspection, or scrapped (counted as rejects). */
+  decideHold(id: string, decision: 'released' | 'scrapped'): void;
   setAutonomy(machineType: string, action: string, level: string): void;
   effectiveFactory(): FactoryConfig;
   onAlarms(cb: (alarms: Alarm[]) => void): () => void;
@@ -163,32 +223,94 @@ export const useStore = create<State & Actions>((set, get) => {
     const nextStatuses = ev.statusChanges.length ? { ...statuses } : statuses;
     for (const ch of ev.statusChanges) nextStatuses[ch.machineId] = ch.status;
 
-    // Protective trip: the first absolute-limit (red) alarm stops the whole serial line.
-    let line = get().line;
-    const trip = line.running ? ev.alarms.find((a) => a.severity === 'rosso') : undefined;
-    if (trip) {
-      sim.setLineRunning(false);
-      engine.setStopped(get().factory.machines.map((m) => m.id));
-      // Shown by the app-wide LineBanner (no toast: it would duplicate it and cover its Restart button).
-      line = { ...line, running: false, stopSec: 0, trippedBy: { machineId: trip.machineId, sensorId: trip.sensorId, value: trip.value, threshold: trip.threshold } };
-    } else if (!line.running) {
-      line = { ...line, stopSec: line.stopSec + 1, totalDowntimeSec: line.totalDowntimeSec + 1 };
-    }
-
+    // Protective trip: the first absolute-limit (red) alarm of a line stops that whole serial line.
+    // Shown by the app-wide LineBanner (no toast: it would duplicate it and cover its Restart button).
+    const { plant, speed } = get();
+    const lines = { ...get().lines };
+    const productions = { ...get().productions };
+    let stops = get().stops;
     const values: Record<string, number> = {};
     for (const smp of samples) values[`${smp.machineId}|${smp.sensorId}`] = smp.value;
-    const speed = Math.min(1, ...Object.values(get().speed));
-    const production = stepProduction(get().production, get().factory, { lineRunning: line.running, speed, values });
+    const bypassed = { ...get().bypassed };
+    const newBypasses: string[] = [];
+    let holds = get().holds;
+    const openedHolds: QualityHold[] = [];
+    for (const pl of plant.lines) {
+      let ls = lines[pl.id] ?? LINE_RUNNING;
+      const reds = ls.running ? ev.alarms.filter((a) => a.severity === 'rosso' && plant.lineOf[a.machineId] === pl.id && !bypassed[a.machineId]) : [];
+      // Redundancy first: a machine with a healthy twin in parallel is bypassed instead of stopping the line.
+      for (const a of reds) {
+        const sibling = siblingsOf(pl.config, a.machineId).find((id) => !bypassed[id] && nextStatuses[id] !== 'rosso');
+        if (!sibling) continue;
+        sim.setLineRunning(false, [a.machineId]);
+        bypassed[a.machineId] = { lineId: pl.id, sibling, sensorId: a.sensorId, value: a.value, threshold: a.threshold, tick: sim.tick };
+        newBypasses.push(a.machineId);
+      }
+      const trip = reds.find((a) => !bypassed[a.machineId]);
+      if (trip) {
+        sim.setLineRunning(false, pl.machineIds);
+        ls = { ...ls, running: false, stopSec: 0, trippedBy: { machineId: trip.machineId, sensorId: trip.sensorId, value: trip.value, threshold: trip.threshold } };
+        stops = [...stops, { lineId: pl.id, machineId: trip.machineId, sensorId: trip.sensorId, startTick: sim.tick, endTick: null }];
+      } else if (!ls.running) {
+        ls = { ...ls, stopSec: ls.stopSec + 1, totalDowntimeSec: ls.totalDowntimeSec + 1 };
+      }
+      lines[pl.id] = ls;
+      const lineBypassed = new Set(pl.machineIds.filter((id) => bypassed[id]));
+      const lineSpeed = Math.min(1, capacityFactor(pl.config, lineBypassed), ...pl.machineIds.map((id) => speed[id] ?? 1));
+      const prevGood = productions[pl.id]?.good ?? 0;
+      productions[pl.id] = stepProduction(productions[pl.id] ?? initProduction(), pl.config, { lineRunning: ls.running, speed: lineSpeed, values });
+      // Quality hold: good bottles made while a product characteristic of the line is abnormal are suspect.
+      const q = ev.alarms.find((a) => plant.lineOf[a.machineId] === pl.id && isQualitySensor(a.sensorId) && !bypassed[a.machineId]);
+      const hs = stepHolds(holds, {
+        lineId: pl.id,
+        tick: sim.tick,
+        lineRunning: ls.running,
+        goodNow: productions[pl.id]!.good - prevGood,
+        signal: q ? { machineId: q.machineId, sensorId: q.sensorId } : null,
+      });
+      holds = hs.holds;
+      if (hs.opened) openedHolds.push(hs.opened);
+    }
+    engine.setStopped(stoppedIds(plant, lines, bypassed));
+    const trend =
+      sim.tick % TREND_EVERY === 0
+        ? [
+            ...get().trend,
+            {
+              tick: sim.tick,
+              lines: Object.fromEntries(plant.lines.map((l) => [l.id, { oee: kpis(productions[l.id]!, l.config).oee, good: productions[l.id]!.good }])),
+            },
+          ].slice(-480)
+        : get().trend;
 
     set({
-      line,
-      production,
+      lines,
+      productions,
+      stops,
+      bypassed,
+      holds,
+      trend,
       tick: sim.tick,
       history: nextHistory,
       statuses: nextStatuses,
       anomalyStart: ev.statusChanges.length ? engine.getAnomalyStarts() : get().anomalyStart,
       activeFaultIds: sim.activeFaults.map((f) => f.id),
     });
+    // Log the automatic bypass on the machine's incident and tell the operator.
+    for (const id of newBypasses) {
+      const b = bypassed[id]!;
+      const pct = Math.round(capacityFactor(plant.lines.find((l) => l.id === b.lineId)!.config, new Set(Object.keys(bypassed).filter((k) => bypassed[k]!.lineId === b.lineId))) * 100);
+      const text = `${id} bypassed: flow rerouted to ${b.sibling}, ${b.lineId} keeps running at ${pct}% capacity`;
+      const inc = Object.values(get().incidents).find((i) => (i.machineId === id || i.causalPath[0] === id) && i.status !== 'chiuso' && i.status !== 'rifiutato');
+      if (inc)
+        get().patchIncident(inc.id, (i) => ({ log: [...i.log, { ts: new Date().toISOString(), kind: 'azione', message: `Automatic reroute (code rule): ${text}`, author: 'Gestore_Autonomia' }] }));
+      get().notify({ kind: 'autonomia', text, incidentId: inc?.id });
+    }
+    for (const h of openedHolds) {
+      const m = get().factory.machines.find((x) => x.id === h.machineId);
+      const sensor = m?.sensors.find((x) => x.id === h.sensorId);
+      get().notify({ kind: 'info', text: `Quality hold ${h.id}: bottles from ${h.lineId} are quarantined while ${h.machineId} ${sensor?.name.toLowerCase() ?? h.sensorId} is abnormal` });
+    }
     if (ev.rejected.length) console.warn('[engine] campioni scartati', ev.rejected.slice(0, 3));
     if (ev.alarms.length) for (const l of alarmListeners) l(ev.alarms);
   };
@@ -214,8 +336,13 @@ export const useStore = create<State & Actions>((set, get) => {
     arming: [],
     lastError: null,
     autonomyOverrides: {},
-    line: LINE_RUNNING,
-    production: initProduction(),
+    plant: plantModel(factory),
+    lines: perLine(plantModel(factory), () => LINE_RUNNING),
+    productions: perLine(plantModel(factory), initProduction),
+    stops: [],
+    bypassed: {},
+    holds: [],
+    trend: [],
     speed: {},
 
     addFactory(f) {
@@ -228,8 +355,10 @@ export const useStore = create<State & Actions>((set, get) => {
       const f = get().factories.find((x) => x.id === id);
       if (!f) return;
       initEngines(f, get().seed);
+      const plant = plantModel(f);
       set({
         factory: f,
+        plant,
         tick: 0,
         statuses: engine!.getAllStatuses(),
         anomalyStart: {},
@@ -239,8 +368,12 @@ export const useStore = create<State & Actions>((set, get) => {
         selectedIncident: null,
         activeFaultIds: [],
         arming: [],
-        line: LINE_RUNNING,
-        production: initProduction(),
+        lines: perLine(plant, () => LINE_RUNNING),
+        productions: perLine(plant, initProduction),
+        stops: [],
+        bypassed: {},
+        holds: [],
+        trend: [],
         speed: {},
       });
     },
@@ -283,24 +416,62 @@ export const useStore = create<State & Actions>((set, get) => {
       sim?.setLineRunning(true);
       engine?.setStopped([]);
       // Counters keep running (same shift); speed reductions are undone with the faults.
-      set({ activeFaultIds: [], arming: [], line: LINE_RUNNING, speed: {} });
+      const t = sim?.tick ?? 0;
+      set((st) => ({
+        activeFaultIds: [],
+        arming: [],
+        lines: Object.fromEntries(Object.entries(st.lines).map(([id, l]) => [id, { ...l, running: true, trippedBy: null, stopSec: 0 }])),
+        stops: st.stops.map((x) => (x.endTick === null ? { ...x, endTick: t } : x)),
+        bypassed: {},
+        speed: {},
+      }));
     },
     clearArming(machineId) {
       const next = get().arming.filter((a) => a.machineId !== machineId);
       if (next.length !== get().arming.length) set({ arming: next });
     },
-    restartLine() {
-      if (get().line.running) return;
-      sim?.setLineRunning(true);
-      engine?.setStopped([]);
-      set((s) => ({ line: { ...s.line, running: true, trippedBy: null, stopSec: 0 } }));
+    restartLine(lineId) {
+      const { plant } = get();
+      const targets = plant.lines.filter((l) => (lineId ? l.id === lineId : true) && get().lines[l.id] && !get().lines[l.id]!.running);
+      if (!targets.length) return;
+      const t = sim?.tick ?? 0;
+      for (const l of targets) sim?.setLineRunning(true, l.machineIds.filter((id) => !get().bypassed[id]));
+      set((st) => {
+        const lines = { ...st.lines };
+        for (const l of targets) lines[l.id] = { ...lines[l.id]!, running: true, trippedBy: null, stopSec: 0 };
+        const ids = new Set(targets.map((l) => l.id));
+        return { lines, stops: st.stops.map((x) => (x.endTick === null && ids.has(x.lineId) ? { ...x, endTick: t } : x)) };
+      });
+      engine?.setStopped(stoppedIds(plant, get().lines, get().bypassed));
     },
     repairMachine(machineId) {
       sim?.clearFault(machineId);
       set({ activeFaultIds: sim?.activeFaults.map((f) => f.id) ?? [] });
-      // Restart once nothing degrades the machine that tripped (directly or through a cascade).
-      const tripped = get().line.trippedBy?.machineId;
-      if (tripped && !sim?.affectedMachines().includes(tripped)) get().restartLine();
+      // A repaired bypassed machine goes back into the flow.
+      if (get().bypassed[machineId]) {
+        const { [machineId]: _done, ...rest } = get().bypassed;
+        set({ bypassed: rest });
+        if (lineStateOf(get(), machineId).running) sim?.setLineRunning(true, [machineId]);
+        engine?.setStopped(stoppedIds(get().plant, get().lines, rest));
+      }
+      // Restart the machine's line once nothing degrades the machine that tripped it (directly or through a cascade).
+      const lineId = get().plant.lineOf[machineId];
+      const tripped = lineId ? get().lines[lineId]?.trippedBy?.machineId : undefined;
+      if (lineId && tripped && !sim?.affectedMachines().includes(tripped)) get().restartLine(lineId);
+    },
+    decideHold(id, decision) {
+      const h = get().holds.find((x) => x.id === id);
+      if (!h || h.status !== 'quarantined') return;
+      const holds = get().holds.map((x) => (x.id === id ? { ...x, status: decision } : x));
+      if (decision === 'released') return set({ holds });
+      // Scrapped lot: those bottles are no longer good output (FPY and OEE quality drop).
+      const p = get().productions[h.lineId];
+      if (!p) return set({ holds });
+      const n = Math.min(h.suspect, p.good);
+      set({
+        holds,
+        productions: { ...get().productions, [h.lineId]: { ...p, good: p.good - n, rejects: { ...p.rejects, 'quality-hold': (p.rejects['quality-hold'] ?? 0) + n } } },
+      });
     },
     selectMachine(id) {
       set({ selectedMachine: id });

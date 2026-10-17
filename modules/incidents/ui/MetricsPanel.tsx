@@ -4,10 +4,11 @@ import { useMemo } from 'react';
 import { useStore } from '@/modules/store';
 import { formatEur } from '../impact';
 
-export function MetricsPanel() {
+/** Copilot impact; with machineId, only incidents on that machine or caused by it. */
+export function MetricsPanel({ machineId }: { machineId?: string } = {}) {
   // Select the stable map, derive the array outside the selector (a new array per call loops useSyncExternalStore).
   const byId = useStore((s) => s.incidents);
-  const incidents = useMemo(() => Object.values(byId), [byId]);
+  const incidents = useMemo(() => Object.values(byId).filter((i) => !machineId || i.machineId === machineId || i.causalPath[0] === machineId), [byId, machineId]);
   const ref = useStore((s) => s.factory.manualSearchRefSec);
 
   const diagnosed = incidents.filter((i) => typeof i.alarmToDiagnosisSec === 'number');
@@ -28,9 +29,9 @@ export function MetricsPanel() {
   return (
     <section aria-labelledby="metrics-h" className="card p-3">
       <h2 id="metrics-h" className="section-title mb-2">
-        Measured impact
+        {machineId ? 'AI copilot impact on this machine' : 'Measured impact'}
       </h2>
-      <div className="grid grid-cols-2 gap-2">
+      <div className={machineId ? 'grid grid-cols-2 gap-2 sm:grid-cols-4' : 'grid grid-cols-2 gap-2'}>
         {cell('Alarm to diagnosis', avg === null ? 'n/a' : `${avg.toFixed(1)}s`, 'text-sky-300', ref ? `vs ${Math.round(ref / 60)} min manual` : 'no reference')}
         {cell('Downtime avoided', avoidedMin && diagnosed.length ? `${avoidedMin.toFixed(0)} min` : 'n/a', 'text-emerald-300')}
         {cell('Savings (est.)', savings && diagnosed.length ? formatEur(Math.round(savings)) : 'n/a', 'text-emerald-300')}

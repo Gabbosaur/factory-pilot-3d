@@ -17,6 +17,8 @@ interface ModelChoice {
   /** Qwen3.8-Flash-Next thinks (xhigh) when reasoning_effort is omitted: force 'none' on the fallback. */
   fallbackReasoningEffort?: 'none' | 'low' | 'medium';
   maxTokens: number;
+  /** Per-attempt timeout (default CALL_TIMEOUT_MS); long generations like onboarding need more. */
+  timeoutMs?: number;
 }
 
 /** Verified against GET /v1/models on 2026-10-17. Gemma accepts no reasoning_effort (on/off only). */
@@ -25,7 +27,8 @@ export const MODELS: Record<Agent, ModelChoice> = {
   // which keeps latency predictable ('low'/'medium' enable thinking and were measured at 16–45+ s).
   diagnosi: { primary: 'DeepSeek-V4-Flash', fallback: 'Qwen3.8-Flash-Next', fallbackReasoningEffort: 'none', maxTokens: 3000 },
   sicurezza: { primary: 'Gemma-4-31B-IT', fallback: 'DeepSeek-V4-Flash', maxTokens: 800 },
-  onboarding: { primary: 'DeepSeek-V4-Flash', fallback: 'Qwen3.8-Flash-Next', fallbackReasoningEffort: 'none', maxTokens: 8000 },
+  // A whole factory draft: one long attempt fits the 60 s route better than two short ones that both time out.
+  onboarding: { primary: 'DeepSeek-V4-Flash', fallback: 'Qwen3.8-Flash-Next', fallbackReasoningEffort: 'none', maxTokens: 3000, timeoutMs: 50_000 },
 };
 
 export interface CallInput {
@@ -173,7 +176,7 @@ export async function callLLM(input: CallInput): Promise<CallResult> {
             return effort ? { reasoning_effort: effort } : {};
           })(),
         },
-        { timeout: Math.min(CALL_TIMEOUT_MS, Math.max(1000, input.deadline - Date.now() - 2000)) },
+        { timeout: Math.min(choice.timeoutMs ?? CALL_TIMEOUT_MS, Math.max(1000, input.deadline - Date.now() - 2000)) },
       );
       const choice0 = res.choices[0];
       const content = choice0?.message?.content ?? '';
