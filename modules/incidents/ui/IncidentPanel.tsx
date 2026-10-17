@@ -16,30 +16,32 @@ export function IncidentPanel() {
   const current = (selected && incidents[selected]) || queue[0] || others[0];
 
   return (
-    <section aria-labelledby="inc-h" className="space-y-3">
-      <div>
-        <h2 id="inc-h" className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-400">
-          Approval queue ({queue.length})
+    <section aria-labelledby="inc-h" className="space-y-2">
+      <div className="flex items-center justify-between">
+        <h2 id="inc-h" className="section-title">
+          Incidents
         </h2>
-        {all.length === 0 ? (
-          <p className="text-xs text-slate-500">No incidents yet. Start the simulation and inject a fault.</p>
-        ) : (
-          <ul className="flex flex-wrap gap-1">
-            {[...queue, ...others].map((i) => (
-              <li key={i.id}>
-                <button
-                  type="button"
-                  onClick={() => select(i.id)}
-                  aria-pressed={current?.id === i.id}
-                  className={`rounded px-2 py-0.5 text-xs ${current?.id === i.id ? 'bg-sky-700' : 'bg-slate-800 hover:bg-slate-700'} ${queue.includes(i) ? 'ring-1 ring-red-500' : ''}`}
-                >
-                  {i.id} · {i.machineId} · {INCIDENT_STATUS_LABEL[i.status]}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
+        {queue.length > 0 && <span className="pill bg-red-500/20 text-red-200 ring-1 ring-inset ring-red-400/40">{queue.length} to review</span>}
       </div>
+      {all.length === 0 ? (
+        <p className="card p-3 text-xs text-slate-500">No incidents yet. Press Start, then Inject fault to see FactoryPilot work.</p>
+      ) : (
+        <ul className="flex flex-wrap gap-1">
+          {[...queue, ...others].map((i) => (
+            <li key={i.id}>
+              <button
+                type="button"
+                onClick={() => select(i.id)}
+                aria-pressed={current?.id === i.id}
+                className={`pill transition ${current?.id === i.id ? 'bg-sky-500/25 text-sky-100 ring-1 ring-inset ring-sky-400/50' : 'bg-slate-800 text-slate-400 ring-1 ring-inset ring-white/10 hover:text-slate-200'} ${queue.includes(i) ? '!ring-red-400/50' : ''}`}
+                title={INCIDENT_STATUS_LABEL[i.status]}
+              >
+                <span className="font-mono">{i.id}</span> · {i.machineId}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
       {current && <IncidentCard key={current.id} inc={current} />}
     </section>
   );

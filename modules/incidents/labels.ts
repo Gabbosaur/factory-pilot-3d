@@ -20,6 +20,25 @@ export const INCIDENT_STATUS_LABEL: Record<IncidentStatus, string> = {
 export const AUTHOR_LABEL: Record<NonNullable<IncidentLogEntry['author']>, string> = {
   Tecnico: 'Technician',
   Responsabile: 'Manager',
-  Gestore_Autonomia: 'Autonomy manager',
+  Gestore_Autonomia: 'Autopilot',
   Sistema: 'System',
+};
+
+/** Pill classes (background + text) per machine status, for consistent colour across the UI. */
+export const STATUS_PILL: Record<MachineStatus, string> = {
+  verde: 'bg-emerald-500/15 text-emerald-300 ring-1 ring-inset ring-emerald-500/30',
+  giallo: 'bg-amber-500/15 text-amber-300 ring-1 ring-inset ring-amber-500/30',
+  rosso: 'bg-red-500/15 text-red-300 ring-1 ring-inset ring-red-500/30',
+};
+
+export const STATUS_DOT: Record<MachineStatus, string> = {
+  verde: 'bg-emerald-400',
+  giallo: 'bg-amber-400',
+  rosso: 'bg-red-400',
+};
+
+export const RISK_PILL: Record<RiskLevel, string> = {
+  basso: 'bg-emerald-500/15 text-emerald-300 ring-1 ring-inset ring-emerald-500/30',
+  medio: 'bg-amber-500/15 text-amber-300 ring-1 ring-inset ring-amber-500/30',
+  alto: 'bg-red-500/15 text-red-300 ring-1 ring-inset ring-red-500/30',
 };

@@ -17,24 +17,24 @@ export function MetricsPanel() {
   const autonomous = incidents.filter((i) => i.escalation && !i.escalation.escalate && i.autonomyMode === 'esegui_e_notifica').length;
   const escalated = incidents.filter((i) => i.escalation?.escalate).length;
 
-  const cell = (label: string, value: string, sub?: string) => (
-    <div className="rounded-md bg-slate-800 p-2">
-      <div className="text-[11px] text-slate-400">{label}</div>
-      <div className="text-lg font-bold">{value}</div>
+  const cell = (label: string, value: string, accent: string, sub?: string) => (
+    <div className="stat">
+      <div className="text-[10px] uppercase tracking-wide text-slate-500">{label}</div>
+      <div className={`text-lg font-bold tabular-nums ${accent}`}>{value}</div>
       {sub && <div className="text-[10px] text-slate-500">{sub}</div>}
     </div>
   );
 
   return (
-    <section aria-labelledby="metrics-h">
-      <h2 id="metrics-h" className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+    <section aria-labelledby="metrics-h" className="card p-3">
+      <h2 id="metrics-h" className="section-title mb-2">
         Measured impact
       </h2>
       <div className="grid grid-cols-2 gap-2">
-        {cell('Alarm → diagnosis', avg === null ? 'no data' : `${avg.toFixed(1)} s`, ref ? `vs ${Math.round(ref / 60)} min of manual search` : 'manual reference not set')}
-        {cell('Estimated downtime avoided', avoidedMin === null ? 'n/a' : diagnosed.length ? `${avoidedMin.toFixed(1)} min` : 'no data')}
-        {cell('Estimated savings', savings === null ? 'n/a' : diagnosed.length ? formatEur(Math.round(savings)) : 'no data', 'estimate')}
-        {cell('Handled autonomously / escalated', `${autonomous} / ${escalated}`)}
+        {cell('Alarm → diagnosis', avg === null ? '—' : `${avg.toFixed(1)}s`, 'text-sky-300', ref ? `vs ${Math.round(ref / 60)} min manual` : 'no reference')}
+        {cell('Downtime avoided', avoidedMin && diagnosed.length ? `${avoidedMin.toFixed(0)} min` : '—', 'text-emerald-300')}
+        {cell('Savings (est.)', savings && diagnosed.length ? formatEur(Math.round(savings)) : '—', 'text-emerald-300')}
+        {cell('Auto / escalated', `${autonomous} / ${escalated}`, 'text-slate-100')}
       </div>
     </section>
   );

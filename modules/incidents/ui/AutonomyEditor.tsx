@@ -15,10 +15,10 @@ export function AutonomyEditor() {
   const types = [...new Set(factory.machines.map((m) => m.type))];
 
   return (
-    <details className="rounded-md border border-slate-800 p-2">
-      <summary className="cursor-pointer text-xs font-semibold uppercase tracking-wide text-slate-400">Autonomy levels</summary>
-      <p className="my-1 text-[11px] text-slate-500">
-        L0 suggests · L1 drafts · L2 one click · L3 executes and notifies. Maintenance interventions and risky cases always go to the manager. Changes apply to new incidents.
+    <details className="card p-3">
+      <summary className="section-title cursor-pointer select-none">Autonomy levels</summary>
+      <p className="my-1.5 text-[11px] leading-relaxed text-slate-500">
+        L0 suggests · L1 drafts · L2 one click · L3 auto + notify. Risky actions always go to the manager. Applies to new incidents.
       </p>
       <table className="w-full text-xs">
         <thead>

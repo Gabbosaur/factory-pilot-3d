@@ -3,14 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useStore } from '@/modules/store';
 import type { MachineStatus } from '@/shared/types';
-import { STATUS_LABEL } from '@/modules/incidents/labels';
-
-const BADGE: Record<MachineStatus, string> = {
-  verde: 'bg-green-600 text-white',
-  giallo: 'bg-yellow-400 text-black',
-  rosso: 'bg-red-600 text-white',
-};
-const LABEL = STATUS_LABEL;
+import { STATUS_DOT, STATUS_LABEL, STATUS_PILL } from '@/modules/incidents/labels';
 
 export function MachineList() {
   const factory = useStore((s) => s.factory);
@@ -30,24 +23,27 @@ export function MachineList() {
 
   return (
     <section aria-labelledby="machines-h">
-      <h2 id="machines-h" className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400">
+      <h2 id="machines-h" className="section-title mb-2">
         Machines
       </h2>
       <ul role="list" className="space-y-1">
         {factory.machines.map((m) => {
           const st = statuses[m.id] ?? 'verde';
+          const active = selected === m.id;
           return (
             <li key={m.id}>
               <button
                 type="button"
                 onClick={() => select(m.id)}
-                aria-pressed={selected === m.id}
-                className={`flex w-full items-center justify-between rounded-md px-2 py-1.5 text-left text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 ${selected === m.id ? 'bg-slate-700' : 'hover:bg-slate-800'}`}
+                aria-pressed={active}
+                className={`flex w-full items-center justify-between rounded-lg px-2.5 py-2 text-left text-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 ${active ? 'bg-white/10 ring-1 ring-inset ring-white/15' : 'hover:bg-white/5'}`}
               >
-                <span>
-                  <span className="font-mono text-slate-400">{m.id}</span> {m.name}
+                <span className="flex items-center gap-2 truncate">
+                  <span className={`h-2 w-2 shrink-0 rounded-full ${STATUS_DOT[st]} ${st === 'rosso' ? 'animate-pulse' : ''}`} />
+                  <span className="font-mono text-xs text-slate-500">{m.id}</span>
+                  <span className="truncate">{m.name}</span>
                 </span>
-                <span className={`ml-2 rounded px-1.5 py-0.5 text-[11px] font-semibold ${BADGE[st]}`}>{LABEL[st]}</span>
+                <span className={`pill ${STATUS_PILL[st]}`}>{STATUS_LABEL[st]}</span>
               </button>
             </li>
           );

@@ -76,7 +76,7 @@ export function handleAlarms(alarms: Alarm[]) {
       (i) => i.status !== 'chiuso' && i.status !== 'rifiutato' && i.causalPath[0] === rc.rootCause && i.machineId !== alarm.machineId,
     );
     if (parent && rc.rootCause !== alarm.machineId) {
-      addLog(parent.id, entry('info', `Cascade effect: ${alarm.machineId} is now in alarm too (${alarm.sensorId})`));
+      addLog(parent.id, entry('info', `Cascade: ${alarm.machineId} also in alarm`));
       continue;
     }
     void createIncident(alarm);
@@ -110,14 +110,10 @@ async function createIncident(alarm: Alarm) {
     autonomyLevel: 'L0',
     similar: [],
     log: [
-      entry('info', `Alarm ${alarm.sensorId} = ${alarm.value} on ${machine.name} (threshold ${alarm.threshold})`),
+      entry('info', `${machine.name}: ${alarm.sensorId} ${alarm.value} > ${alarm.threshold}`),
       entry(
         'info',
-        rc.path.length > 1
-          ? `Root cause traced back along the line: ${rc.path.join(' → ')}`
-          : rc.complete
-            ? 'No upstream anomaly: the cause is on the machine in alarm'
-            : 'Root cause analysis not completed: assuming the machine in alarm',
+        rc.path.length > 1 ? `Root cause: ${rc.path.join(' → ')}` : rc.complete ? 'Root cause: this machine' : 'Root cause: unresolved, using this machine',
       ),
     ],
     llmCalls: 0,
@@ -131,7 +127,7 @@ async function createIncident(alarm: Alarm) {
   const mem = await searchMemory({ machineId: root.id, machineType: root.type, sensorIds: rootSensors, symptom });
   useStore.getState().setMemorySource(mem.source);
   useStore.getState().patchIncident(id, { similar: mem.entries });
-  addLog(id, entry('info', `Memory (${mem.source === 'evolus' ? 'Evolus RAG' : 'local'}): ${mem.entries.length} similar interventions`));
+  addLog(id, entry('info', `Memory: ${mem.entries.length} similar past repair${mem.entries.length === 1 ? '' : 's'}`));
 
   await runDiagnosis(id, alarm, mem.entries);
 }
@@ -176,11 +172,11 @@ async function runDiagnosis(id: string, alarm: Alarm, similar: MemoryEntry[]) {
       const parsed = DiagnosisSchema.safeParse(res.data);
       if (parsed.success) {
         diagnosis = verifyCitation(parsed.data, allPages); // Req 8.5
-        addLog(id, entry('llm', `Diagnosis by ${res.meta?.model ?? 'model'}${res.meta?.replay ? ' (replay)' : ''} in ${((res.meta?.latencyMs ?? 0) / 1000).toFixed(1)} s`));
+        addLog(id, entry('llm', `Diagnosed by ${res.meta?.model ?? 'model'}${res.meta?.replay ? ' · replay' : ''} · ${((res.meta?.latencyMs ?? 0) / 1000).toFixed(1)}s`));
         break;
       }
     }
-    addLog(id, entry('errore', `Diagnosis invalid or unavailable: ${res.ok ? 'schema' : res.error}`));
+    addLog(id, entry('errore', `Diagnosis failed: ${res.ok ? 'bad schema' : res.error}`));
     if (!res.ok && !INVALID_OUTPUT.test(res.error)) break; // only retry on invalid output
   }
 
@@ -188,7 +184,7 @@ async function runDiagnosis(id: string, alarm: Alarm, similar: MemoryEntry[]) {
     diagnosis !== 'non_disponibile' ? Math.max(0, Math.round((Date.now() - new Date(inc.createdAt).getTime()) / 1000)) : undefined;
   useStore.getState().patchIncident(id, { diagnosis, alarmToDiagnosisSec });
   if (diagnosis !== 'non_disponibile' && diagnosis.citazione_verificata === false)
-    addLog(id, entry('errore', `Page ${diagnosis.pagina_manuale} is not in the manual: citation not verified, confidence set to 0`));
+    addLog(id, entry('errore', `Page ${diagnosis.pagina_manuale} not in manual · confidence set to 0`));
 
   const risk = diagnosis === 'non_disponibile' ? null : await runSafety(id, diagnosis, alarm, pathMachines[0]!);
   decide(id, diagnosis, risk);
@@ -212,11 +208,11 @@ async function runSafety(id: string, diagnosis: Diagnosis, alarm: Alarm, rootMac
     if (res.meta) useStore.getState().logLlm(res.meta);
     const parsed = RiskAssessmentSchema.safeParse(res.data);
     if (parsed.success) {
-      addLog(id, entry('llm', `${RISK_LABEL[parsed.data.livello_rischio]} risk from ${res.meta?.model ?? 'Gemma'}: ${parsed.data.motivazione}`));
+      addLog(id, entry('llm', `${RISK_LABEL[parsed.data.livello_rischio]} risk · ${parsed.data.motivazione}`));
       return parsed.data;
     }
   }
-  addLog(id, entry('errore', `Risk assessment unavailable or invalid: treated as high risk${res.ok ? '' : ` (${res.error})`}`));
+  addLog(id, entry('errore', `Risk check failed · treated as High`));
   return null; // ⇒ high in escalation and priority (Req 9.2, 9.7)
 }
 
@@ -245,8 +241,8 @@ function decide(id: string, diagnosis: Diagnosis | 'non_disponibile', risk: Risk
     entry(
       'decisione',
       decision.escalate
-        ? `Escalated to the manager: ${decision.reasons.map((r) => REASON_LABEL[r]).join(', ')}`
-        : `No escalation required · autonomy level ${level}`,
+        ? `Escalated · ${decision.reasons.map((r) => REASON_LABEL[r]).join(', ')}`
+        : `Cleared for autonomy · ${level}`,
     ),
   );
   if (!decision.escalate && mode === 'esegui_e_notifica') executeAction(id, 'Gestore_Autonomia');
@@ -269,9 +265,9 @@ export function executeAction(id: string, author: 'Gestore_Autonomia' | 'Respons
       undoStack.set(id, () => undefined);
     }
     st.patchIncident(id, { status: 'autonomo' });
-    addLog(id, entry('azione', `Executed: ${ACTION_LABEL[action]} on ${target} (level ${inc.autonomyLevel}) · succeeded`, author));
+    addLog(id, entry('azione', `${ACTION_LABEL[action]} on ${target} · done (${inc.autonomyLevel})`, author));
     if (author === 'Gestore_Autonomia')
-      st.notify({ kind: 'autonomia', incidentId: id, text: `${ACTION_LABEL[action]} on ${target} executed autonomously (${id}). You can undo it.` });
+      st.notify({ kind: 'autonomia', incidentId: id, text: `Auto-fixed ${target}: ${ACTION_LABEL[action].toLowerCase()}` });
   } catch (err) {
     addLog(id, entry('errore', `Action failed: ${err instanceof Error ? err.message : String(err)}`, author));
     st.notify({ kind: 'errore', incidentId: id, text: `${ACTION_LABEL[action]} failed on ${target}` });
@@ -286,9 +282,9 @@ export function undoAction(id: string) {
     undo();
     undoStack.delete(id);
     useStore.getState().patchIncident(id, { status: 'in_coda' });
-    addLog(id, entry('azione', 'Action undone by the manager, previous state restored', 'Responsabile'));
+    addLog(id, entry('azione', 'Action undone · state restored', 'Responsabile'));
   } catch {
-    addLog(id, entry('errore', 'Undo failed, state unchanged', 'Responsabile'));
+    addLog(id, entry('errore', 'Undo failed · state unchanged', 'Responsabile'));
   }
 }
 
@@ -313,7 +309,7 @@ export function approve(id: string, assignee = 'Maintenance crew – shift A') {
     createdAt: now(),
   };
   useStore.getState().patchIncident(id, { status: 'approvato', workOrder: wo });
-  addLog(id, entry('decisione', `Approved. Work order ${wo.id} created and assigned to ${assignee}`, 'Responsabile'));
+  addLog(id, entry('decisione', `Approved · work order ${wo.id} → ${assignee}`, 'Responsabile'));
   if (d && (d.codice_azione === 'riduci_velocita' || d.codice_azione === 'apri_ticket' || d.codice_azione === 'pianifica_ispezione') && inc.autonomyMode === 'approva_un_clic')
     executeAction(id, 'Responsabile');
 }
@@ -355,7 +351,7 @@ export async function closeWorkOrder(id: string, input: { realCause: string; fix
       status: 'chiuso',
       workOrder: i.workOrder ? { ...i.workOrder, closedAt } : i.workOrder,
     }));
-    addLog(id, entry('decisione', `Intervention closed (${input.durationMin} min) and saved to memory${r.evolus ? ' (Evolus + local)' : ' (local)'}`, 'Tecnico'));
+    addLog(id, entry('decisione', `Closed in ${input.durationMin} min · saved to memory${r.evolus ? ' (Evolus)' : ''}`, 'Tecnico'));
     return {};
   } catch {
     return { _form: 'Could not save to memory, please retry' }; // Req 15.8
