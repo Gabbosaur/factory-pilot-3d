@@ -1,0 +1,8 @@
+{
+  "agent": "sicurezza",
+  "scenarioId": "k1-overheat",
+  "hash": "62ffacc7cb26eb9bc9f6466e27a8b90cbfdf8975febaf84383b335bc5fdaedbc",
+  "model": "Gemma-4-31B-IT",
+  "content": "{\"livello_rischio\": \"basso\", \"motivazione\": \"Reducing speed is a safe remote action and the motor temperature is not yet at a critical danger level.\"}",
+  "recordedAt": "2026-10-17T13:59:08.160Z"
+}

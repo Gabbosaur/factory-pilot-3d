@@ -1,0 +1,35 @@
+[
+  {
+    "id": "seed-p1-2026-09-12",
+    "machineId": "P1",
+    "machineType": "centrifugal_pump",
+    "sensorIds": ["current"],
+    "realCause": "Impeller partially clogged by filter debris, high motor current",
+    "fix": "Cleaned the impeller and replaced the suction filter cartridge",
+    "durationMin": 55,
+    "closedAt": "2026-09-12T10:20:00.000Z",
+    "isSample": true
+  },
+  {
+    "id": "seed-k1-2026-09-28",
+    "machineId": "K1",
+    "machineType": "conveyor",
+    "sensorIds": ["motor_temp", "current"],
+    "realCause": "Motor cooling fan clogged with cardboard dust",
+    "fix": "Cleaned fan and grille, temporarily reduced conveyor speed",
+    "durationMin": 20,
+    "closedAt": "2026-09-28T14:05:00.000Z",
+    "isSample": true
+  },
+  {
+    "id": "seed-f1-2026-10-03",
+    "machineId": "F1",
+    "machineType": "filler",
+    "sensorIds": ["fill_rejects", "flow_var"],
+    "realCause": "Worn seal on filling valve no. 14",
+    "fix": "Replaced the filling valve seal",
+    "durationMin": 40,
+    "closedAt": "2026-10-03T08:45:00.000Z",
+    "isSample": true
+  }
+]

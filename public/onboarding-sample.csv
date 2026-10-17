@@ -1,0 +1,9 @@
+machine_id,sensor_name,unit,machine_name
+CMP1,Air pressure,bar,Air compressor
+CMP1,Oil temperature,°C,Air compressor
+CNC1,Spindle vibration,mm/s,CNC machining center
+CNC1,Spindle current,A,CNC machining center
+CNC1,Spindle temperature,°C,CNC machining center
+WSH1,Bath temperature,°C,Parts washer
+WSH1,Bath conductivity,mS/cm,Parts washer
+QC1,Dimensional rejects,%,Dimensional inspection

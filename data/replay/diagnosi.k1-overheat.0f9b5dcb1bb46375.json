@@ -1,0 +1,8 @@
+{
+  "agent": "diagnosi",
+  "scenarioId": "k1-overheat",
+  "hash": "0f9b5dcb1bb46375ef8b3ad3b4c435e2a07ec1d6ada848d46afe2e0188437ee4",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\n  \"causa_probabile\": \"Motor cooling fan clogged with cardboard dust\",\n  \"pagina_manuale\": 3,\n  \"citazione\": \"A slow rise in motor temperature with nearly stable current indicates insufficient cooling (fan or grille clogged with cardboard dust) or overload due to speed.\",\n  \"confidenza\": 0.85,\n  \"azione_raccomandata\": \"Reduce conveyor speed by 30-40% immediately to lower thermal load. Schedule fan cleaning at the next planned stop (about 20 minutes).\",\n  \"codice_azione\": \"riduci_velocita\",\n  \"ricambi\": [\"Motor fan – code NT4-V01\"]\n}",
+  "recordedAt": "2026-10-17T13:59:05.926Z"
+}

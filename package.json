@@ -1,0 +1,42 @@
+{
+  "name": "factory-pilot-3d",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "predev": "tsx scripts/build-data.ts",
+    "dev": "next dev",
+    "prebuild": "tsx scripts/build-data.ts && tsx scripts/check-imports.ts",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest --run",
+    "check:imports": "tsx scripts/check-imports.ts"
+  },
+  "dependencies": {
+    "@react-three/drei": "10.7.9",
+    "@react-three/fiber": "9.8.2",
+    "next": "16.4.2",
+    "openai": "7.36.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "recharts": "3.10.1",
+    "three": "0.186.1",
+    "zod": "4.6.7",
+    "zustand": "5.0.15"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@types/three": "0.186.0",
+    "fast-check": "4.10.2",
+    "tailwindcss": "4.3.3",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vitest": "5.0.5"
+  }
+}

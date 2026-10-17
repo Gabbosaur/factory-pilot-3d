@@ -1,0 +1,8 @@
+{
+  "agent": "diagnosi",
+  "scenarioId": "p1-bearing",
+  "hash": "3415819bba277d33833ebc72b5f8d2c200c5e528bbab140aeb8307b81ed4ae83",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\n  \"causa_probabile\": \"Worn or damaged bearing in the centrifugal feed pump causing unstable flow and fill-level variations downstream\",\n  \"pagina_manuale\": 6,\n  \"citazione\": \"A damaged bearing reduces flow stability and can cause fill-level variations in filling machines downstream.\",\n  \"confidenza\": 0.7,\n  \"azione_raccomandata\": \"Stop the pump immediately, lock out/tag out, close valves, release pressure. Inspect bearings for wear or damage; replace if necessary (see manual p. 7). Check coupling alignment. Also verify impeller for debris as a secondary cause.\",\n  \"codice_azione\": \"intervento_manutentivo\",\n  \"ricambi\": [\"PC80-B01\", \"PC80-B02\", \"PC80-G05\", \"LUB-L3\"]\n}",
+  "recordedAt": "2026-10-17T13:55:42.671Z"
+}

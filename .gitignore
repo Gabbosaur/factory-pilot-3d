@@ -16,6 +16,12 @@ coverage/
 *.pptx
 tokenfactory-guide.pdf
 
+# Local scratch
+.tmp/
+data/manuals.generated.ts
+*.tsbuildinfo
+next-env.d.ts
+
 # OS / editor
 .DS_Store
 Thumbs.db
