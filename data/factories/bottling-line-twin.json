@@ -6,7 +6,7 @@
   "confidenceThreshold": 0.7,
   "zThresholds": { "warn": 2.5, "crit": 3.5 },
   "autonomy": {
-    "conveyor": { "riduci_velocita": "L3", "apri_ticket": "L3" },
+    "conveyor": { "riduci_velocita": "L2", "apri_ticket": "L2" },
     "centrifugal_pump": { "apri_ticket": "L2" }
   },
   "machines": [

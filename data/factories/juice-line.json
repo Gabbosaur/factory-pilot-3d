@@ -10,8 +10,8 @@
   },
   "autonomy": {
     "conveyor": {
-      "riduci_velocita": "L3",
-      "apri_ticket": "L3",
+      "riduci_velocita": "L2",
+      "apri_ticket": "L2",
       "pianifica_ispezione": "L2"
     },
     "centrifugal_pump": {

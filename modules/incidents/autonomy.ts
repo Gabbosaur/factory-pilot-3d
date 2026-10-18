@@ -11,19 +11,21 @@ export function autonomyLevelFor(config: FactoryConfig, machineType: string, act
 
 export function autonomyMode(level: AutonomyLevel, decision: EscalationDecision, action: ActionCode): AutonomyMode {
   const whitelisted = (WHITELIST as readonly string[]).includes(action);
+  // L0: alert only, the AI just suggests.
   if (level === 'L0') return 'suggerisci';
-  // Non-whitelisted actions never go beyond a manual draft (Req 10.6).
-  if (!whitelisted || level === 'L1') return 'bozza';
-  if (level === 'L2') return 'approva_un_clic';
-  // L3: autonomous only when the escalation rule does not require a human (Req 10.5).
+  // Non-whitelisted actions never run on their own: at most a manual draft the technician executes (Req 10.6).
+  if (!whitelisted) return 'bozza';
+  // L1: ready action, one click from a human to run it.
+  if (level === 'L1') return 'approva_un_clic';
+  // L2: fully autonomous, but only when the safety rule does not require a human (Req 10.5).
   return decision.escalate ? 'approva_un_clic' : 'esegui_e_notifica';
 }
 
 export const MODE_LABEL: Record<AutonomyMode, string> = {
-  suggerisci: 'L0 · Suggestion only',
-  bozza: 'L1 · Draft, manual execution',
-  approva_un_clic: 'L2 · One-click approval',
-  esegui_e_notifica: 'L3 · Executed autonomously',
+  suggerisci: 'L0 · Alert only',
+  bozza: 'L1 · Draft, run manually',
+  approva_un_clic: 'L1 · Approve to act',
+  esegui_e_notifica: 'L2 · Autonomous',
 };
 
 export const ACTION_LABEL: Record<ActionCode, string> = {

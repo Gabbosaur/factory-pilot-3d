@@ -5,7 +5,7 @@ import { ACTION_LABEL } from '../autonomy';
 import type { ActionCode, AutonomyLevel } from '@/shared/types';
 
 const ACTIONS: ActionCode[] = ['riduci_velocita', 'apri_ticket', 'pianifica_ispezione'];
-const LEVELS: AutonomyLevel[] = ['L0', 'L1', 'L2', 'L3'];
+const LEVELS: AutonomyLevel[] = ['L0', 'L1', 'L2'];
 
 /** With machineType, only that type (the level applies to every machine of the type). */
 export function AutonomyEditor({ machineType }: { machineType?: string } = {}) {
@@ -20,7 +20,7 @@ export function AutonomyEditor({ machineType }: { machineType?: string } = {}) {
     <details className="card p-3" open>
       <summary className="section-title cursor-pointer select-none">Autonomy levels</summary>
       <p className="my-1.5 text-[11px] leading-relaxed text-slate-500">
-        L0 suggests · L1 drafts · L2 one click · L3 auto + notify. Risky actions always go to the manager. Applies to new incidents.
+L0 alerts only · L1 you approve the action · L2 runs on its own and notifies you. Risky actions always go to the manager. Applies to new incidents.
       </p>
       {machineType && (
         <p className="mb-1.5 text-[11px] text-amber-300/90">

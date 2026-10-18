@@ -262,7 +262,7 @@ function decide(id: string, diagnosis: Diagnosis | 'non_disponibile', risk: Risk
 
 const undoStack = new Map<string, () => void>();
 
-/** Executes a whitelisted action (L2 after one click, L3 autonomously). Req 10.4, 10.5, 10.7. */
+/** Executes a whitelisted action (L1 after one click, L2 autonomously). Req 10.4, 10.5, 10.7. */
 export function executeAction(id: string, author: 'Gestore_Autonomia' | 'Responsabile' | 'Tecnico') {
   const st = useStore.getState();
   const inc = get(id);
