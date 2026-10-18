@@ -5,7 +5,7 @@
  * Starts automatically on first visit (localStorage), re-openable from the header button.
  */
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useStore } from '@/modules/store';
 
 const SEEN_KEY = 'fp.tour.seen.v2';
@@ -54,8 +54,14 @@ const STEPS: Step[] = [
     target: 'lines',
     route: '/',
     title: 'One card per line',
-    body: 'Each line shows state, throughput, OEE and its bottleneck. Click a line to drill down to its clusters and machines.',
+    body: 'Each line shows state, throughput, OEE and its bottleneck. Click the Line 1 card to drill down into it.',
     placement: 'top',
+    await: () => window.location.pathname.startsWith('/lines/'),
+    awaitHint: 'Click the Line 1 card to continue',
+    revealTarget: 'map',
+    revealPlacement: 'left',
+    revealTitle: 'Inside the line',
+    revealBody: 'You are on the line page: its KPIs, clusters (feed, filling, end of line) and the live twin. Press Next.',
   },
   {
     target: 'map',
@@ -136,14 +142,13 @@ export function Tour() {
   const [revealed, setRevealed] = useState(false);
   const raf = useRef<number | null>(null);
   const router = useRouter();
-  const pathname = usePathname();
 
   const step = STEPS[i]!;
 
-  // Navigate to the step's page before it highlights its target.
+  // Navigate to the step's page when the step starts (not afterwards: an action step may lead to another page).
   useEffect(() => {
-    if (open && step.route && pathname !== step.route) router.push(step.route);
-  }, [open, i, step.route, pathname, router]);
+    if (open && step.route && window.location.pathname !== step.route) router.push(step.route);
+  }, [open, i]);
 
   const finish = useCallback(() => {
     setOpen(false);
@@ -292,7 +297,7 @@ export function Tour() {
     <div className="pointer-events-none fixed inset-0 z-[60]" role="dialog" aria-modal="true" aria-label="Product tour">
       {hole && step.corner && !(revealed && step.revealTarget) ? (
         // The highlighted button opens a menu: no dim, so the menu stays readable; only the ring shows the target.
-        <div className="pointer-events-none fixed rounded-xl ring-2 ring-sky-400" style={{ left: hole.left, top: hole.top, width: hole.width, height: hole.height }} />
+        <div className={`pointer-events-none fixed rounded-xl ring-2 ring-sky-400 ${step.await && !canAdvance ? "animate-pulse ring-4" : ""}`} style={{ left: hole.left, top: hole.top, width: hole.width, height: hole.height }} />
       ) : hole ? (
         <>
           <div className={dim} style={{ left: 0, top: 0, right: 0, height: Math.max(0, hole.top) }} />
@@ -300,7 +305,7 @@ export function Tour() {
           <div className={dim} style={{ left: 0, top: hole.top, width: Math.max(0, hole.left), height: hole.height }} />
           <div className={dim} style={{ left: hole.left + hole.width, top: hole.top, right: 0, height: hole.height }} />
           {/* ring around the hole (click-through) */}
-          <div className="pointer-events-none fixed rounded-xl ring-2 ring-sky-400" style={{ left: hole.left, top: hole.top, width: hole.width, height: hole.height }} />
+          <div className={`pointer-events-none fixed rounded-xl ring-2 ring-sky-400 ${step.await && !canAdvance ? "animate-pulse ring-4" : ""}`} style={{ left: hole.left, top: hole.top, width: hole.width, height: hole.height }} />
         </>
       ) : (
         <div className={`${dim} inset-0`} />

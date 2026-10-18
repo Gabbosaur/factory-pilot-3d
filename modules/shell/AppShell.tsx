@@ -12,6 +12,7 @@ import { resetMemory } from '@/modules/incidents/memory/adapter';
 import { HistoryOverlay } from '@/modules/monitoring/panels/HistoryOverlay';
 import { LineBanner } from '@/modules/monitoring/panels/LineBanner';
 import { Tour, startTour } from '@/modules/tour/Tour';
+import { Logo } from '@/modules/shell/Logo';
 
 interface Health {
   amdKey: boolean;
@@ -97,7 +98,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     <div className="flex h-dvh flex-col text-slate-100">
       <header className="z-20 flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-white/10 bg-slate-950/70 px-4 py-2.5 backdrop-blur">
         <Link href="/" className="flex items-center gap-2">
-          <span className="grid h-7 w-7 place-items-center rounded-lg bg-amd font-black text-white shadow-sm shadow-red-900/40">F</span>
+          <Logo />
           <h1 className="text-[15px] font-bold tracking-tight">
             FactoryPilot <span className="text-amd">3D</span>
           </h1>
