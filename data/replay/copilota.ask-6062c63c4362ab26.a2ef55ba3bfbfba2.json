@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-6062c63c4362ab26",
+  "hash": "a2ef55ba3bfbfba21de7722d7e88520593b396a8593751149635779abc0d15a7",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\n  \"answer\": \"P1 is OK: status verde, all sensors in normal zone (vibration 1.33 mm/s, bearing temp 55.24°C, current 13.08 A) with zero trend. No incidents or quality holds. No wrong-direction trend detected.\",\n  \"evidence\": [\n    \"P1 status: verde\",\n    \"Vibration 1.33 mm/s (nominal 1.1–1.5, warn 1.8)\",\n    \"Bearing temp 55.24°C (nominal 53–57, warn 70)\",\n    \"Motor current 13.08 A (nominal 12.8–13.6, warn 14.5)\",\n    \"Trends per min: 0 for all sensors\"\n  ],\n  \"next_step\": \"Continue routine monitoring; no action required.\",\n  \"sources\": [\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 5},\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 6}\n  ]\n}",
+  "recordedAt": "2026-10-18T08:15:56.715Z"
+}

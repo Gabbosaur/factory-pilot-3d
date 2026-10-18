@@ -1,8 +1,0 @@
-{
-  "agent": "pianificatore",
-  "scenarioId": "recovery-milan-plant-all-running-step2",
-  "hash": "9ec3d8e2ee1cf320815f1fee62e868d365fafbbdc959053faf0d3bec5f2a4616",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\"thought\":\"Boosting L1 for 1 minute recovers 10 bottles at no cost, which covers the 1-bottle gap. I should also check L2 to see if a similar boost is worthwhile.\",\"tool\":\"simulate\",\"args\":{\"type\":\"boost_other_line\",\"line\":\"L2\",\"minutes\":1}}",
-  "recordedAt": "2026-10-18T07:41:38.136Z"
-}

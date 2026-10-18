@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-5bd6d25b1be393f5",
+  "hash": "3ade267ab4aa1a0630c24516e91dbce6d487de3638edc2596d8fbff275185655",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\"summary\": \"Plant is running at OEE 99.1%, availability and performance 100%, FPY 99.1%. 327 good bottles, 3 rejects. No open incidents, quality holds, or downtime. Reject Pareto: 1 each at L2-C1, F1, L2-F2, L2-F1; C1 has 0. All machines green, no bypasses, no bottleneck.\"}",
+  "recordedAt": "2026-10-18T08:13:11.674Z"
+}

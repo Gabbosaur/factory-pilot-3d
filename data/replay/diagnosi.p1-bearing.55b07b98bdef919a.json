@@ -1,0 +1,8 @@
+{
+  "agent": "diagnosi",
+  "scenarioId": "p1-bearing",
+  "hash": "55b07b98bdef919a7016444aa0855d4cd733f3e4cdf46e33b0ff68af95e43537",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\n  \"causa_probabile\": \"Cavitation caused by air ingress through damaged suction flange gasket\",\n  \"pagina_manuale\": 5,\n  \"citazione\": \"A sudden increase without a temperature change more likely indicates impeller imbalance or cavitation.\",\n  \"confidenza\": 0.7,\n  \"azione_raccomandata\": \"Inspect the suction flange gasket for damage and replace if necessary. Torque flange bolts to 45 Nm and purge air from the pump casing. If the gasket is intact, check for other sources of air ingress and verify NPSH conditions.\",\n  \"codice_azione\": \"intervento_manutentivo\",\n  \"ricambi\": [\"Suction flange PTFE gasket\"]\n}",
+  "recordedAt": "2026-10-18T08:35:43.561Z"
+}

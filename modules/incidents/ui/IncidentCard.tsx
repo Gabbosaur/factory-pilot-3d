@@ -15,7 +15,7 @@ import { PhotoEvidence } from '@/modules/vision/PhotoEvidence';
 /** One-line headline per state, so the operator understands the card at a glance. */
 function headline(inc: Incident): { icon: string; text: string; tone: string } {
   if (inc.status === 'analisi') return { icon: '◴', text: 'Analysing on AMD Token Factory…', tone: 'text-sky-300' };
-  if (inc.status === 'chiuso') return { icon: '✓', text: 'Resolved and saved to memory', tone: 'text-emerald-300' };
+  if (inc.status === 'chiuso') return { icon: '✓', text: inc.log.some((l) => l.message.includes('saved to memory')) ? 'Resolved and saved to memory' : 'Resolved (simulation reset)', tone: 'text-emerald-300' };
   if (inc.status === 'rifiutato') return { icon: '✕', text: 'Rejected by manager', tone: 'text-slate-400' };
   if (inc.status === 'approvato') return { icon: '✓', text: 'Approved · work order issued', tone: 'text-emerald-300' };
   if (inc.status === 'autonomo') return { icon: '⚡', text: 'Auto-fixed by FactoryPilot', tone: 'text-emerald-300' };

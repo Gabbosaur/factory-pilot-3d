@@ -1,8 +1,0 @@
-{
-  "agent": "copilota",
-  "scenarioId": "ask-164cec86d3b67ce9",
-  "hash": "917cc014e1d100f21cbc1a7a98dd518c271c416becb872c4949c179d393f632c",
-  "model": "Gemma-4-31B-IT",
-  "content": "{\"answer\": \"Quality summary for the current shift at Imperia plant (Juice line):\\n- FPY: 99.1%\\n- Rejects: 0 bottles (though Capper C1 shows a 0.85% reject rate in cluster data)\\n- Lots on hold: None (qualityHolds list is empty)\", \"evidence\": [\"fpyPct: 99.1\", \"rejects: 0\", \"qualityHolds: []\", \"C1 rejectPct: 0.85%\"], \"next_step\": \"Monitor Capper C1 to determine why cluster reject percentage is 0.85% despite zero total rejects recorded.\", \"sources\": []}",
-  "recordedAt": "2026-10-18T07:42:37.992Z"
-}

@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-68f4bef689ee2ff1",
+  "hash": "6359aebd45939d37d45b928363e815cbc9792cf493ef4407db02476ca8560923",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\n  \"answer\": \"Plant OEE is 99.1%, below the 100% target due to quality losses only: FPY is 99.1% on L1 and 99.2% on L2)Skip. Availability and performance are both 100%, so no downtime or speed losses. Reject rates are 0.91% on L1 filling/capping and 0.84% on L2 filling/capping, causing the OEE gap. No incidents or quality holds are active.\",\n  \"evidence\": [\n    \"OEE 99.1% vs target 100%\",\n    \"Availability 100%, Performance 100%\",\n    \"FPY 99.1% (L1), 99.2% (L2)\",\n    \"RejectPct 0.91% (L1 F1/C1), 0.84% (L2 F1/F2/C1)\"\n  ],\n  \"next_step\": \"Inspect F1, C1, L2-F1, L2-F2, L2-C1 for capping/filling defects to reduce reject rates.\",\n  \"sources\": []\n}",
+  "recordedAt": "2026-10-18T08:13:01.421Z"
+}

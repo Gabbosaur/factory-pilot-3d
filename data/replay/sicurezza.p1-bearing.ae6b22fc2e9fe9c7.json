@@ -1,0 +1,8 @@
+{
+  "agent": "sicurezza",
+  "scenarioId": "p1-bearing",
+  "hash": "ae6b22fc2e9fe9c773c6d222074f21ec5d688c8ef20b6967ba2ce2748b3b2714",
+  "model": "Gemma-4-31B-IT",
+  "content": "{\"livello_rischio\": \"alto\", \"motivazione\": \"The action involves maintenance on a centrifugal pump, which contains rotating parts and pressurized fluids.\"}",
+  "recordedAt": "2026-10-18T08:35:49.970Z"
+}

@@ -1,8 +1,0 @@
-{
-  "agent": "copilota",
-  "scenarioId": "ask-335414ee681b1ed7",
-  "hash": "013ed07c01673623b5b8a709672a63b216deb447c2b4d9abecdf6e10fe80478e",
-  "model": "Gemma-4-31B-IT",
-  "content": "{\"answer\": \"Machine P1 is currently 'verde', but if trends continue, it will trip in 16.8 minutes due to Motor current reaching the trip limit of 16 A (current trend: 0.163 A/min). Vibration is also increasing and would trip in 72.2 minutes (trip limit: 4.5 mm/s). According to the manual, high motor current is caused by mechanical friction or a rubbing impeller. You should stop the machine and inspect it.\", \"evidence\": [\"Motor current trip in 16.8 min\", \"Current trip limit: 16 A\", \"Vibration trip in 72.2 min\", \"Vibration trip limit: 4.5 mm/s\"], \"next_step\": \"Stop machine P1 and inspect for mechanical friction or rubbing impeller.\", \"sources\": [{\"type\": \"manual\", \"ref\": \"P1\", \"page\": 6}]}",
-  "recordedAt": "2026-10-18T07:43:55.353Z"
-}

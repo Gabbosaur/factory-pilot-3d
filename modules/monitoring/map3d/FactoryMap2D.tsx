@@ -11,6 +11,7 @@ import { STATUS_LABEL } from '@/modules/incidents/labels';
 import { useHistoryUi } from '@/modules/monitoring/panels/HistoryOverlay';
 import type { MachineConfig, MachineStatus } from '@/shared/types';
 import { computeLayout } from './layout';
+import { siblingsOf } from '@/modules/plant/plant';
 
 /** World units → SVG px. */
 const S = 40;
@@ -79,7 +80,15 @@ export default function FactoryMap2D({ machineIds }: { machineIds?: string[] } =
     const i = causal.indexOf(a);
     return i >= 0 && causal[i + 1] === b;
   };
-  const flowing = (machineId: string) => running && lineOf(machineId).running;
+  // Twins carry one flow at a time (as in 3D): the first healthy one is in the flow, the others wait on standby.
+  const idle = new Set<string>();
+  for (const m of factory.machines) {
+    const group = [m.id, ...siblingsOf(factory, m.id)].sort((x, y) => factory.machines.findIndex((k) => k.id === x) - factory.machines.findIndex((k) => k.id === y));
+    if (group.length < 2) continue;
+    const active = group.find((id) => !bypassed[id]);
+    if (m.id !== active) idle.add(m.id);
+  }
+  const flowing = (machineId: string) => running && lineOf(machineId).running && !idle.has(machineId);
 
   return (
     <svg
@@ -128,7 +137,7 @@ export default function FactoryMap2D({ machineIds }: { machineIds?: string[] } =
 
       {/* Conveyors between machines, with bottles moving while the line runs */}
       {edges.map(([a, b]) => (
-        <ConveyorLink key={`${a}-${b}`} from={pos.get(a)!} to={pos.get(b)!} hot={onCausal(a, b)} flowing={flowing(a) && !bypassed[a] && !bypassed[b]} mode={bypassed[a] || bypassed[b] ? 'off' : rerouteTargets.has(a) || rerouteTargets.has(b) ? 'reroute' : 'normal'} />
+        <ConveyorLink key={`${a}-${b}`} from={pos.get(a)!} to={pos.get(b)!} hot={onCausal(a, b)} flowing={flowing(a) && flowing(b)} mode={idle.has(a) || idle.has(b) ? 'off' : rerouteTargets.has(a) || rerouteTargets.has(b) ? 'reroute' : 'normal'} />
       ))}
 
       {factory.machines.map((m) => (

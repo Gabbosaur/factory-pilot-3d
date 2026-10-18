@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-85fdca537403f24e",
+  "hash": "8322ed6cc50f3e1f599714d17a188782c542db415346e00b00cc7ff14f60c15b",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\n  \"answer\": \"Start with Line 1, Filling & capping cluster (F1/C1): it is the only cluster with rejects (0.87%) and drives the plant FPY of 99.1%. All machines are green and running at 100%, but the filler/capper is the quality bottleneck.\",\n  \"evidence\": [\n    \"Line 1 OEE 99.1%, availability 100%, performance 100%, FPY 99.1%\",\n    \"Filling & capping cluster rejectPct 0.87% (F1/C1)\",\n    \"Feed & pumping and End of line rejectPct 0%\",\n    \"Reject Pareto: F1 and C1 each 0 bottles (no current rejects, but historical rate)\"\n  ],\n  \"next_step\": \"Monitor F1/C1 reject trend and check filler/capper settings (e.g., capping torque, fill level) to prevent quality loss.\",\n  \"sources\": []\n}",
+  "recordedAt": "2026-10-18T08:14:13.980Z"
+}

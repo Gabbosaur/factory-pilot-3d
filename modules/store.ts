@@ -414,12 +414,21 @@ export const useStore = create<State & Actions>((set, get) => {
       }
     },
     resetSim() {
+      const before = get();
+      const faulty = new Set([...before.arming.map((x) => x.machineId), ...Object.keys(before.bypassed), ...Object.entries(before.statuses).filter(([, v]) => v !== 'verde').map(([k]) => k)]);
+      const stoppedLines = Object.values(before.lines).filter((l) => !l.running).length;
+      const openIncidents = Object.values(before.incidents).filter((i) => i.status !== 'chiuso' && i.status !== 'rifiutato');
       sim?.reset();
       sim?.setLineRunning(true);
-      engine?.setStopped([]);
+      // A fresh detector: machines turn green at once instead of waiting for the statistics to settle.
+      engine = new AnomalyEngine(before.effectiveFactory());
       // Counters keep running (same shift); speed reductions are undone with the faults.
       const t = sim?.tick ?? 0;
+      const now = new Date().toISOString();
       set((st) => ({
+        statuses: engine!.getAllStatuses(),
+        anomalyStart: {},
+        incidents: Object.fromEntries(Object.entries(st.incidents).map(([id, i]) => [id, openIncidents.some((o) => o.id === id) ? { ...i, status: 'chiuso' as const, log: [...i.log, { ts: now, kind: 'decisione' as const, message: 'Closed by Simulate solved (demo reset, no repair report)', author: 'Sistema' as const }] } : i])),
         activeFaultIds: [],
         arming: [],
         lines: Object.fromEntries(Object.entries(st.lines).map(([id, l]) => [id, { ...l, running: true, trippedBy: null, stopSec: 0 }])),
@@ -427,6 +436,12 @@ export const useStore = create<State & Actions>((set, get) => {
         bypassed: {},
         speed: {},
       }));
+      const parts = [
+        faulty.size ? `${faulty.size} machine${faulty.size === 1 ? '' : 's'} back to normal` : '',
+        stoppedLines ? `${stoppedLines} line${stoppedLines === 1 ? '' : 's'} restarted` : '',
+        openIncidents.length ? `${openIncidents.length} incident${openIncidents.length === 1 ? '' : 's'} closed` : '',
+      ].filter(Boolean);
+      get().notify({ kind: 'autonomia', text: parts.length ? `✓ Faults solved: ${parts.join(', ')}.` : '✓ Nothing to solve: every machine is already healthy.' });
     },
     clearArming(machineId) {
       const next = get().arming.filter((a) => a.machineId !== machineId);

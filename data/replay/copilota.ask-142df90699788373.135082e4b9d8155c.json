@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-142df90699788373",
+  "hash": "135082e4b9d8155c3bb28dad8fd7d5a331dbe74866535b822c0c2e9a7c6b1849",
+  "model": "Gemma-4-31B-IT",
+  "content": "{\"answer\": \"Plant OEE is 88.1% (below target) primarily due to Line 1 (OEE 70.4%), which is currently stopped by a protective trip on pump P1. The trip was triggered by vibration (4.527 > 4.5 mm/s). Incident INC-002 identifies the cause as cavitation from air ingress via a damaged suction flange gasket. Line 2 is running (OEE 99.1%) but has a quality hold (QH-L2-001) and machine L2-F1 is bypassed to L2-F2 due to unstable supply from the feed pump (INC-001).\", \"evidence\": [\"OEE 88.1%\", \"L1 OEE 70.4%\", \"P1 vib 4.527 > 4.5\", \"INC-002\", \"L2 OEE 99.1%\", \"QH-L2-001\"], \"next_step\": \"Inspect and replace the suction flange gasket on P1, torque bolts to 45 Nm, and purge air from the casing.\", \"sources\": [{\"type\": \"manual\", \"ref\": \"P1\", \"page\": 5}, {\"type\": \"memory\", \"ref\": \"seed-p1-2026-09-22\"}]}",
+  "recordedAt": "2026-10-18T08:37:46.082Z"
+}

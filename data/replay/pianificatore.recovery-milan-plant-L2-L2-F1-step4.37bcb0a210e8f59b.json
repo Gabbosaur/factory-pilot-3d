@@ -1,0 +1,8 @@
+{
+  "agent": "pianificatore",
+  "scenarioId": "recovery-milan-plant-L2-L2-F1-step4",
+  "hash": "37bcb0a210e8f59b667126dfb27a6a988fc292ac5f0fd9e15edd44d25143118c",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\"thought\":\"Boosting L1 for 60 minutes recovers 600 bottles and €1140 with no cost, which fully covers the small gap on L2. I will finalize with this plan.\",\"tool\":\"final\",\"args\":{\"summary\":\"Boost L1 at +10% for 60 minutes to recover 600 bottles (€1140 net), covering the L2 gap of 3 bottles. No repair needed on L2-F1 as it is bypassed and not causing loss.\",\"steps\":[{\"line\":\"L1\",\"action\":\"boost_other_line\",\"minutes\":60,\"extraBottles\":600,\"eurRecovered\":1140,\"costEur\":0,\"netEur\":1140}]}}",
+  "recordedAt": "2026-10-18T08:18:29.172Z"
+}

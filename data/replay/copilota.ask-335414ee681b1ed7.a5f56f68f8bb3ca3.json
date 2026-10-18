@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-335414ee681b1ed7",
+  "hash": "a5f56f68f8bb3ca3a462bfefb08dc9790a46e6474309446a4c16474d0c39f079",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\n  \"answer\": \"P1 is currently green (OK). Vibration is 1.32 mm/s (normal, warn 1.8, trip 4.5) with a rising trend of 0.082 mm/s/min, projecting trip in ~39 min. Motor current is 13.26 A (normal, warn 14.5, trip 16) with a rising trend of 0.162 A/min, projecting trip in ~16.8 min. Bearing temperature is stable. No immediate trip, but current will trip first in ~17 min if trends continue. Now: monitor current and vibration; prepare to inspect for mechanical friction or impeller rubbing (manual p.6). If current reaches 14.5 A, stop and inspect. No bypass is active.\",\n  \"evidence\": [\n    \"P1 status verde, vibration 1.32 mm/s (trend +0.082, minutesToTrip 39)\",\n    \"Motor current 13.26 A (trend +0.162, minutesToTrip 16.8)\",\n    \"Bearing temp 54.78°C (trend -0.098, no trip)\",\n    \"Trip limits: vibration 4.5 mm/s, current 16 A\"\n  ],\n  \"next_step\": \"Schedule a quick inspection of P1 within the next 15 minutes; check for mechanical friction or impeller rubbing and verify lubrication.\",\n  \"sources\": [\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 6},\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 5}\n  ]\n}",
+  "recordedAt": "2026-10-18T08:16:23.908Z"
+}

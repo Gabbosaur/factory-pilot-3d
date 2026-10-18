@@ -125,7 +125,7 @@ export function RecoveryPanel() {
   };
 
   return (
-    <section className="card p-3" aria-label="Recovery planner">
+    <section className="card p-3" aria-label="Recovery planner" data-tour="recovery">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <div>
           <h2 className="section-title">⟳ Recovery planner · AI agent</h2>

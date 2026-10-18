@@ -1,8 +1,0 @@
-{
-  "agent": "copilota",
-  "scenarioId": "ask-85fdca537403f24e",
-  "hash": "02ea59b1a03aa382d72044818d2c7a1b7187b95659ac38b73fd51f2077085086",
-  "model": "Gemma-4-31B-IT",
-  "content": "{\"answer\": \"All lines are running with high OEE (99.1%). However, the 'Filling & capping' cluster on L1 shows the worst relative quality with a rejectPct of 0.86%, primarily associated with the Capper (C1) and Rotary filler (F1) area, although current reject counts are 0. No critical alarms (rosso) or open incidents are reported.\", \"evidence\": [\"L1 OEE: 99.1%\", \"Filling & capping rejectPct: 0.86%\", \"Throughput: 3985/4020 bottles/h\"], \"next_step\": \"Monitor the Filling & capping cluster to identify the cause of the 0.86% reject rate.\", \"sources\": []}",
-  "recordedAt": "2026-10-18T07:42:26.693Z"
-}

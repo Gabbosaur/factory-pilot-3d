@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-a489339876967900",
+  "hash": "e79abadddaf2613b54bd1b5f9006ba41698ccd0749237575ed41c4f7247fe29e",
+  "model": "Gemma-4-31B-IT",
+  "content": "{\"answer\": \"Prioritize machine P1 on Line 1. L1 is currently stopped due to a protective trip on P1 (vibration 4.527 > 4.5), which exceeds the safety limit of 4.5 mm/s where there is a risk of damage. This is a high-risk incident (INC-002) with a cost of 190 Eur/min. The suspected cause is cavitation due to a damaged suction flange gasket. While L2-F1 is in 'rosso' status, it is currently bypassed to L2-F2, meaning L2 remains operational, whereas L1 is completely down.\",\"evidence\": [\"L1 state: stopped by protective trip on P1 (vib 4.527 > 4.5)\", \"INC-002 risk: alto\", \"INC-002 costPerMinEur: 190\", \"L2-F1 bypassedTo: L2-F2\"], \"next_step\": \"Inspect the suction flange gasket on P1 for damage and replace if necessary, torquing bolts to 45 Nm.\", \"sources\": [{\"type\": \"manual\", \"ref\": \"P1\", \"page\": 5}, {\"type\": \"memory\", \"ref\": \"seed-p1-2026-09-22\"}]}",
+  "recordedAt": "2026-10-18T08:37:58.684Z"
+}

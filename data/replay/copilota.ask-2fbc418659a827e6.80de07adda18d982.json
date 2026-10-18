@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-2fbc418659a827e6",
+  "hash": "80de07adda18d982e81d9eddc37ed7f465c236dab58f431b629ae08019cc193a",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\"answer\":\"OEE is 99% overall, slightly below target because Line 2 (L2) runs at 98.9% OEE, driven by a quality loss of 1.1% (rejectPct 1.12%) from Filler L2-F1. L2-F1 is in red status and bypassed to L2-F2; incident INC-001 (level probe sensor clouded) is queued. A quality hold QH-L2-001 quarantines 126 suspect bottles. Availability and performance are 100% on both lines, so the gap is purely quality-related on L2-F1.\",\"evidence\":[\"Plant OEE 99% vs target 100% (implied)\",\"L2 OEE 98.9%, qualityPct 98.9%, rejectPct 1.12%\",\"L2-F1 status rosso, bypassed to L2-F2\",\"INC-001 cause: level probe optical sensor clouded\",\"QH-L2-001: 126 suspect bottles quarantined\"],\"next_step\":\"Execute INC-001 action: check feed pump stability, then clean L2-F1 level probe lens with isopropyl alcohol and re-align sensor bracket.\",\"sources\":[{\"type\":\"manual\",\"ref\":\"L2-F1\",\"page\":3},{\"type\":\"memory\",\"ref\":\"seed-l2f1-2026-10-01\"},{\"type\":\"memory\",\"ref\":\"seed-l2f1-2026-10-05\"}]}",
+  "recordedAt": "2026-10-18T08:19:38.564Z"
+}

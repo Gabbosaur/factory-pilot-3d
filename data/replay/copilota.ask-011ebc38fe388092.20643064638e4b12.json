@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-011ebc38fe388092",
+  "hash": "20643064638e4b123afc1c8680f557c00636075265a757bdb94840bb7acdea09",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\"answer\": \"Both lines are running at full speed with no downtime, no open incidents, and no quality holds. OEE is 99.1% on each line. Rejects are minimal: 3 total (1 at L2-C1 capper, 1 at F1 filler, 1 at L2-F2 filler). No bottleneck detected. No manual pages or past interventions were provided, so I cannot advise on causes or procedures. Missing: detailed reject reasons and maintenance history.\", \"sources\": []}",
+  "recordedAt": "2026-10-18T08:13:06.665Z"
+}

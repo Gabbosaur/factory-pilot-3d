@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-164cec86d3b67ce9",
+  "hash": "0bb3097294dc300730a5465716d82d9d60bb798492d2b55cae27a696abd42f8b",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\n  \"answer\": \"Shift quality is excellent: FPY 99.1%, 0 rejects, 0 lots on hold. Good bottles: 37. Reject Pareto shows 0 at F1 filler and 0 at C1 capper. No open incidents, no quality holds, no downtime. OEE 99.1% (availability 100%, performance 100%).\",\n  \"evidence\": [\n    \"FPY 99.1% (line L1)\",\n    \"Rejects: 0 (plant and Pareto)\",\n    \"Quality holds: none\",\n    \"Good bottles: 37\"\n  ],\n  \"next_step\": \"No action required; continue monitoring.\",\n  \"sources\": []\n}",
+  "recordedAt": "2026-10-18T08:14:34.906Z"
+}

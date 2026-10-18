@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-74afb4b43fa74ca4",
+  "hash": "ec646e44da94a58356b47efee10c4a3d43ffa9894f909091a346a943a19cd07f",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\n  \"oeePct\": 99.1,\n  \"availabilityPct\": 100,\n  \"performancePct\": 100,\n  \"fpyPct\": 99.1,\n  \"goodBottles\": 769,\n  \"rejects\": 7,\n  \"throughputPerHour\": 15493,\n  \"targetPerHour\": 15600\n}",
+  "recordedAt": "2026-10-18T08:19:43.563Z"
+}

@@ -11,6 +11,7 @@ import { handleAlarms } from '@/modules/incidents/orchestrator';
 import { resetMemory } from '@/modules/incidents/memory/adapter';
 import { HistoryOverlay } from '@/modules/monitoring/panels/HistoryOverlay';
 import { LineBanner } from '@/modules/monitoring/panels/LineBanner';
+import { Tour, startTour } from '@/modules/tour/Tour';
 
 interface Health {
   amdKey: boolean;
@@ -33,7 +34,15 @@ export function AppShell({ children }: { children: ReactNode }) {
   const faultMenuRef = useRef<HTMLDivElement>(null);
   const [health, setHealth] = useState<Health | null>(null);
 
-  const needsYou = Object.values(s.incidents).filter((i) => i.status === 'in_coda' && i.escalation?.escalate).length;
+  // Machines with a simulated problem (fault building up, alarm, bypass) plus stopped lines: what "Simulate solved" would fix.
+  const problems =
+    new Set([
+      ...s.arming.map((a) => a.machineId),
+      ...s.activeFaultIds.flatMap((id) => s.factory.faults.filter((f) => f.id === id).map((f) => f.machineId)),
+      ...Object.keys(s.bypassed),
+      ...Object.entries(s.statuses).filter(([, v]) => v !== 'verde').map(([k]) => k),
+    ]).size + Object.values(s.lines).filter((l) => !l.running).length;
+  const needsYou =Object.values(s.incidents).filter((i) => i.status === 'in_coda' && i.escalation?.escalate).length;
 
   useEffect(() => {
     if (!faultMenuOpen) return;
@@ -95,7 +104,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </Link>
 
         {/* Global filter: every page shows the selected plant */}
-        <label className="flex items-center gap-1.5 text-xs text-slate-400">
+        <label className="flex items-center gap-1.5 text-xs text-slate-400" data-tour="plant">
           Plant
           <select className="input w-auto py-1 text-sm" value={s.factory.id} onChange={(e) => s.setFactory(e.target.value)}>
             {s.factories.map((f) => (
@@ -131,6 +140,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="ml-auto flex flex-wrap items-center gap-2 text-xs">
           <button
             type="button"
+            data-tour="replay"
             onClick={() => s.setReplay(!s.replay)}
             className={`pill ${s.replay ? 'bg-purple-500/20 text-purple-200 ring-1 ring-inset ring-purple-400/40' : 'bg-slate-800 text-slate-400 ring-1 ring-inset ring-white/10'}`}
             title="Serve recorded AMD responses instead of live calls"
@@ -142,6 +152,9 @@ export function AppShell({ children }: { children: ReactNode }) {
             {s.aiReachable ? (health?.amdKey ? 'AMD Token Factory' : 'No AMD key') : 'AI offline'}
           </span>
           <span className="pill bg-slate-800 text-slate-300 ring-1 ring-inset ring-white/10">Memory · {memoryLabel}</span>
+          <button type="button" className="btn-ghost" onClick={startTour} title="Guided walkthrough of the app">
+            ? Tour
+          </button>
         </div>
       </header>
 
@@ -198,11 +211,13 @@ export function AppShell({ children }: { children: ReactNode }) {
 
         <button
           type="button"
-          className="btn"
+          className={problems > 0 ? 'btn flex items-center gap-1.5 ring-1 ring-inset ring-emerald-400/50 text-emerald-200' : 'btn opacity-50'}
           onClick={() => s.resetSim()}
-          title="Clear all active faults and return machines to nominal healthy conditions"
+          disabled={problems === 0}
+          title={problems > 0 ? 'Fix every simulated fault now: machines back to normal, stopped lines restarted, open incidents closed' : 'Nothing to solve: every machine is healthy'}
         >
-          Simulate solved
+          ✓ Simulate solved
+          {problems > 0 && <span className="rounded-full bg-emerald-500/25 px-1.5 text-[10px] font-bold">{problems}</span>}
         </button>
 
         <div className="ml-auto flex items-center gap-2">
@@ -269,6 +284,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <main className="min-h-0 flex-1 overflow-hidden">{children}</main>
 
       <HistoryOverlay />
+      <Tour />
     </div>
   );
 }

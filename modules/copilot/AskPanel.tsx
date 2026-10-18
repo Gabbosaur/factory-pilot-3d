@@ -114,7 +114,7 @@ export function AskPanel({ machineId }: { machineId?: string } = {}) {
   );
 
   return (
-    <section className="card p-3" aria-label="Ask FactoryPilot">
+    <section className="card p-3" aria-label="Ask FactoryPilot" data-tour="ask">
       <div className="mb-2 flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="section-title">{title}</h2>
         <span className="text-[10px] text-slate-500">AI on AMD Token Factory · answers from the live data, the technical manuals and the factory memory, with verified sources</span>

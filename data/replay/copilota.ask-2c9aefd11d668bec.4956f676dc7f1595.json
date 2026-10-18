@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-2c9aefd11d668bec",
+  "hash": "4956f676dc7f159596fccd10b1da911ebcbeefbe7e506d253736a3da8f979bf3",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\n  \"answer\": \"Quality this shift: FPY 99.1%, 7 rejects, 1 lot on hold. Line L1 FPY 99.2% (304 good, 2 rejects). Line L2 FPY 99.1% (486 good, 5 rejects). Reject Pareto: L2-C1 capper 2, F1 rotary filler 2, L2-F1 filler A 1, L2-F2 filler B 1, C1 capper 1. Quality hold QH-L2-001 (126 suspect bottles) quarantined due to L2-F1 fill rejects. Incident INC-001 open on L2-F1 (optical sensor clouded).\",\n  \"evidence\": [\n    \"FPY 99.1%, rejects 7, good bottles 790\",\n    \"L1 FPY 99.2%, rejects 2; L2 FPY 99.1%, rejects 5\",\n    \"Reject Pareto: L2-C1 2, F1 2, L2-F1 1, L2-F2 1, C1 1\",\n    \"Quality hold QH-L2-001: 126 suspect bottles, quarantined\"\n  ],\n  \"next_step\": \"Inspect and clean L2-F1 optical sensor per INC-001 action; monitor rejects after cleaning.\",\n  \"sources\": [\n    {\"type\": \"manual\", \"ref\": \"L2-F1\", \"page\": 3},\n    {\"type\": \"memory\", \"ref\": \"seed-l2f1-2026-10-01\"},\n    {\"type\": \"memory\", \"ref\": \"seed-l2f1-2026-10-05\"}\n  ]\n}",
+  "recordedAt": "2026-10-18T08:20:10.268Z"
+}

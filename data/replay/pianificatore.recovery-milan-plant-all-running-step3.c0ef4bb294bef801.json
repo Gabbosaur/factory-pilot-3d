@@ -1,8 +1,0 @@
-{
-  "agent": "pianificatore",
-  "scenarioId": "recovery-milan-plant-all-running-step3",
-  "hash": "c0ef4bb294bef801db7fdc4125979b1def915b9d65259df3443d3d46c049c62d",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\"thought\":\"Boosting L1 for 1 minute recovers 10 bottles (net €19) and boosting L2 for 1 minute recovers 16 bottles (net €24), both covering their 1-bottle gaps at zero cost. Since both are worthwhile, I will recommend boosting both lines for 1 minute.\",\"tool\":\"final\",\"args\":{\"summary\":\"Both lines are running at 100% with a negligible 1-bottle gap each. Boosting L1 for 1 minute recovers 10 bottles (net €19) and boosting L2 for 1 minute recovers 16 bottles (net €24), both at zero cost. Recommend boosting both lines for 1 minute to fully meet shift targets.\",\"steps\":[{\"action\":\"Boost L1 for 1 minute\",\"extraBottles\":10,\"netEur\":19},{\"action\":\"Boost L2 for 1 minute\",\"extraBottles\":16,\"netEur\":24}]}}",
-  "recordedAt": "2026-10-18T07:41:46.810Z"
-}

@@ -3,6 +3,6 @@
   "scenarioId": "f1-valve",
   "hash": "e5d3516115a4ccfafe25beea71de75f02a91b698e452a1fcab5864bec2afabba",
   "model": "DeepSeek-V4-Flash",
-  "content": "{\n  \"causa_probabile\": \"Level probe optical sensor clouded with syrup/liquid splashes\",\n  \"pagina_manuale\": 3,\n  \"citazione\": \"If rejects concern a single valve, check that valve's seal (p. 4).\",\n  \"confidenza\": 0.6,\n  \"azione_raccomandata\": \"Inspect and clean the level probe optical sensor lens with isopropyl alcohol and re-align the laser sensor bracket. If rejects persist, check the filling valve seals.\",\n  \"codice_azione\": \"intervento_manutentivo\",\n  \"ricambi\": [\"RF24-L01\"]\n}",
-  "recordedAt": "2026-10-18T07:45:25.396Z"
+  "content": "{\n  \"causa_probabile\": \"Unstable supply from the feed pump upstream of the filler, causing fill-level rejects to rise on all valves simultaneously.\",\n  \"pagina_manuale\": 3,\n  \"citazione\": \"If rejects rise on ALL valves at the same time and the inlet flow oscillates, the cause is almost always upstream (unstable supply from the feed pump), not in the filler: check the feed pump before working on the valves.\",\n  \"confidenza\": 0.7,\n  \"azione_raccomandata\": \"Check the feed pump and inlet flow stability. If the feed pump is unstable, schedule maintenance or repair. Also inspect the level probe optical sensor for clouding, as past interventions show this as a recurring cause.\",\n  \"codice_azione\": \"apri_ticket\",\n  \"ricambi\": []\n}",
+  "recordedAt": "2026-10-18T08:35:26.971Z"
 }

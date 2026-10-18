@@ -53,13 +53,16 @@ async function injectFault(page: Page, labelPart: string) {
 async function main() {
   const browser = await chromium.launch({ executablePath: EXE, headless: true });
   const page = await browser.newPage({ viewport: { width: 1600, height: 1000 } });
+  await page.addInitScript(() => localStorage.setItem('fp.tour.seen.v2', '1')); // the first-run tour would cover the UI
   page.on('pageerror', (e) => log('pageerror', e.message));
   await page.goto(BASE, { waitUntil: 'networkidle' });
   await page.waitForTimeout(8000); // let the shift accumulate some production
 
+  // ONLY_STOP=1 re-records just the last scenario (line stop + bypass).
+  const onlyStop = process.env.ONLY_STOP === '1';
   // 1) Overview of every plant: example questions + agent with all lines running.
   const plants = await page.locator('header select option').evaluateAll((os) => os.map((o) => (o as HTMLOptionElement).value));
-  for (const id of plants) {
+  for (const id of onlyStop ? [] : plants) {
     await page.locator('header select').selectOption(id);
     await page.waitForTimeout(6000);
     await askExamples(page, `ask plant ${id}`);
@@ -71,15 +74,17 @@ async function main() {
   // 2) Machine page examples.
   await page.goto(`${BASE}/machines/P1`, { waitUntil: 'networkidle' });
   await page.waitForTimeout(5000);
-  await askExamples(page, 'ask machine P1');
+  if (!onlyStop) await askExamples(page, 'ask machine P1');
 
   // 3) Bypass on line 2 (twin filler takes over), then the agent.
   await page.goto(BASE, { waitUntil: 'networkidle' });
   await injectFault(page, 'Filler A valve drift');
   await page.getByText(/bypass/i).first().waitFor({ timeout: 180_000 }).catch(() => log('bypass not seen'));
   await page.waitForTimeout(3000);
-  await runAgent(page, 'agent bypass');
-  await askExamples(page, 'ask plant (bypass)');
+  if (!onlyStop) {
+    await runAgent(page, 'agent bypass');
+    await askExamples(page, 'ask plant (bypass)');
+  }
 
   // 4) Protective stop of line 1 (P1 bearing crosses the ISO limit after ~70 s), then the agent.
   await injectFault(page, 'L1 · Pump P1 bearing');

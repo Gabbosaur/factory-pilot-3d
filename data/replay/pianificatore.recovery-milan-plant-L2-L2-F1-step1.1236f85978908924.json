@@ -1,0 +1,8 @@
+{
+  "agent": "pianificatore",
+  "scenarioId": "recovery-milan-plant-L2-L2-F1-step1",
+  "hash": "1236f859789089241b6a8e680cf47a452f38cf667de2cf220c6f23f250c7fbb9",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\n  \"thought\": \"L2 has a small gap of 3 bottles and a bypassed filler (L2-F1) with 35 min MTTR. I should simulate repairing the filler now vs doing nothing to see if it recovers more output.\",\n  \"tool\": \"simulate\",\n  \"args\": {\"type\": \"repair_now\", \"line\": \"L2\", \"machine\": \"L2-F1\"}\n}",
+  "recordedAt": "2026-10-18T08:17:57.138Z"
+}

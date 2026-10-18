@@ -132,7 +132,7 @@ export function QualityHolds({ machineId }: { machineId?: string } = {}) {
   const waiting = holds.filter((h) => h.status === 'quarantined').length;
 
   return (
-    <section className="card p-3" aria-label="Quality holds">
+    <section className="card p-3" aria-label="Quality holds" data-tour="holds">
       <h2 className="section-title mb-1">
         Quality holds {waiting > 0 && <span className="text-red-300">· {waiting} awaiting decision</span>}
       </h2>

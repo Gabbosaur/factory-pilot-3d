@@ -1,8 +1,0 @@
-{
-  "agent": "sicurezza",
-  "scenarioId": "p1-bearing",
-  "hash": "10cc7adeaae537dbb77c81e73ebb7365d5bbf95a1e92536974799d3a2deb40d0",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\"livello_rischio\": \"medio\", \"motivazione\": \"The action is a planned inspection, not immediate intervention. Vibration is elevated but not critical, and the action does not require approaching the machine.\"}",
-  "recordedAt": "2026-10-18T07:48:13.628Z"
-}

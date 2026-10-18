@@ -119,7 +119,7 @@ export default function PlantPage() {
         </div>
 
         {/* Plant KPIs */}
-        <section aria-label="Plant KPIs" className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-6">
+        <section aria-label="Plant KPIs" data-tour="kpis" className="grid grid-cols-2 gap-2 md:grid-cols-3 xl:grid-cols-6">
           <Kpi
             label="Lines running"
             value={`${runningLines} / ${plant.lines.length}`}
@@ -157,7 +157,7 @@ export default function PlantPage() {
         </div>
 
         {/* Lines */}
-        <section aria-label="Production lines" className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+        <section aria-label="Production lines" data-tour="lines" className="grid grid-cols-1 gap-3 lg:grid-cols-2">
           {plant.lines.map((l, i) => {
             const p = productions[l.id];
             const lk = p ? kpis(p, l.config) : null;

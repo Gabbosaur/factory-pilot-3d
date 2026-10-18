@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-3b7e51cd356ea8a5",
+  "hash": "d1a6cbc1c24a623007641c1ebf84a291b88e7786ef5be85eda92ce27ba2ac338",
+  "model": "Gemma-4-31B-IT",
+  "content": "{\"answer\": \"Quality summary for the shift:\\n- FPY: 98.9%\\n- Total Rejects: 9 bottles (F1: 2, L2-C1: 2, C1: 2, L2-F1: 1, L2-F2: 1)\\n- Lots on Hold: 2 lots quarantined\\n  - QH-L2-001 (L2): 126 suspect bottles triggered by L2-F1 fill_rejects\\n  - QH-L1-001 (L1): 88 suspect bottles triggered by F1 flow_var\", \"evidence\": [\"fpyPct: 98.9\", \"rejects: 9\", \"QH-L2-001: 126 bottles\", \"QH-L1-001: 88 bottles\"], \"next_step\": \"Investigate L2-F1 fill-level rejects and check feed pump stability as per INC-001.\", \"sources\": []}",
+  "recordedAt": "2026-10-18T08:38:23.827Z"
+}

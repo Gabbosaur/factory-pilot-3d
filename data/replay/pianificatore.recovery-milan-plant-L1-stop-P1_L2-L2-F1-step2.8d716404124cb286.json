@@ -1,0 +1,8 @@
+{
+  "agent": "pianificatore",
+  "scenarioId": "recovery-milan-plant-L1-stop-P1_L2-L2-F1-step2",
+  "hash": "8d716404124cb2869169670fec6358431f33a6c4139efa42952add3546c9f273",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\"thought\":\"Repairing L1 now recovers a large amount, but I should also compare boosting L2 to see if it adds more recovery.\",\"tool\":\"simulate\",\"args\":{\"type\":\"boost_other_line\",\"line\":\"L2\",\"minutes\":60}}",
+  "recordedAt": "2026-10-18T08:36:51.488Z"
+}

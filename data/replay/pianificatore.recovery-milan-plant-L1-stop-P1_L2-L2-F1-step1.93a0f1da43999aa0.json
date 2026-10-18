@@ -1,0 +1,8 @@
+{
+  "agent": "pianificatore",
+  "scenarioId": "recovery-milan-plant-L1-stop-P1_L2-L2-F1-step1",
+  "hash": "93a0f1da43999aa02d5945e241baaa1da7082d34509f42a44d4fe59a10879f18",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\"thought\":\"L1 is stopped due to a pump failure (MTTR 45 min) causing a huge gap. L2 is nearly on target with a small gap and has spare capacity. I need to compare repairing L1 now versus boosting L2 to recover output.\",\"tool\":\"simulate\",\"args\":{\"type\":\"repair_now\",\"line\":\"L1\",\"machine\":\"P1\"}}",
+  "recordedAt": "2026-10-18T08:36:48.324Z"
+}

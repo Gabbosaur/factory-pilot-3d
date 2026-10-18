@@ -390,7 +390,7 @@ export default function MachinePage() {
           />
         </section>
 
-        <div role="tablist" aria-label="Machine sections" className="flex gap-1 border-b border-white/10">
+        <div role="tablist" aria-label="Machine sections" data-tour="machine-tabs" className="flex gap-1 border-b border-white/10">
           {TABS.map((t) => (
             <button
               key={t.id}

@@ -2,82 +2,130 @@
   {
     "agent": "copilota",
     "scenarioId": "ask-011ebc38fe388092",
-    "hash": "8bc54d58a3f2a4e5e830af45e4e0b47b06064463bc00aedaacb4d4a5aa3c68fc",
+    "hash": "20643064638e4b123afc1c8680f557c00636075265a757bdb94840bb7acdea09",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\"answer\": \"Both lines are running at full speed with no downtime, no open incidents, and no quality holds. OEE is 99.1% on each line. Rejects are minimal: 3 total (1 at L2-C1 capper, 1 at F1 filler, 1 at L2-F2 filler). No bottleneck detected. No manual pages or past interventions were provided, so I cannot advise on causes or procedures. Missing: detailed reject reasons and maintenance history.\", \"sources\": []}",
+    "recordedAt": "2026-10-18T08:13:06.665Z"
+  },
+  {
+    "agent": "copilota",
+    "scenarioId": "ask-142df90699788373",
+    "hash": "135082e4b9d8155c3bb28dad8fd7d5a331dbe74866535b822c0c2e9a7c6b1849",
     "model": "Gemma-4-31B-IT",
-    "content": "{\"answer\": \"All lines are currently running with high OEE (99.1%) and no open incidents. However, the 'Filling & capping' clusters on both lines are the only areas reporting rejects: L1 (0.87%) and L2 (0.86%). While all machine statuses are 'verde', these clusters are the primary source of quality loss affecting FPY (99.1%).\", \"evidence\": [\"L1 OEE: 99.1%\", \"L2 OEE: 99.1%\", \"L1 Filling & capping rejectPct: 0.87%\", \"L2 Filling & capping rejectPct: 0.86%\", \"FPY: 99.1%\"], \"next_step\": \"Investigate the Filling & capping clusters on L1 and L2 to identify the cause of the ~0.8% reject rate.\", \"sources\": []}",
-    "recordedAt": "2026-10-18T07:41:16.482Z"
+    "content": "{\"answer\": \"Plant OEE is 88.1% (below target) primarily due to Line 1 (OEE 70.4%), which is currently stopped by a protective trip on pump P1. The trip was triggered by vibration (4.527 > 4.5 mm/s). Incident INC-002 identifies the cause as cavitation from air ingress via a damaged suction flange gasket. Line 2 is running (OEE 99.1%) but has a quality hold (QH-L2-001) and machine L2-F1 is bypassed to L2-F2 due to unstable supply from the feed pump (INC-001).\", \"evidence\": [\"OEE 88.1%\", \"L1 OEE 70.4%\", \"P1 vib 4.527 > 4.5\", \"INC-002\", \"L2 OEE 99.1%\", \"QH-L2-001\"], \"next_step\": \"Inspect and replace the suction flange gasket on P1, torque bolts to 45 Nm, and purge air from the casing.\", \"sources\": [{\"type\": \"manual\", \"ref\": \"P1\", \"page\": 5}, {\"type\": \"memory\", \"ref\": \"seed-p1-2026-09-22\"}]}",
+    "recordedAt": "2026-10-18T08:37:46.082Z"
   },
   {
     "agent": "copilota",
     "scenarioId": "ask-164cec86d3b67ce9",
-    "hash": "917cc014e1d100f21cbc1a7a98dd518c271c416becb872c4949c179d393f632c",
-    "model": "Gemma-4-31B-IT",
-    "content": "{\"answer\": \"Quality summary for the current shift at Imperia plant (Juice line):\\n- FPY: 99.1%\\n- Rejects: 0 bottles (though Capper C1 shows a 0.85% reject rate in cluster data)\\n- Lots on hold: None (qualityHolds list is empty)\", \"evidence\": [\"fpyPct: 99.1\", \"rejects: 0\", \"qualityHolds: []\", \"C1 rejectPct: 0.85%\"], \"next_step\": \"Monitor Capper C1 to determine why cluster reject percentage is 0.85% despite zero total rejects recorded.\", \"sources\": []}",
-    "recordedAt": "2026-10-18T07:42:37.992Z"
+    "hash": "0bb3097294dc300730a5465716d82d9d60bb798492d2b55cae27a696abd42f8b",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\n  \"answer\": \"Shift quality is excellent: FPY 99.1%, 0 rejects, 0 lots on hold. Good bottles: 37. Reject Pareto shows 0 at F1 filler and 0 at C1 capper. No open incidents, no quality holds, no downtime. OEE 99.1% (availability 100%, performance 100%).\",\n  \"evidence\": [\n    \"FPY 99.1% (line L1)\",\n    \"Rejects: 0 (plant and Pareto)\",\n    \"Quality holds: none\",\n    \"Good bottles: 37\"\n  ],\n  \"next_step\": \"No action required; continue monitoring.\",\n  \"sources\": []\n}",
+    "recordedAt": "2026-10-18T08:14:34.906Z"
+  },
+  {
+    "agent": "copilota",
+    "scenarioId": "ask-2c9aefd11d668bec",
+    "hash": "4956f676dc7f159596fccd10b1da911ebcbeefbe7e506d253736a3da8f979bf3",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\n  \"answer\": \"Quality this shift: FPY 99.1%, 7 rejects, 1 lot on hold. Line L1 FPY 99.2% (304 good, 2 rejects). Line L2 FPY 99.1% (486 good, 5 rejects). Reject Pareto: L2-C1 capper 2, F1 rotary filler 2, L2-F1 filler A 1, L2-F2 filler B 1, C1 capper 1. Quality hold QH-L2-001 (126 suspect bottles) quarantined due to L2-F1 fill rejects. Incident INC-001 open on L2-F1 (optical sensor clouded).\",\n  \"evidence\": [\n    \"FPY 99.1%, rejects 7, good bottles 790\",\n    \"L1 FPY 99.2%, rejects 2; L2 FPY 99.1%, rejects 5\",\n    \"Reject Pareto: L2-C1 2, F1 2, L2-F1 1, L2-F2 1, C1 1\",\n    \"Quality hold QH-L2-001: 126 suspect bottles, quarantined\"\n  ],\n  \"next_step\": \"Inspect and clean L2-F1 optical sensor per INC-001 action; monitor rejects after cleaning.\",\n  \"sources\": [\n    {\"type\": \"manual\", \"ref\": \"L2-F1\", \"page\": 3},\n    {\"type\": \"memory\", \"ref\": \"seed-l2f1-2026-10-01\"},\n    {\"type\": \"memory\", \"ref\": \"seed-l2f1-2026-10-05\"}\n  ]\n}",
+    "recordedAt": "2026-10-18T08:20:10.268Z"
+  },
+  {
+    "agent": "copilota",
+    "scenarioId": "ask-2fbc418659a827e6",
+    "hash": "80de07adda18d982e81d9eddc37ed7f465c236dab58f431b629ae08019cc193a",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\"answer\":\"OEE is 99% overall, slightly below target because Line 2 (L2) runs at 98.9% OEE, driven by a quality loss of 1.1% (rejectPct 1.12%) from Filler L2-F1. L2-F1 is in red status and bypassed to L2-F2; incident INC-001 (level probe sensor clouded) is queued. A quality hold QH-L2-001 quarantines 126 suspect bottles. Availability and performance are 100% on both lines, so the gap is purely quality-related on L2-F1.\",\"evidence\":[\"Plant OEE 99% vs target 100% (implied)\",\"L2 OEE 98.9%, qualityPct 98.9%, rejectPct 1.12%\",\"L2-F1 status rosso, bypassed to L2-F2\",\"INC-001 cause: level probe optical sensor clouded\",\"QH-L2-001: 126 suspect bottles quarantined\"],\"next_step\":\"Execute INC-001 action: check feed pump stability, then clean L2-F1 level probe lens with isopropyl alcohol and re-align sensor bracket.\",\"sources\":[{\"type\":\"manual\",\"ref\":\"L2-F1\",\"page\":3},{\"type\":\"memory\",\"ref\":\"seed-l2f1-2026-10-01\"},{\"type\":\"memory\",\"ref\":\"seed-l2f1-2026-10-05\"}]}",
+    "recordedAt": "2026-10-18T08:19:38.564Z"
   },
   {
     "agent": "copilota",
     "scenarioId": "ask-335414ee681b1ed7",
-    "hash": "013ed07c01673623b5b8a709672a63b216deb447c2b4d9abecdf6e10fe80478e",
+    "hash": "a5f56f68f8bb3ca3a462bfefb08dc9790a46e6474309446a4c16474d0c39f079",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\n  \"answer\": \"P1 is currently green (OK). Vibration is 1.32 mm/s (normal, warn 1.8, trip 4.5) with a rising trend of 0.082 mm/s/min, projecting trip in ~39 min. Motor current is 13.26 A (normal, warn 14.5, trip 16) with a rising trend of 0.162 A/min, projecting trip in ~16.8 min. Bearing temperature is stable. No immediate trip, but current will trip first in ~17 min if trends continue. Now: monitor current and vibration; prepare to inspect for mechanical friction or impeller rubbing (manual p.6). If current reaches 14.5 A, stop and inspect. No bypass is active.\",\n  \"evidence\": [\n    \"P1 status verde, vibration 1.32 mm/s (trend +0.082, minutesToTrip 39)\",\n    \"Motor current 13.26 A (trend +0.162, minutesToTrip 16.8)\",\n    \"Bearing temp 54.78°C (trend -0.098, no trip)\",\n    \"Trip limits: vibration 4.5 mm/s, current 16 A\"\n  ],\n  \"next_step\": \"Schedule a quick inspection of P1 within the next 15 minutes; check for mechanical friction or impeller rubbing and verify lubrication.\",\n  \"sources\": [\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 6},\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 5}\n  ]\n}",
+    "recordedAt": "2026-10-18T08:16:23.908Z"
+  },
+  {
+    "agent": "copilota",
+    "scenarioId": "ask-3b7e51cd356ea8a5",
+    "hash": "d1a6cbc1c24a623007641c1ebf84a291b88e7786ef5be85eda92ce27ba2ac338",
     "model": "Gemma-4-31B-IT",
-    "content": "{\"answer\": \"Machine P1 is currently 'verde', but if trends continue, it will trip in 16.8 minutes due to Motor current reaching the trip limit of 16 A (current trend: 0.163 A/min). Vibration is also increasing and would trip in 72.2 minutes (trip limit: 4.5 mm/s). According to the manual, high motor current is caused by mechanical friction or a rubbing impeller. You should stop the machine and inspect it.\", \"evidence\": [\"Motor current trip in 16.8 min\", \"Current trip limit: 16 A\", \"Vibration trip in 72.2 min\", \"Vibration trip limit: 4.5 mm/s\"], \"next_step\": \"Stop machine P1 and inspect for mechanical friction or rubbing impeller.\", \"sources\": [{\"type\": \"manual\", \"ref\": \"P1\", \"page\": 6}]}",
-    "recordedAt": "2026-10-18T07:43:55.353Z"
+    "content": "{\"answer\": \"Quality summary for the shift:\\n- FPY: 98.9%\\n- Total Rejects: 9 bottles (F1: 2, L2-C1: 2, C1: 2, L2-F1: 1, L2-F2: 1)\\n- Lots on Hold: 2 lots quarantined\\n  - QH-L2-001 (L2): 126 suspect bottles triggered by L2-F1 fill_rejects\\n  - QH-L1-001 (L1): 88 suspect bottles triggered by F1 flow_var\", \"evidence\": [\"fpyPct: 98.9\", \"rejects: 9\", \"QH-L2-001: 126 bottles\", \"QH-L1-001: 88 bottles\"], \"next_step\": \"Investigate L2-F1 fill-level rejects and check feed pump stability as per INC-001.\", \"sources\": []}",
+    "recordedAt": "2026-10-18T08:38:23.827Z"
   },
   {
     "agent": "copilota",
     "scenarioId": "ask-5bd6d25b1be393f5",
-    "hash": "678453e1bb7699680ab3f33e59256ea14d6fc5c6c94227847e74b600f5cc23ff",
-    "model": "Gemma-4-31B-IT",
-    "content": "{\"answer\": \"Quality summary for the current shift:\\n- FPY: 99.1%\\n- Total Rejects: 1 bottle\\n- Quality Holds: 0 lots on hold\\n\\nBoth L1 and L2 report a qualityPct of 99.1%. The Filling & capping clusters on both lines show a rejectPct of 0.86%.\", \"evidence\": [\"fpyPct: 99.1\", \"rejects: 1\", \"qualityHolds: []\"], \"next_step\": \"Monitor Filling & capping clusters to reduce the 0.86% reject rate.\", \"sources\": []}",
-    "recordedAt": "2026-10-18T07:41:27.154Z"
+    "hash": "3ade267ab4aa1a0630c24516e91dbce6d487de3638edc2596d8fbff275185655",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\"summary\": \"Plant is running at OEE 99.1%, availability and performance 100%, FPY 99.1%. 327 good bottles, 3 rejects. No open incidents, quality holds, or downtime. Reject Pareto: 1 each at L2-C1, F1, L2-F2, L2-F1; C1 has 0. All machines green, no bypasses, no bottleneck.\"}",
+    "recordedAt": "2026-10-18T08:13:11.674Z"
   },
   {
     "agent": "copilota",
     "scenarioId": "ask-6062c63c4362ab26",
-    "hash": "4eb6f8818685d7fe9a62dbeddc77d203c4e684851c15e39a492583220d5046a3",
-    "model": "Gemma-4-31B-IT",
-    "content": "{\"answer\": \"Machine P1 is currently OK. Its status is 'verde' and it is operating at 100% speed. All sensors are within nominal ranges: vibration is 1.33 mm/s (nominal 1.1-1.5), bearing temperature is 55.24 °C (nominal 53-57), and motor current is 13.08 A (nominal 12.8-13.6). There are no sensors trending in the wrong direction, as all 'trendPerMin' values are 0.\", \"evidence\": [\"status: verde\", \"speedPct: 100\", \"vib: 1.33 mm/s\", \"bearing_temp: 55.24 °C\", \"current: 13.08 A\", \"trendPerMin: 0\"], \"next_step\": \"Continue monitoring sensor trends during the shift.\", \"sources\": []}",
-    "recordedAt": "2026-10-18T07:43:22.984Z"
+    "hash": "a2ef55ba3bfbfba21de7722d7e88520593b396a8593751149635779abc0d15a7",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\n  \"answer\": \"P1 is OK: status verde, all sensors in normal zone (vibration 1.33 mm/s, bearing temp 55.24°C, current 13.08 A) with zero trend. No incidents or quality holds. No wrong-direction trend detected.\",\n  \"evidence\": [\n    \"P1 status: verde\",\n    \"Vibration 1.33 mm/s (nominal 1.1–1.5, warn 1.8)\",\n    \"Bearing temp 55.24°C (nominal 53–57, warn 70)\",\n    \"Motor current 13.08 A (nominal 12.8–13.6, warn 14.5)\",\n    \"Trends per min: 0 for all sensors\"\n  ],\n  \"next_step\": \"Continue routine monitoring; no action required.\",\n  \"sources\": [\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 5},\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 6}\n  ]\n}",
+    "recordedAt": "2026-10-18T08:15:56.715Z"
   },
   {
     "agent": "copilota",
     "scenarioId": "ask-68f4bef689ee2ff1",
-    "hash": "17c5fd69d1101a66331b365a50db774c93c1beecaacdc9c5cd32c80397921edc",
-    "model": "Gemma-4-31B-IT",
-    "content": "{\"answer\": \"The plant OEE is 99.1%, which is below the target throughput of 15,600 bottles/h (current: 15,465 bottles/h). The loss is driven entirely by Quality (FPY 99.1%), as Availability and Performance are both at 100%. Specifically, the 'Filling & capping' clusters on both lines are generating rejects: L1 has a reject rate of 0.91% and L2 has 0.84%.\", \"evidence\": [\"oeePct: 99.1\", \"throughputPerHour: 15465\", \"targetPerHour: 15600\", \"fpyPct: 99.1\", \"L1 Filling & capping rejectPct: 0.91\", \"L2 Filling & capping rejectPct: 0.84\"], \"next_step\": \"Inspect the Filling & Capping clusters on L1 and L2 to identify the cause of the quality loss.\", \"sources\": []}",
-    "recordedAt": "2026-10-18T07:41:08.903Z"
+    "hash": "6359aebd45939d37d45b928363e815cbc9792cf493ef4407db02476ca8560923",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\n  \"answer\": \"Plant OEE is 99.1%, below the 100% target due to quality losses only: FPY is 99.1% on L1 and 99.2% on L2)Skip. Availability and performance are both 100%, so no downtime or speed losses. Reject rates are 0.91% on L1 filling/capping and 0.84% on L2 filling/capping, causing the OEE gap. No incidents or quality holds are active.\",\n  \"evidence\": [\n    \"OEE 99.1% vs target 100%\",\n    \"Availability 100%, Performance 100%\",\n    \"FPY 99.1% (L1), 99.2% (L2)\",\n    \"RejectPct 0.91% (L1 F1/C1), 0.84% (L2 F1/F2/C1)\"\n  ],\n  \"next_step\": \"Inspect F1, C1, L2-F1, L2-F2, L2-C1 for capping/filling defects to reduce reject rates.\",\n  \"sources\": []\n}",
+    "recordedAt": "2026-10-18T08:13:01.421Z"
+  },
+  {
+    "agent": "copilota",
+    "scenarioId": "ask-74afb4b43fa74ca4",
+    "hash": "ec646e44da94a58356b47efee10c4a3d43ffa9894f909091a346a943a19cd07f",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\n  \"oeePct\": 99.1,\n  \"availabilityPct\": 100,\n  \"performancePct\": 100,\n  \"fpyPct\": 99.1,\n  \"goodBottles\": 769,\n  \"rejects\": 7,\n  \"throughputPerHour\": 15493,\n  \"targetPerHour\": 15600\n}",
+    "recordedAt": "2026-10-18T08:19:43.563Z"
   },
   {
     "agent": "copilota",
     "scenarioId": "ask-7b134d0e8954c5d1",
-    "hash": "9edde28f42fe126c577e85538aad998503bdd67abee3c766715540c68e3f8655",
-    "model": "Gemma-4-31B-IT",
-    "content": "{\"answer\": \"The provided data does not contain Cpk or statistical capability indices to determine if the process is 'capable' in a formal quality sense. However, machine P1 is currently in 'verde' status with all sensors within nominal ranges: vibration at 1.29 mm/s (nominal 1.1-1.5), bearing temperature at 55.08 °C (nominal 53-57), and motor current at 13.1 A (nominal 12.8-13.6). The 'Feed & pumping' cluster for L1 reports a rejectPct of 0%.\", \"evidence\": [\"P1 status: verde\", \"vib: 1.29 mm/s\", \"bearing_temp: 55.08 °C\", \"current: 13.1 A\", \"rejectPct: 0\"], \"next_step\": \"Request Cpk reports or quality control charts for product characteristics to assess process capability.\", \"sources\": []}",
-    "recordedAt": "2026-10-18T07:44:46.457Z"
+    "hash": "7be0ff9001725d0d30c4bcdafe52a1aa4eb050fb883d5f1a8d40b451ccba610e",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\n  \"answer\": \"No, process capability on product characteristics cannot be assessed from the provided data. The data covers machine P1 (centrifugal pump) with sensors (vibration, bearing temperature, motor current) all in normal zoneholidays, but no product characteristic measurements (e.g., fill volume, capping torque, CO2 content) are present. P1's status is verde, and its cluster rejectPct is 0%, but that is not a capability index. To assess capability, you need Cpk or similar data on product characteristics.\",\n  \"evidence\": [\n    \"P1 sensors: vibration 1.29 mm/s (nominal 1.1-1.5), bearing temp 54.76°C (nominal 53-57), current 13.29A (nominal 12.8-13.6) - all normal\",\n    \"P1 cluster rejectPct: 0%\",\n    \"No product characteristic data (e.g., fill volume, capping torque) in provided data\"\n  ],\n  \"next_step\": \"Request product characteristic measurements (e.g., fill volume, capping torque) and capability indices (Cpk) for P1's output to assess process capability.\",\n  \"sources\": []\n}",
+    "recordedAt": "2026-10-18T08:16:39.381Z"
   },
   {
     "agent": "copilota",
     "scenarioId": "ask-85fdca537403f24e",
-    "hash": "02ea59b1a03aa382d72044818d2c7a1b7187b95659ac38b73fd51f2077085086",
+    "hash": "8322ed6cc50f3e1f599714d17a188782c542db415346e00b00cc7ff14f60c15b",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\n  \"answer\": \"Start with Line 1, Filling & capping cluster (F1/C1): it is the only cluster with rejects (0.87%) and drives the plant FPY of 99.1%. All machines are green and running at 100%, but the filler/capper is the quality bottleneck.\",\n  \"evidence\": [\n    \"Line 1 OEE 99.1%, availability 100%, performance 100%, FPY 99.1%\",\n    \"Filling & capping cluster rejectPct 0.87% (F1/C1)\",\n    \"Feed & pumping and End of line rejectPct 0%\",\n    \"Reject Pareto: F1 and C1 each 0 bottles (no current rejects, but historical rate)\"\n  ],\n  \"next_step\": \"Monitor F1/C1 reject trend and check filler/capper settings (e.g., capping torque, fill level) to prevent quality loss.\",\n  \"sources\": []\n}",
+    "recordedAt": "2026-10-18T08:14:13.980Z"
+  },
+  {
+    "agent": "copilota",
+    "scenarioId": "ask-a489339876967900",
+    "hash": "e79abadddaf2613b54bd1b5f9006ba41698ccd0749237575ed41c4f7247fe29e",
     "model": "Gemma-4-31B-IT",
-    "content": "{\"answer\": \"All lines are running with high OEE (99.1%). However, the 'Filling & capping' cluster on L1 shows the worst relative quality with a rejectPct of 0.86%, primarily associated with the Capper (C1) and Rotary filler (F1) area, although current reject counts are 0. No critical alarms (rosso) or open incidents are reported.\", \"evidence\": [\"L1 OEE: 99.1%\", \"Filling & capping rejectPct: 0.86%\", \"Throughput: 3985/4020 bottles/h\"], \"next_step\": \"Monitor the Filling & capping cluster to identify the cause of the 0.86% reject rate.\", \"sources\": []}",
-    "recordedAt": "2026-10-18T07:42:26.693Z"
+    "content": "{\"answer\": \"Prioritize machine P1 on Line 1. L1 is currently stopped due to a protective trip on P1 (vibration 4.527 > 4.5), which exceeds the safety limit of 4.5 mm/s where there is a risk of damage. This is a high-risk incident (INC-002) with a cost of 190 Eur/min. The suspected cause is cavitation due to a damaged suction flange gasket. While L2-F1 is in 'rosso' status, it is currently bypassed to L2-F2, meaning L2 remains operational, whereas L1 is completely down.\",\"evidence\": [\"L1 state: stopped by protective trip on P1 (vib 4.527 > 4.5)\", \"INC-002 risk: alto\", \"INC-002 costPerMinEur: 190\", \"L2-F1 bypassedTo: L2-F2\"], \"next_step\": \"Inspect the suction flange gasket on P1 for damage and replace if necessary, torquing bolts to 45 Nm.\", \"sources\": [{\"type\": \"manual\", \"ref\": \"P1\", \"page\": 5}, {\"type\": \"memory\", \"ref\": \"seed-p1-2026-09-22\"}]}",
+    "recordedAt": "2026-10-18T08:37:58.684Z"
   },
   {
     "agent": "copilota",
     "scenarioId": "ask-a658c72d81d92883",
-    "hash": "e38700d6da130265df716953feabdfbba5bd1c8d32163c3c80928d02e4cb5927",
-    "model": "Gemma-4-31B-IT",
-    "content": "{\"answer\": \"The plant OEE is 99.1%, which is below the target (implied by the throughput of 3983 vs target 4020 bottles/h). The loss is driven entirely by quality (FPY 99.1%), as availability and performance are both at 100%. Specifically, the 'Filling & capping' cluster is reporting a reject rate of 0.92%.\", \"evidence\": [\"OEE: 99.1%\", \"FPY: 99.1%\", \"Throughput: 3983/4020 bottles/h\", \"Filling & capping rejectPct: 0.92%\"], \"next_step\": \"Inspect the Filling & capping cluster (F1, C1) to identify the cause of the 0.92% reject rate.\", \"sources\": []}",
-    "recordedAt": "2026-10-18T07:42:14.953Z"
+    "hash": "2ebbeebe42622c0b5e6a1d9fd78869efef36fb02d7acfc086a429b9c59bcdb74",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\"oeePct\":99.1,\"availabilityPct\":100,\"performancePct\":100,\"fpyPct\":99.1,\"goodBottles\":7,\"rejects\":0,\"throughputPerHour\":3983,\"targetPerHour\":4020}",
+    "recordedAt": "2026-10-18T08:14:03.656Z"
   },
   {
     "agent": "diagnosi",
     "scenarioId": "f1-valve",
     "hash": "e5d3516115a4ccfafe25beea71de75f02a91b698e452a1fcab5864bec2afabba",
     "model": "DeepSeek-V4-Flash",
-    "content": "{\n  \"causa_probabile\": \"Level probe optical sensor clouded with syrup/liquid splashes\",\n  \"pagina_manuale\": 3,\n  \"citazione\": \"If rejects concern a single valve, check that valve's seal (p. 4).\",\n  \"confidenza\": 0.6,\n  \"azione_raccomandata\": \"Inspect and clean the level probe optical sensor lens with isopropyl alcohol and re-align the laser sensor bracket. If rejects persist, check the filling valve seals.\",\n  \"codice_azione\": \"intervento_manutentivo\",\n  \"ricambi\": [\"RF24-L01\"]\n}",
-    "recordedAt": "2026-10-18T07:45:25.396Z"
+    "content": "{\n  \"causa_probabile\": \"Unstable supply from the feed pump upstream of the filler, causing fill-level rejects to rise on all valves simultaneously.\",\n  \"pagina_manuale\": 3,\n  \"citazione\": \"If rejects rise on ALL valves at the same time and the inlet flow oscillates, the cause is almost always upstream (unstable supply from the feed pump), not in the filler: check the feed pump before working on the valves.\",\n  \"confidenza\": 0.7,\n  \"azione_raccomandata\": \"Check the feed pump and inlet flow stability. If the feed pump is unstable, schedule maintenance or repair. Also inspect the level probe optical sensor for clouding, as past interventions show this as a recurring cause.\",\n  \"codice_azione\": \"apri_ticket\",\n  \"ricambi\": []\n}",
+    "recordedAt": "2026-10-18T08:35:26.971Z"
   },
   {
     "agent": "diagnosi",
@@ -90,66 +138,154 @@
   {
     "agent": "diagnosi",
     "scenarioId": "p1-bearing",
-    "hash": "3e574eab2b3b12c1fea5dc2f697efd4c9391b8bd61be7e15efe661badbb6e87b",
+    "hash": "55b07b98bdef919a7016444aa0855d4cd733f3e4cdf46e33b0ff68af95e43537",
     "model": "DeepSeek-V4-Flash",
-    "content": "{\n  \"causa_probabile\": \"Bearing wear or damage due to insufficient lubrication\",\n  \"pagina_manuale\": 5,\n  \"citazione\": \"A progressive increase in vibration together with a rising coupling-side bearing temperature indicates bearing wear or damage (raceways or rolling elements), often caused by insufficient lubrication.\",\n  \"confidenza\": 0.7,\n  \"azione_raccomandata\": \"Check bearing temperature and lubrication. If temperature is rising, plan a bearing replacement and coupling alignment check. If temperature is normal, inspect for impeller imbalance or cavitation.\",\n  \"codice_azione\": \"pianifica_ispezione\",\n  \"ricambi\": [\"Bearing 6309-2Z/C3 coupling side – code PC80-B01\", \"Bearing 6308-2Z/C3 non-drive side – code PC80-B02\", \"NLGI 3 lithium grease, 400 g cartridge – code LUB-L3\"]\n}",
-    "recordedAt": "2026-10-18T07:48:10.492Z"
+    "content": "{\n  \"causa_probabile\": \"Cavitation caused by air ingress through damaged suction flange gasket\",\n  \"pagina_manuale\": 5,\n  \"citazione\": \"A sudden increase without a temperature change more likely indicates impeller imbalance or cavitation.\",\n  \"confidenza\": 0.7,\n  \"azione_raccomandata\": \"Inspect the suction flange gasket for damage and replace if necessary. Torque flange bolts to 45 Nm and purge air from the pump casing. If the gasket is intact, check for other sources of air ingress and verify NPSH conditions.\",\n  \"codice_azione\": \"intervento_manutentivo\",\n  \"ricambi\": [\"Suction flange PTFE gasket\"]\n}",
+    "recordedAt": "2026-10-18T08:35:43.561Z"
   },
   {
     "agent": "pianificatore",
     "scenarioId": "recovery-imperia-plant-all-running-step0",
     "hash": "747117000b91a534dade5d642e5a10f06d1708c1a41e0c84b05498b62eb21a8c",
     "model": "DeepSeek-V4-Flash",
-    "content": "{\"thought\": \"I need to check the current situation of all lines to see if any action is worth it.\", \"tool\": \"get_situation\", \"args\": {}}",
-    "recordedAt": "2026-10-18T07:42:40.574Z"
+    "content": "{\n  \"thought\": \"I need to start by getting the current situation of all lines to assess the projection and decide if any action is needed.\",\n  \"tool\": \"get_situation\",\n  \"args\": {}\n}",
+    "recordedAt": "2026-10-18T08:14:38.391Z"
   },
   {
     "agent": "pianificatore",
     "scenarioId": "recovery-imperia-plant-all-running-step1",
-    "hash": "b7709cf383216b81674dc1a8ae013cd6fe91ad73dbf07c8d5ce0001fd0486006",
+    "hash": "b645a5a1d536dcccc67169cee4f952684dcd526f106ec1f3733c8539e0097665",
     "model": "DeepSeek-V4-Flash",
-    "content": "{\"thought\":\"Only one line is running and it is essentially on target with a 1-bottle gap, so no action is worth it.\",\"tool\":\"final\",\"args\":{\"summary\":\"Line 1 is running at 100% and projected to miss the shift target by only 1 bottle (€2). No repair, boost, or overtime action is economically justified.\",\"steps\":[]}}",
-    "recordedAt": "2026-10-18T07:42:45.164Z"
+    "content": "{\"thought\":\"The juice line is running at 100% and the projected output is only 1 bottle short of the shift target, which is negligible. I should simulate doing nothing to confirm no action is worth it.\",\"tool\":\"simulate\",\"args\":{\"type\":\"do_nothing\",\"line\":\"L1\"}}",
+    "recordedAt": "2026-10-18T08:15:15.217Z"
+  },
+  {
+    "agent": "pianificatore",
+    "scenarioId": "recovery-imperia-plant-all-running-step2",
+    "hash": "59160c5de0eb40bff1a8ac7f29ecd78f7da92197246067e814fa9e93d24d970b",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\"thought\":\"Doing nothing recovers 0 bottles and 0 eurosholars, and the gap is only 1 bottle, so no action is worth it.\",\"tool\":\"final\",\"args\":{\"summary\":\"The juice line is running at 100% and projected output is only 1 bottle short of the shift target (gap of 2 euros). Doing nothing recovers nothing, and any repair/boost/overtime would cost more than the negligible gap. No action is worth it.\",\"steps\":[{\"line\":\"L1\",\"action\":\"do_nothing\",\"extraBottles\":0,\"eurRecovered\":0,\"costEur\":0,\"netEur\":0}]}}",
+    "recordedAt": "2026-10-18T08:15:22.279Z"
+  },
+  {
+    "agent": "pianificatore",
+    "scenarioId": "recovery-milan-plant-L1-stop-P1_L2-L2-F1-step0",
+    "hash": "c83edaa6c79e3caa62b3bbf79d81d367898522a460b4ee60e784aceb3ad534f4",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\n  \"thought\": \"I need to start by getting the current situation for both lines to understand the losses and available options.\",\n  \"tool\": \"get_situation\",\n  \"args\": {}\n}",
+    "recordedAt": "2026-10-18T08:36:43.795Z"
+  },
+  {
+    "agent": "pianificatore",
+    "scenarioId": "recovery-milan-plant-L1-stop-P1_L2-L2-F1-step1",
+    "hash": "93a0f1da43999aa02d5945e241baaa1da7082d34509f42a44d4fe59a10879f18",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\"thought\":\"L1 is stopped due to a pump failure (MTTR 45 min) causing a huge gap. L2 is nearly on target with a small gap and has spare capacity. I need to compare repairing L1 now versus boosting L2 to recover output.\",\"tool\":\"simulate\",\"args\":{\"type\":\"repair_now\",\"line\":\"L1\",\"machine\":\"P1\"}}",
+    "recordedAt": "2026-10-18T08:36:48.324Z"
+  },
+  {
+    "agent": "pianificatore",
+    "scenarioId": "recovery-milan-plant-L1-stop-P1_L2-L2-F1-step2",
+    "hash": "8d716404124cb2869169670fec6358431f33a6c4139efa42952add3546c9f273",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\"thought\":\"Repairing L1 now recovers a large amount, but I should also compare boosting L2 to see if it adds more recovery.\",\"tool\":\"simulate\",\"args\":{\"type\":\"boost_other_line\",\"line\":\"L2\",\"minutes\":60}}",
+    "recordedAt": "2026-10-18T08:36:51.488Z"
+  },
+  {
+    "agent": "pianificatore",
+    "scenarioId": "recovery-milan-plant-L1-stop-P1_L2-L2-F1-step3",
+    "hash": "fe1e391db91a4d4287f4b99903b3f05a1093c28a3456f5cf137732023799e2c3",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\"thought\":\"Repairing L1 now recovers 82185€, while boosting L2 for 60 min recovers only 1440€. I should also consider repairing L1 at a later minute to see if waiting changes the net recovery, but the pump MTTR is 45 min and the shift is long, so repairing now seems best.\",\"tool\":\"simulate\",\"args\":{\"type\":\"repair_at_minute\",\"line\":\"L1\",\"machine\":\"P1\",\"minute\":30}}",
+    "recordedAt": "2026-10-18T08:36:56.780Z"
+  },
+  {
+    "agent": "pianificatore",
+    "scenarioId": "recovery-milan-plant-L1-stop-P1_L2-L2-F1-step4",
+    "hash": "616f373a287a854c06d89d6979b81bf0c07f5c405ba938cf425bd1c48718b30c",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\"thought\":\"Repairing L1 now is better than waiting 30 minutes (82185 vs 76456 net €). Boosting L2 adds only 1440 €, so the best plan is to repair L1 immediately)Skip boosting.\",\"tool\":\"final\",\"args\":{\"summary\":\"Repair L1 pump P1 immediately, recovering 82185 € and 43255 bottles. L2 is on target; no boost needed.\",\"steps\":[{\"line\":\"L1\",\"machine\":\"P1\",\"action\":\"repair_now\",\"extraBottles\":43255,\"eurRecovered\":82185,\"netEur\":82185}]}}",
+    "recordedAt": "2026-10-18T08:37:30.902Z"
+  },
+  {
+    "agent": "pianificatore",
+    "scenarioId": "recovery-milan-plant-L2-L2-F1-step0",
+    "hash": "845de129d7fd9aa82a2e5cc07d82ef2417a6616a5b195d6e0192431f033b4459",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\"thought\": \"I need to see the current situation on all lines to understand the losses and available options.\", \"tool\": \"get_situation\", \"args\": {}}",
+    "recordedAt": "2026-10-18T08:17:48.676Z"
+  },
+  {
+    "agent": "pianificatore",
+    "scenarioId": "recovery-milan-plant-L2-L2-F1-step1",
+    "hash": "1236f859789089241b6a8e680cf47a452f38cf667de2cf220c6f23f250c7fbb9",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\n  \"thought\": \"L2 has a small gap of 3 bottles and a bypassed filler (L2-F1) with 35 min MTTR. I should simulate repairing the filler now vs doing nothing to see if it recovers more output.\",\n  \"tool\": \"simulate\",\n  \"args\": {\"type\": \"repair_now\", \"line\": \"L2\", \"machine\": \"L2-F1\"}\n}",
+    "recordedAt": "2026-10-18T08:17:57.138Z"
+  },
+  {
+    "agent": "pianificatore",
+    "scenarioId": "recovery-milan-plant-L2-L2-F1-step2",
+    "hash": "39fe48b7016e1a7e69dacd024fbb7bf9bbd029c91cd2da02466b0391bbb663d8",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\"thought\":\"Repairing the filler now yields no extra bottles, so I should compare with doing nothing and possibly boosting L1 to recover the small gap.\",\"tool\":\"simulate\",\"args\":{\"type\":\"do_nothing\",\"line\":\"L2\"}}",
+    "recordedAt": "2026-10-18T08:18:00.462Z"
+  },
+  {
+    "agent": "pianificatore",
+    "scenarioId": "recovery-milan-plant-L2-L2-F1-step3",
+    "hash": "9b74bb7584fc5e0d48d3fbf2ad4d3d8c5e1c4fbdf80cd8461dcf1be3adc8ed2d",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\"thought\":\"Repairing the filler now gives no extra bottles)Skip; doing nothing also gives 0. I should simulate boosting L1 to see if it can recover the small gap.\",\"tool\":\"simulate\",\"args\":{\"type\":\"boost_other_line\",\"line\":\"L1\",\"minutes\":60}}",
+    "recordedAt": "2026-10-18T08:18:04.455Z"
+  },
+  {
+    "agent": "pianificatore",
+    "scenarioId": "recovery-milan-plant-L2-L2-F1-step4",
+    "hash": "37bcb0a210e8f59b667126dfb27a6a988fc292ac5f0fd9e15edd44d25143118c",
+    "model": "DeepSeek-V4-Flash",
+    "content": "{\"thought\":\"Boosting L1 for 60 minutes recovers 600 bottles and €1140 with no cost, which fully covers the small gap on L2. I will finalize with this plan.\",\"tool\":\"final\",\"args\":{\"summary\":\"Boost L1 at +10% for 60 minutes to recover 600 bottles (€1140 net), covering the L2 gap of 3 bottles. No repair needed on L2-F1 as it is bypassed and not causing loss.\",\"steps\":[{\"line\":\"L1\",\"action\":\"boost_other_line\",\"minutes\":60,\"extraBottles\":600,\"eurRecovered\":1140,\"costEur\":0,\"netEur\":1140}]}}",
+    "recordedAt": "2026-10-18T08:18:29.172Z"
   },
   {
     "agent": "pianificatore",
     "scenarioId": "recovery-milan-plant-all-running-step0",
     "hash": "361069f8ca6a24675d6afa12e0b528bc7fc67d75e86e8d94a9ed3d4cace120e6",
     "model": "DeepSeek-V4-Flash",
-    "content": "{\n  \"thought\": \"I need to check the current situation of all lines to see the projected output versus shift target and identify any gaps.\",\n  \"tool\": \"get_situation\",\n  \"args\": {}\n}",
-    "recordedAt": "2026-10-18T07:41:30.311Z"
+    "content": "{\"thought\": \"I need to see the current situation for all lines before deciding if any action is worth it.\", \"tool\": \"get_situation\", \"args\": {}}",
+    "recordedAt": "2026-10-18T08:13:14.089Z"
   },
   {
     "agent": "pianificatore",
     "scenarioId": "recovery-milan-plant-all-running-step1",
-    "hash": "edf8512d54f730da2813ed73d0307bb0215e1811e77494b28751713a54ea6278",
+    "hash": "5b8fcf0d4a3dd79f9723ea14d2523f0911626c65023d4f4a342aff8e9c2fa174",
     "model": "DeepSeek-V4-Flash",
-    "content": "{\"thought\":\"Both lines are running at 100% with only a 1-bottle gap each, which is negligible. I should simulate a small boost on each line to see if it can recover the gap and whether it is worth the cost.\",\"tool\":\"simulate\",\"args\":{\"type\":\"boost_other_line\",\"line\":\"L1\",\"minutes\":1}}",
-    "recordedAt": "2026-10-18T07:41:34.334Z"
+    "content": "{\n  \"thought\": \"Both lines are running at 100% with tiny gaps (1 and 2 bottles) and no faulty machines. The gaps are negligible and likely not worth any intervention, but I should simulate do_nothing to confirm the baseline and check if any action could recover the small shortfall cost-effectively.\",\n  \"tool\": \"simulate\",\n  \"args\": {\"type\": \"do_nothing\"}\n}",
+    "recordedAt": "2026-10-18T08:13:19.963Z"
   },
   {
     "agent": "pianificatore",
     "scenarioId": "recovery-milan-plant-all-running-step2",
-    "hash": "9ec3d8e2ee1cf320815f1fee62e868d365fafbbdc959053faf0d3bec5f2a4616",
+    "hash": "03386e8128cbff1170b9f619c0f77063d0da5685511641a6b36fedaefe4c53aa",
     "model": "DeepSeek-V4-Flash",
-    "content": "{\"thought\":\"Boosting L1 for 1 minute recovers 10 bottles at no cost, which covers the 1-bottle gap. I should also check L2 to see if a similar boost is worthwhile.\",\"tool\":\"simulate\",\"args\":{\"type\":\"boost_other_line\",\"line\":\"L2\",\"minutes\":1}}",
-    "recordedAt": "2026-10-18T07:41:38.136Z"
+    "content": "{\"thought\":\"The simulate tool requires a line argument even for do_nothing. I'll simulate do_nothing on L1 to get the baseline for that line, then check L2 similarly.\",\"tool\":\"simulate\",\"args\":{\"type\":\"do_nothing\",\"line\":\"L1\"}}",
+    "recordedAt": "2026-10-18T08:13:24.128Z"
   },
   {
     "agent": "pianificatore",
     "scenarioId": "recovery-milan-plant-all-running-step3",
-    "hash": "c0ef4bb294bef801db7fdc4125979b1def915b9d65259df3443d3d46c049c62d",
+    "hash": "c24ce9108f304fdf8f7ab91debb9ef40f4031a4fa94e5affacc23cf367629115",
     "model": "DeepSeek-V4-Flash",
-    "content": "{\"thought\":\"Boosting L1 for 1 minute recovers 10 bottles (net €19) and boosting L2 for 1 minute recovers 16 bottles (net €24), both covering their 1-bottle gaps at zero cost. Since both are worthwhile, I will recommend boosting both lines for 1 minute.\",\"tool\":\"final\",\"args\":{\"summary\":\"Both lines are running at 100% with a negligible 1-bottle gap each. Boosting L1 for 1 minute recovers 10 bottles (net €19) and boosting L2 for 1 minute recovers 16 bottles (net €24), both at zero cost. Recommend boosting both lines for 1 minute to fully meet shift targets.\",\"steps\":[{\"action\":\"Boost L1 for 1 minute\",\"extraBottles\":10,\"netEur\":19},{\"action\":\"Boost L2 for 1 minute\",\"extraBottles\":16,\"netEur\":24}]}}",
-    "recordedAt": "2026-10-18T07:41:46.810Z"
+    "content": "{\"thought\":\"The do_nothing baseline for L1 shows zero extra bottles and zero net euros, confirming no action is needed there. The gaps are only 1-2 bottles, far below any meaningful recovery, so I will not propose any intervention.\",\"tool\":\"final\",\"args\":{\"summary\":\"Both lines are running at 100% with negligible shortfalls (L1: 1 bottle, L2: 2 bottles) and no faulty machines. No action is worth taking as the potential recovery is essentially zero and would not justify any cost or risk.\",\"steps\":[{\"line\":\"L1\",\"action\":\"do_nothing\"},{\"line\":\"L2\",\"action\":\"do_nothing\"}]}}",
+    "recordedAt": "2026-10-18T08:13:40.513Z"
   },
   {
     "agent": "sicurezza",
     "scenarioId": "f1-valve",
-    "hash": "779ca5578183b06a15e210ecfb35a47be285c63eb6003cc33efb26fee021dff7",
+    "hash": "cfd3e130265d793b63129d79ef86bc7752af0f5328efea5140cdb53825564565",
     "model": "Gemma-4-31B-IT",
-    "content": "{\"livello_rischio\": \"alto\", \"motivazione\": \"Maintenance intervention on a filler involves potential contact with rotating parts and energized machinery.\"}",
-    "recordedAt": "2026-10-18T07:45:28.489Z"
+    "content": "{\"livello_rischio\": \"basso\", \"motivazione\": \"The immediate action is only to open a ticket, which does not involve physical interaction with the machine or dangerous operations.\"}",
+    "recordedAt": "2026-10-18T08:35:34.452Z"
   },
   {
     "agent": "sicurezza",
@@ -162,9 +298,9 @@
   {
     "agent": "sicurezza",
     "scenarioId": "p1-bearing",
-    "hash": "10cc7adeaae537dbb77c81e73ebb7365d5bbf95a1e92536974799d3a2deb40d0",
-    "model": "DeepSeek-V4-Flash",
-    "content": "{\"livello_rischio\": \"medio\", \"motivazione\": \"The action is a planned inspection, not immediate intervention. Vibration is elevated but not critical, and the action does not require approaching the machine.\"}",
-    "recordedAt": "2026-10-18T07:48:13.628Z"
+    "hash": "ae6b22fc2e9fe9c773c6d222074f21ec5d688c8ef20b6967ba2ce2748b3b2714",
+    "model": "Gemma-4-31B-IT",
+    "content": "{\"livello_rischio\": \"alto\", \"motivazione\": \"The action involves maintenance on a centrifugal pump, which contains rotating parts and pressurized fluids.\"}",
+    "recordedAt": "2026-10-18T08:35:49.970Z"
   }
 ]

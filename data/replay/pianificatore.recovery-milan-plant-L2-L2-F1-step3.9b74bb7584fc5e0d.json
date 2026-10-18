@@ -1,0 +1,8 @@
+{
+  "agent": "pianificatore",
+  "scenarioId": "recovery-milan-plant-L2-L2-F1-step3",
+  "hash": "9b74bb7584fc5e0d48d3fbf2ad4d3d8c5e1c4fbdf80cd8461dcf1be3adc8ed2d",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\"thought\":\"Repairing the filler now gives no extra bottles)Skip; doing nothing also gives 0. I should simulate boosting L1 to see if it can recover the small gap.\",\"tool\":\"simulate\",\"args\":{\"type\":\"boost_other_line\",\"line\":\"L1\",\"minutes\":60}}",
+  "recordedAt": "2026-10-18T08:18:04.455Z"
+}
