@@ -28,12 +28,12 @@ export const MODELS: Record<Agent, ModelChoice> = {
   // which keeps latency predictable ('low'/'medium' enable thinking and were measured at 16–45+ s).
   diagnosi: { primary: 'DeepSeek-V4-Flash', fallback: 'Qwen3.8-Flash-Next', fallbackReasoningEffort: 'none', maxTokens: 3000 },
   sicurezza: { primary: 'Gemma-4-31B-IT', fallback: 'DeepSeek-V4-Flash', maxTokens: 800 },
-  // Q&A over the live plant data (one call per question).
-  copilota: { primary: 'DeepSeek-V4-Flash', fallback: 'Qwen3.8-Flash-Next', fallbackReasoningEffort: 'none', maxTokens: 1200 },
+  // Q&A over the live plant data (one call per question): Gemma is the voice of FactoryPilot.
+  copilota: { primary: 'Gemma-4-31B-IT', fallback: 'DeepSeek-V4-Flash', maxTokens: 1200, timeoutMs: 35_000 },
   // Visual inspection of a product photo: Gemma is the multimodal model of the catalog.
   visione: { primary: 'Gemma-4-31B-IT', maxTokens: 800, timeoutMs: 45_000 },
-  // Recovery planner agent (Gemma: tool choice + plan), one short step per call; DeepSeek as fallback.
-  pianificatore: { primary: 'Gemma-4-31B-IT', fallback: 'DeepSeek-V4-Flash', maxTokens: 1000, timeoutMs: 40_000 },
+  // Recovery planner agent: one short tool-choice step per call (4-6 steps in a row, so the fast model).
+  pianificatore: { primary: 'DeepSeek-V4-Flash', fallback: 'Qwen3.8-Flash-Next', fallbackReasoningEffort: 'none', maxTokens: 1000 },
   // A whole factory draft: one long attempt fits the 60 s route better than two short ones that both time out.
   onboarding: { primary: 'DeepSeek-V4-Flash', fallback: 'Qwen3.8-Flash-Next', fallbackReasoningEffort: 'none', maxTokens: 3000, timeoutMs: 50_000 },
 };

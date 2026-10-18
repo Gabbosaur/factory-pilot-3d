@@ -1,8 +1,0 @@
-{
-  "agent": "pianificatore",
-  "scenarioId": "recovery-milan-plant-all-running-step2",
-  "hash": "648bf1b0ff2854fd945ec66616e3d8d920794caccb256d927ce8bc047266fef4",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\"thought\":\"Do nothing yields no recovery. I'll simulate a small boost on L1 to see if it can close the 1-bottle gap profitably.\",\"tool\":\"simulate\",\"args\":{\"type\":\"boost_other_line\",\"line\":\"L1\",\"minutes\":1}}",
-  "recordedAt": "2026-10-18T07:31:13.552Z"
-}

@@ -1,8 +1,0 @@
-{
-  "agent": "copilota",
-  "scenarioId": "ask-011ebc38fe388092",
-  "hash": "5f6d32a7f1e340d6344b1160869183a7e258adaed9209ad0324e46032bba9264",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\"answer\": \"Look first at Line 2 (L2): it has the highest throughput (9,517 bottles/h vs 5,948 on L1) and the only reject Pareto entries, all at 0 bottles but on L2 stations (L2-C1, L2-F2, L2-F1). L1 shows no rejects. Both lines are green (verde) with OEE 99.1%, no incidents or holds. Since L2 handles more volume and has the capper/fillers listed in the reject Pareto, inspect L2-C1 and L2-F1/F2 first for any emerging quality drift.\",\"sources\":[]}",
-  "recordedAt": "2026-10-18T06:50:53.738Z"
-}

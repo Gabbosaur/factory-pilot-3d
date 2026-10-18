@@ -1,8 +1,0 @@
-{
-  "agent": "sicurezza",
-  "scenarioId": "f1-valve",
-  "hash": "39bbd644afb79324b365dcce429014d1a2849675a1324708f4a9d58cc20a6205",
-  "model": "Gemma-4-31B-IT",
-  "content": "{\"livello_rischio\": \"basso\", \"motivazione\": \"The immediate action is only to open a ticket, which does not involve physical interaction with the machine or dangerous operations.\"}",
-  "recordedAt": "2026-10-18T06:54:15.254Z"
-}

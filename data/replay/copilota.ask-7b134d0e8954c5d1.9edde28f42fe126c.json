@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-7b134d0e8954c5d1",
+  "hash": "9edde28f42fe126c577e85538aad998503bdd67abee3c766715540c68e3f8655",
+  "model": "Gemma-4-31B-IT",
+  "content": "{\"answer\": \"The provided data does not contain Cpk or statistical capability indices to determine if the process is 'capable' in a formal quality sense. However, machine P1 is currently in 'verde' status with all sensors within nominal ranges: vibration at 1.29 mm/s (nominal 1.1-1.5), bearing temperature at 55.08 °C (nominal 53-57), and motor current at 13.1 A (nominal 12.8-13.6). The 'Feed & pumping' cluster for L1 reports a rejectPct of 0%.\", \"evidence\": [\"P1 status: verde\", \"vib: 1.29 mm/s\", \"bearing_temp: 55.08 °C\", \"current: 13.1 A\", \"rejectPct: 0\"], \"next_step\": \"Request Cpk reports or quality control charts for product characteristics to assess process capability.\", \"sources\": []}",
+  "recordedAt": "2026-10-18T07:44:46.457Z"
+}

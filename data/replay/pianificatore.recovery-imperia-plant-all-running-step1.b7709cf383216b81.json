@@ -1,0 +1,8 @@
+{
+  "agent": "pianificatore",
+  "scenarioId": "recovery-imperia-plant-all-running-step1",
+  "hash": "b7709cf383216b81674dc1a8ae013cd6fe91ad73dbf07c8d5ce0001fd0486006",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\"thought\":\"Only one line is running and it is essentially on target with a 1-bottle gap, so no action is worth it.\",\"tool\":\"final\",\"args\":{\"summary\":\"Line 1 is running at 100% and projected to miss the shift target by only 1 bottle (€2). No repair, boost, or overtime action is economically justified.\",\"steps\":[]}}",
+  "recordedAt": "2026-10-18T07:42:45.164Z"
+}

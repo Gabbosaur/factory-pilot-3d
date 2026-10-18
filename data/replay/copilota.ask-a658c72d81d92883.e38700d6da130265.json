@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-a658c72d81d92883",
+  "hash": "e38700d6da130265df716953feabdfbba5bd1c8d32163c3c80928d02e4cb5927",
+  "model": "Gemma-4-31B-IT",
+  "content": "{\"answer\": \"The plant OEE is 99.1%, which is below the target (implied by the throughput of 3983 vs target 4020 bottles/h). The loss is driven entirely by quality (FPY 99.1%), as availability and performance are both at 100%. Specifically, the 'Filling & capping' cluster is reporting a reject rate of 0.92%.\", \"evidence\": [\"OEE: 99.1%\", \"FPY: 99.1%\", \"Throughput: 3983/4020 bottles/h\", \"Filling & capping rejectPct: 0.92%\"], \"next_step\": \"Inspect the Filling & capping cluster (F1, C1) to identify the cause of the 0.92% reject rate.\", \"sources\": []}",
+  "recordedAt": "2026-10-18T07:42:14.953Z"
+}

@@ -1,0 +1,8 @@
+{
+  "agent": "pianificatore",
+  "scenarioId": "recovery-milan-plant-L1-stop-P1_L2-L2-F1-step1",
+  "hash": "e37a2524993620ffde8f9f4c5a797b15bef3acb79b880681b147d8cb1d4fe830",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\"thought\":\"I need to evaluate recovery options for both lines, starting with repairing the faulty machines since both lines have output gaps.\",\"tool\":\"simulate\",\"args\":{\"type\":\"repair_now\",\"line\":\"L1\",\"machine\":\"P1\"}}",
+  "recordedAt": "2026-10-18T07:49:16.400Z"
+}

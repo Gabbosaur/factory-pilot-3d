@@ -1,8 +1,0 @@
-{
-  "agent": "copilota",
-  "scenarioId": "ask-6062c63c4362ab26",
-  "hash": "a2ef55ba3bfbfba21de7722d7e88520593b396a8593751149635779abc0d15a7",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\n  \"answer\": \"P1 is OK: status verde, all sensors in normal zone (vibration 1.33 mm/s, bearing temp 55.24°C, current 13.08 A), no incidents, no quality holds. No trend is worsening: all trendPerMin values are 0. However, note the rejectPareto shows 0.92% rejects at F1 on L1, but that is not P1. P1's maintenance history shows two recent interventions (clogged impeller, cavitation) but current readings are healthy.\",\n  \"evidence\": [\n    \"P1 status: verde\",\n    \"Vibration 1.33 mm/s (nominal 1.1-1.5, warn 1.8, trip 4.5)\",\n    \"Bearing temp 55.24°C (nominal 53-57, warn 70, trip 85)\",\n    \"Motor current 13.08 A (nominal 12.8-13.6, warn 14.5, trip 16)\",\n    \"All trendPerMin = 0\"\n  ],\n  \"next_step\": \"Continue monitoring; no action required on P1. Optionally check F1 reject rate (0.92%) on L1.\",\n  \"sources\": [\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 5},\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 6},\n    {\"type\": \"memory\", \"ref\": \"seed-p1-2026-09-12\"},\n    {\"type\": \"memory\", \"ref\": \"seed-p1-2026-09-22\"}\n  ]\n}",
-  "recordedAt": "2026-10-18T06:53:12.820Z"
-}

@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-6062c63c4362ab26",
+  "hash": "4eb6f8818685d7fe9a62dbeddc77d203c4e684851c15e39a492583220d5046a3",
+  "model": "Gemma-4-31B-IT",
+  "content": "{\"answer\": \"Machine P1 is currently OK. Its status is 'verde' and it is operating at 100% speed. All sensors are within nominal ranges: vibration is 1.33 mm/s (nominal 1.1-1.5), bearing temperature is 55.24 °C (nominal 53-57), and motor current is 13.08 A (nominal 12.8-13.6). There are no sensors trending in the wrong direction, as all 'trendPerMin' values are 0.\", \"evidence\": [\"status: verde\", \"speedPct: 100\", \"vib: 1.33 mm/s\", \"bearing_temp: 55.24 °C\", \"current: 13.08 A\", \"trendPerMin: 0\"], \"next_step\": \"Continue monitoring sensor trends during the shift.\", \"sources\": []}",
+  "recordedAt": "2026-10-18T07:43:22.984Z"
+}

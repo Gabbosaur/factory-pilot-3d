@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-011ebc38fe388092",
+  "hash": "8bc54d58a3f2a4e5e830af45e4e0b47b06064463bc00aedaacb4d4a5aa3c68fc",
+  "model": "Gemma-4-31B-IT",
+  "content": "{\"answer\": \"All lines are currently running with high OEE (99.1%) and no open incidents. However, the 'Filling & capping' clusters on both lines are the only areas reporting rejects: L1 (0.87%) and L2 (0.86%). While all machine statuses are 'verde', these clusters are the primary source of quality loss affecting FPY (99.1%).\", \"evidence\": [\"L1 OEE: 99.1%\", \"L2 OEE: 99.1%\", \"L1 Filling & capping rejectPct: 0.87%\", \"L2 Filling & capping rejectPct: 0.86%\", \"FPY: 99.1%\"], \"next_step\": \"Investigate the Filling & capping clusters on L1 and L2 to identify the cause of the ~0.8% reject rate.\", \"sources\": []}",
+  "recordedAt": "2026-10-18T07:41:16.482Z"
+}

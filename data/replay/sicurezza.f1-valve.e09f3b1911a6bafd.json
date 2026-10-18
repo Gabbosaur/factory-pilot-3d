@@ -1,8 +1,0 @@
-{
-  "agent": "sicurezza",
-  "scenarioId": "f1-valve",
-  "hash": "e09f3b1911a6bafdf20162816aa516df433daec2135fafcf6438594ef0989375",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\"livello_rischio\": \"basso\", \"motivazione\": \"Action is to plan an inspection, not immediate intervention. No dangerous conditions indicated; sensor alarm is moderate, confidence is acceptable.\"}",
-  "recordedAt": "2026-10-18T07:06:49.834Z"
-}

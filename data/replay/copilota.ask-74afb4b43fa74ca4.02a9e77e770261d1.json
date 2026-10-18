@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-74afb4b43fa74ca4",
+  "hash": "02a9e77e770261d1a70e1b8426a281194e023932f16eb7b54991e62295d968d2",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\n  \"answer\": \"Line 2 is the issue: OEE 69% (target 9600 b/h, actual 4771), bottleneck Filling & capping at 50% capacity. Filler L2-F1 is in alarm (rosso) and bypassed to L2-F2; reject rate 1.11% (above 1.5% threshold per manual p.3). Incident INC-001 (high risk, escalated) suspects clouded level probe sensor; action: clean lens with isopropyl alcohol, re-align laser bracket, check valve seals. Quality hold QH-L2-001 quarantines 112 bottles. Line 1 is healthy (OEE 99.2%).\",\n  \"sources\": [\n    {\"type\": \"manual\", \"ref\": \"L2-F1\", \"page\": 3},\n    {\"type\": \"memory\", \"ref\": \"seed-l2f1-2026-10-01\"},\n    {\"type\": \"memory\", \"ref\": \"seed-l2f1-2026-10-05\"}\n  ]\n}",
+  "recordedAt": "2026-10-18T07:47:35.981Z"
+}

@@ -1,8 +1,0 @@
-{
-  "agent": "copilota",
-  "scenarioId": "ask-a658c72d81d92883",
-  "hash": "2ebbeebe42622c0b5e6a1d9fd78869efef36fb02d7acfc086a429b9c59bcdb74",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\n  \"status\": \"all green\",\n  \"oee\": 99.1,\n  \"availability\": 100,\n  \"performance\": 100,\n  \"fpy\": 99.1,\n  \"goodBottles\": 7,\n  \"rejects\": 0,\n  \"throughput\": 3983,\n  \"target\": 4020,\n  \"line\": \"L1\",\n  \"machines\": \"P1, F1, C1, K1 all verde\",\n  \"incidents\": \"none\",\n  \"qualityHolds\": \"none\",\n  \"rejectPareto\": \"F1 0, C1 0\",\n  \"bottleneck\": \"none\",\n  \"note\": \"No manual pages or past interventions provided; no safety or stop actions needed.\"\n}",
-  "recordedAt": "2026-10-18T06:51:41.182Z"
-}

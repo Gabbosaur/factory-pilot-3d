@@ -20,7 +20,7 @@ Built for the AMD Developer Hackathon ACT III – track *Intelligent Industry*.
 | Quality engineer | FPY, rejects per station, SPC charts with Cpk on product characteristics (fill level, cap torque), quality holds with AI photo sampling and a release / scrap suggestion |
 | Production / maintenance manager | Decisions waiting on the plant page, approval for risky actions, configurable autonomy per machine type |
 
-Measured on the real AMD Token Factory (17 Oct 2026): diagnosis with DeepSeek-V4-Flash in about 8 s without reasoning mode (10–45 s with reasoning enabled, so it is off), Gemma-4-31B-IT safety check in 2–13 s. Slow or failing calls switch automatically to Qwen3.8-Flash-Next.
+Measured on the real AMD Token Factory (17 Oct 2026): diagnosis with DeepSeek-V4-Flash in about 8 s without reasoning mode (10–45 s with reasoning enabled, so it is off), Gemma-4-31B-IT safety check in 2–13 s and copilot answers in 5–19 s (18 Oct 2026). Slow or failing calls switch automatically to Qwen3.8-Flash-Next.
 
 Measured in the app: time alarm → diagnosis (seconds vs a 45-minute manual-search reference), downtime and € lost per line, estimated savings, incidents handled autonomously vs escalated.
 
@@ -36,14 +36,16 @@ The plant selector in the header is the global filter. Right-click any machine f
 
 ## The AI agents
 
+Two models on AMD Token Factory, each where it fits best. **Gemma-4-31B-IT is the eyes, the conscience and the voice of FactoryPilot**: it inspects photos (the multimodal model of the catalog), judges the risk of every proposed action and answers the engineers' questions. **DeepSeek-V4-Flash** does the fast work behind the scenes: incident diagnosis, the multi-step recovery planning and onboarding drafts. Every agent has a fallback model.
+
 | Agent | What it does | Guard rails |
 | --- | --- | --- |
-| Diagnosis | Root cause, manual page with quote, action code and spare parts for each incident | The quoted page is checked against the manual; unverified ⇒ human |
-| Safety check | Rates the risk of the proposed action | High risk ⇒ always a human, whatever the autonomy level |
-| Ask FactoryPilot | Answers on the live plant JSON + manual pages and past interventions retrieved for the question (local RAG), in parallel with the **Evolus knowledge library** (RAG over the uploaded manuals and closed interventions) | Sources shown as chips: ✓ only if the page / intervention really was in the retrieved documents |
-| Recovery planner | ReAct loop in the browser: calls deterministic tools (`get_situation`, `simulate` repair now / later, boost the other line, overtime) and returns a plan with extra bottles and net € | Numbers come only from the tools; max 6 steps; the plan needs the manager's approval |
-| Visual inspection | Gemma looks at photos of sample bottles from a quarantined lot (fill level, cap, label, foreign bodies) | ≥ 3 samples before a suggestion; ≥ 20 % defects ⇒ scrap, all OK ⇒ release; a person decides |
-| Onboarding | Drafts machines, sensors, thresholds, links and 3D layout of a new line from a manual and a CSV | zod-validated draft, edited and confirmed by a person |
+| Diagnosis (DeepSeek) | Root cause, manual page with quote, action code and spare parts for each incident | The quoted page is checked against the manual; unverified ⇒ human |
+| Safety check (Gemma) | Rates the risk of the proposed action | High risk ⇒ always a human, whatever the autonomy level |
+| Ask FactoryPilot (Gemma) | Answers on the live plant JSON + manual pages and past interventions retrieved for the question (local RAG), in parallel with the **Evolus knowledge library** (RAG over the uploaded manuals and closed interventions) | Sources shown as chips: ✓ only if the page / intervention really was in the retrieved documents |
+| Recovery planner (DeepSeek) | ReAct loop in the browser: calls deterministic tools (`get_situation`, `simulate` repair now / later, boost the other line, overtime) and returns a plan with extra bottles and net € | Numbers come only from the tools; max 6 steps; the plan needs the manager's approval |
+| Visual inspection (Gemma) | Gemma looks at photos of sample bottles from a quarantined lot (fill level, cap, label, foreign bodies) | ≥ 3 samples before a suggestion; ≥ 20 % defects ⇒ scrap, all OK ⇒ release; a person decides |
+| Onboarding (DeepSeek) | Drafts machines, sensors, thresholds, links and 3D layout of a new line from a manual and a CSV | zod-validated draft, edited and confirmed by a person |
 
 What happens on the line is deterministic code:
 

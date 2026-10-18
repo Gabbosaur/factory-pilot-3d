@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-5bd6d25b1be393f5",
+  "hash": "678453e1bb7699680ab3f33e59256ea14d6fc5c6c94227847e74b600f5cc23ff",
+  "model": "Gemma-4-31B-IT",
+  "content": "{\"answer\": \"Quality summary for the current shift:\\n- FPY: 99.1%\\n- Total Rejects: 1 bottle\\n- Quality Holds: 0 lots on hold\\n\\nBoth L1 and L2 report a qualityPct of 99.1%. The Filling & capping clusters on both lines show a rejectPct of 0.86%.\", \"evidence\": [\"fpyPct: 99.1\", \"rejects: 1\", \"qualityHolds: []\"], \"next_step\": \"Monitor Filling & capping clusters to reduce the 0.86% reject rate.\", \"sources\": []}",
+  "recordedAt": "2026-10-18T07:41:27.154Z"
+}

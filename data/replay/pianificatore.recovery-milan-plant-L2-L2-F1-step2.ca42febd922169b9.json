@@ -1,0 +1,8 @@
+{
+  "agent": "pianificatore",
+  "scenarioId": "recovery-milan-plant-L2-L2-F1-step2",
+  "hash": "ca42febd922169b95a1c9162268aef6791ed6ba66aec9ef320afa4f5ad9ca0ef",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\"thought\":\"Repairing L2-F1 now recovers 35,501 bottles and €53,252 with no cost, which is a strong recovery. I'll proceed with this action.\",\"tool\":\"final\",\"args\":{\"summary\":\"Repair L2-F1 immediately on L2 to restore full capacity and recover 35,501 bottles (€53,252) by end of shift.\",\"steps\":[{\"line\":\"L2\",\"machine\":\"L2-F1\",\"action\":\"repair_now\"}]}}",
+  "recordedAt": "2026-10-18T07:46:06.468Z"
+}

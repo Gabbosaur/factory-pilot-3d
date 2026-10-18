@@ -1,8 +1,0 @@
-{
-  "agent": "sicurezza",
-  "scenarioId": "p1-bearing",
-  "hash": "b51bc23e5644272de1367a6613e4159418645d19b1b197d9dc379d28a22ac2b2",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\"livello_rischio\": \"medio\", \"motivazione\": \"Vibration exceeds threshold but action is only planning an inspection, not approaching the machine; no immediate danger.\"}",
-  "recordedAt": "2026-10-18T07:34:17.864Z"
-}

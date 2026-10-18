@@ -1,8 +1,0 @@
-{
-  "agent": "copilota",
-  "scenarioId": "ask-2c9aefd11d668bec",
-  "hash": "37518366598dd3f3416e1ec7cec5c343579e1da63121cb7bb4dbb3d6114d9a6a",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\n  \"answer\": \"FPY is 99% plant-wide; L1 at 99.2%, L2 at 98.9%. Rejects: 6 bottles total (1 each at F1, L2-F1, L2-C1, C1, L2-F2). One lot on hold: QH-L2-001 (L2, 112 suspect bottles, quarantined). L2-F1 is red, bypassed to L2-F2, with open incident INC-001 (unstable feed pump, confidence 0.7).\",\n  \"evidence\": \"L2-F1 rejectPct 1.06% (>1.5% threshold not reached, but >0.7% normal); OEE L2 67% vs L1 99.2%; bottleneck Filling & capping.\",\n  \"next_step\": \"Check L2 feed pump stability per INC-001; monitor rejects—if >3%, stop production.\",\n  \"sources\": [\n    {\"type\": \"manual\", \"ref\": \"L2-F1\", \"page\": 3},\n    {\"type\": \"memory\", \"ref\": \"seed-l2f1-2026-10-12\"}\n  ]\n}",
-  "recordedAt": "2026-10-18T06:56:38.943Z"
-}

@@ -1,8 +1,0 @@
-{
-  "agent": "sicurezza",
-  "scenarioId": "f1-valve",
-  "hash": "75845234d8558973bd0ff4abbb158647bbba4e8e5d7ed7bedcbbe0c3ab40fe42",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\"livello_rischio\": \"basso\", \"motivazione\": \"Action is opening a ticket, no immediate machine approach or hazard; sensor value not critical, diagnosis moderate confidence.\"}",
-  "recordedAt": "2026-10-18T07:32:38.589Z"
-}

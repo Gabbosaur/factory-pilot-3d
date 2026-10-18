@@ -1,8 +1,0 @@
-{
-  "agent": "copilota",
-  "scenarioId": "ask-5bd6d25b1be393f5",
-  "hash": "63942942b807246f40e5655105e19efba9c84726e4b8dd5eea856ba44c98413a",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\"answer\": \"All lines are running at 100% capacity with no incidents, quality holds, or downtime. OEE is 99.1% on both L1 and L2, with FPY 99.1%. Total good bottles: 142, rejects: 1 (0.86% reject in Filling & capping clusters). No bottleneck detected. No documents (manual pages or past interventions) were provided, so no how-to or cause analysis is possible. Missing: reject reason for the 1 bottle and any historical context.\", \"evidence\": [\"L1 OEE 99.1%, availability 100%, performance 100%, quality 99.1%\", \"L2 OEE 99.1%, availability 100%, performance 100%, quality 99.1%\", \"Reject Pareto shows 0 bottles per station, but total rejects=1\", \"No open incidents, no quality holds, no downtime Pareto\"], \"next_step\": \"Check the reject sensor log for the specific bottle to identify the reject station and cause.\", \"sources\": []}",
-  "recordedAt": "2026-10-18T06:51:07.280Z"
-}

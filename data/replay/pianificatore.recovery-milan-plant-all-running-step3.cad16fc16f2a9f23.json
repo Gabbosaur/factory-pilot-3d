@@ -1,8 +1,0 @@
-{
-  "agent": "pianificatore",
-  "scenarioId": "recovery-milan-plant-all-running-step3",
-  "hash": "cad16fc16f2a9f23e94575707b72e1b92d9e96ea3c055393020f1a14ea4274f6",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\"thought\":\"A 1-minute boost on L1 recovers 10 bottles and 19€ at no cost, which is clearly worth it. I'll also check a boost on L2 to compare.\",\"tool\":\"simulate\",\"args\":{\"type\":\"boost_other_line\",\"line\":\"L2\",\"minutes\":1}}",
-  "recordedAt": "2026-10-18T07:31:17.074Z"
-}

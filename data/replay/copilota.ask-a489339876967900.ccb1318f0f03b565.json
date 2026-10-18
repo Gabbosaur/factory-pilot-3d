@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-a489339876967900",
+  "hash": "ccb1318f0f03b565a3f06ab1f0a83493fbc81eef5517f92507637b7ed47ae276",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\"answer\": \"Look first at Line 1 (L1): it is stopped by a protective trip on pump P1 (vibration 4.526 > 4.5 mm/s) for 62s, with INC-002 open (bearing wear, confidence 0.7, cost 190 €/min). Per manual p.5, above 4.5 mm/s risk of damage — stop is correct. Then check Line 2 (L2): filler L2-F1 is bypassed to L2-F2, INC-001 open (optical sensor clouded, high risk, escalated), and quality hold QH-L2-001 quarantines 112 bottles. L1 is the priority because it is stopped; L2 is running at 50% capacity.\", \"sources\": [{\"type\": \"manual\", \"ref\": \"P1\", \"page\": 5}, {\"type\": \"manual\", \"ref\": \"L2-F1\", \"page\": 3}]}",
+  "recordedAt": "2026-10-18T07:50:18.518Z"
+}

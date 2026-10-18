@@ -1,8 +1,0 @@
-{
-  "agent": "diagnosi",
-  "scenarioId": "f1-valve",
-  "hash": "51e5b314a9a194dc3d6285ea5d77ce8eea477869fb598eae8ddc3bdf9eb7e8f5",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\n  \"causa_probabile\": \"Unstable supply from the feed pump (upstream of the filler)\",\n  \"pagina_manuale\": 3,\n  \"citazione\": \"If rejects rise on ALL valves at the same time and the inlet flow oscillates, the cause is almost always upstream (unstable supply from the feed pump), not in the filler: check the feed pump before working on the valves.\",\n  \"confidenza\": 0.7,\n  \"azione_raccomandata\": \"Check the feed pump and inlet flow stability. If the pump is unstable, schedule maintenance on the feed pump. Do not work on the filler valves yet. Monitor rejects; if they exceed 3%, stop production.\",\n  \"codice_azione\": \"apri_ticket\",\n  \"ricambi\": []\n}",
-  "recordedAt": "2026-10-18T06:54:12.298Z"
-}

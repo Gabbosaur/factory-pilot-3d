@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-3b7e51cd356ea8a5",
+  "hash": "acef87a19a9f162dd7faef583e7f36616580b125213f53fc7c79d2f467f78cbb",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\n  \"answer\": \"L1 is stopped by a protective trip on P1 (vibration 4.526 > 4.5 mm/s) for 72s; OEE 77%, availability 77.9%. P1 is in 'rosso' with open incident INC-002 (bearing wear, confidence 0.7, risk medio). Manual p.5: above 4.5 mm/s risk of damage, stop pump; p.6: rising vibration + bearing temp = worn bearing/lubrication; p.7: bearing replacement 60–90 min. L2 runs at 50% capacity, bottleneck Filling & capping; L2-F1 is bypassed to L2-F2 (INC-001, optical sensor clouded, confidence 0.6, risk alto). Quality holds: QH-L1-001 (91 bottles), QH-L2-001 (112 bottles).\",\n  \"sources\": [\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 5},\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 6},\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 7},\n    {\"type\": \"manual\", \"ref\": \"L2-F1\", \"page\": 3},\n    {\"type\": \"memory\", \"ref\": \"seed-p1-2026-09-22\"},\n    {\"type\": \"memory\", \"ref\": \"seed-l2f1-2026-10-01\"}\n  ]\n}",
+  "recordedAt": "2026-10-18T07:51:09.794Z"
+}

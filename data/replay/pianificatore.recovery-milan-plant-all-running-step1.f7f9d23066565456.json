@@ -1,8 +1,0 @@
-{
-  "agent": "pianificatore",
-  "scenarioId": "recovery-milan-plant-all-running-step1",
-  "hash": "f7f9d23066565456029745c7547e4b811f461fd116d5e3f61281cd67492ee682",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\"thought\":\"Both lines are running at 100% with only a 1-bottle gap each (2€ each). I should compare do_nothing vs a small boost to see if any action is worth it.\",\"tool\":\"simulate\",\"args\":{\"type\":\"do_nothing\",\"line\":\"L1\"}}",
-  "recordedAt": "2026-10-18T07:31:09.798Z"
-}
