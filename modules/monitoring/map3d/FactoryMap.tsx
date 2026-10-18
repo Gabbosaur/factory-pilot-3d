@@ -279,15 +279,13 @@ export default function FactoryMap({ machineIds }: { machineIds?: string[] } = {
   const causal = inc && inc.causalPath.length > 1 ? inc.causalPath : null;
   const onPath = new Set(inc?.causalPath ?? []);
 
-  // One conveyor per branch (twin fillers run in parallel); a branch through a bypassed machine carries no bottles.
-  const branches = useMemo(
+  // Bottles take the twin of a bypassed machine (automatic reroute): one flow at a time.
+  const flow = useMemo(
     () =>
-      layout.paths.map((p) => ({
-        key: p.join('>'),
-        first: p[0] ?? '',
-        off: p.some((id) => bypassed[id]),
-        points: p.filter((id) => byId.has(id)).map((id) => new THREE.Vector3(byId.get(id)!.position[0], 1, byId.get(id)!.position[2])),
-      })),
+      layout.flow
+        .map((id) => bypassed[id]?.sibling ?? id)
+        .filter((id) => byId.has(id))
+        .map((id) => new THREE.Vector3(byId.get(id)!.position[0], 1, byId.get(id)!.position[2])),
     [layout, byId, bypassed],
   );
   const span = Math.max(layout.hall.w, layout.hall.d) / 2;
@@ -337,19 +335,13 @@ export default function FactoryMap({ machineIds }: { machineIds?: string[] } = {
 
         <Hall layout={layout} />
         <FloorPlan layout={layout} />
-        {branches.map((b) => (
-          <Conveyor key={b.key} points={b.points} />
-        ))}
+        <Conveyor points={flow} />
         {layout.props.map((p, i) => (
           <SceneProp key={i} prop={p} />
         ))}
 
         {causal && <CausalPath points={causal.map((id) => center(id).add(new THREE.Vector3(0, 0.8, 0)))} moving={running && lineRunning(causal[0]!)} />}
-        {branches
-          .filter((b) => !b.off)
-          .map((b) => (
-            <Bottles key={b.key} path={b.points} speed={running && lineRunning(b.first) ? 1 : 0} count={Math.max(8, Math.round(24 / branches.length))} />
-          ))}
+        <Bottles path={flow} speed={running && lineRunning(layout.flow[0] ?? '') ? 1 : 0} />
 
         {factory.machines.map((m) => (
           <MachineMesh

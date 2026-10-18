@@ -44,8 +44,9 @@ describe('Plant metrics', () => {
     const filling = (lineIdx: number, bypassed = new Set<string>()) =>
       clusterMetrics(plant.lines[lineIdx]!, initProduction(), {}, {}, true, bypassed).find((c) => c.cluster.id === 'filling')!;
     expect(filling(0).capacityPerHour).toBe(6000); // F1 → C1 in series
-    expect(filling(1).capacityPerHour).toBe(9600); // F1 ∥ F2 (4,800 each) → C1 9,600
-    expect(filling(1, new Set(['L2-F1'])).capacityPerHour).toBe(4800);
+    expect(filling(1).capacityPerHour).toBe(9600); // F1 ∥ F2 (9,600 each, one is standby) → C1 9,600
+    expect(filling(1, new Set(['L2-F1'])).capacityPerHour).toBe(9600); // the standby twin takes over
+    expect(filling(1, new Set(['L2-F1', 'L2-F2'])).capacityPerHour).toBe(0);
     expect(filling(1, new Set(['L2-F1'])).nominalPerHour).toBe(9600);
   });
 

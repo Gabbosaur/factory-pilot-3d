@@ -1,8 +1,0 @@
-{
-  "agent": "copilota",
-  "scenarioId": "ask-2fbc418659a827e6",
-  "hash": "1e0a0623bd6384e123be0acc7e5ebbf808908020855a0b5574f14f7ce79a449a",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\n  \"answer\": \"Plant OEE is 92% vs target because Line 2 (L2) runs at 50% capacity: filler L2-F1 is bypassed to L2-F2 (red status), cutting Filling & capping capacity to 4800 b/h and performance to 88.8%. Open incident INC-001 (level probe sensor clouded) is causing fill rejects (1.39% vs 0.7% normal), with 112 bottles quarantined (QH-L2-001). Line 1 is fine (OEE 99.1%).\",\n  \"evidence\": [\n    \"Plant OEE 92%, target 15600 b/h, actual 13985 b/h\",\n    \"L2 OEE 87.5%, performance 88.8%, capacity 50%\",\n    \"L2-F1 status rosso, bypassed to L2-F2, capacity 4800 b/h\",\n    \"Reject % L2 Filling & capping 1.39%, manual threshold 1.5% investigate\",\n    \"Incident INC-001: level probe sensor clouded, risk alto\",\n    \"Quality hold QH-L2-001: 112 suspect bottles\"\n  ],\n  \"next_step\": \"Execute INC-001 action: clean L2-F1 level probe sensor lens with isopropyl alcohol and re-align laser bracket; if rejects persist, check valve seals.\",\n  \"sources\": [\n    {\"type\": \"manual\", \"ref\": \"L2-F1\", \"page\": 3},\n    {\"type\": \"memory\", \"ref\": \"seed-l2f1-2026-10-01\"},\n    {\"type\": \"memory\", \"ref\": \"seed-l2f1-2026-10-05\"}\n  ]\n}",
-  "recordedAt": "2026-10-18T07:47:23.727Z"
-}

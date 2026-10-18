@@ -54,8 +54,9 @@ export function siblingsOf(config: FactoryConfig, machineId: string): string[] {
 }
 
 /**
- * Share of the line capacity still available when some machines are bypassed: the serial line runs at
- * its weakest process step (parallel machines of the same type add up).
+ * Share of the line capacity still available when some machines are bypassed. Each process step offers the
+ * sum of its machines of that type; the line is designed for its weakest step. A standby twin (a step with
+ * spare machines) keeps the line at 100% when one machine is bypassed; parallel half-rate twins drop it.
  */
 export function capacityFactor(config: FactoryConfig, bypassed: ReadonlySet<string>): number {
   const byType = new Map<string, { total: number; available: number }>();
@@ -65,7 +66,10 @@ export function capacityFactor(config: FactoryConfig, bypassed: ReadonlySet<stri
     if (!bypassed.has(m.id)) t.available += m.partsPerMin;
     byType.set(m.type, t);
   }
-  return Math.min(1, ...[...byType.values()].map((t) => (t.total ? t.available / t.total : 1)));
+  const steps = [...byType.values()];
+  const design = Math.min(...steps.map((t) => t.total));
+  const left = Math.min(...steps.map((t) => t.available));
+  return design > 0 ? Math.min(1, left / design) : 1;
 }
 
 /** Strip the line prefix of a machine/fault id (e.g. "L2-P1" → "P1"): shared manuals, datasets, replays. */

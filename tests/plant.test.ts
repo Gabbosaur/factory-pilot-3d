@@ -43,13 +43,17 @@ describe('Plant model', () => {
     expect(m.lines[0]!.config.machines.every((x) => x.partsPerMin === 67)).toBe(true);
   });
 
-  it('finds the redundant twin filler and the capacity left when one is bypassed', () => {
+  it('finds the standby twin filler and the capacity left when one is bypassed', () => {
     expect(siblingsOf(plant, 'L2-F1')).toEqual(['L2-F2']);
     expect(siblingsOf(plant, 'F1')).toEqual([]); // line 1 has a single filler
     expect(siblingsOf(plant, 'L2-C1')).toEqual([]);
     const l2 = plantModel(plant).lines[1]!.config;
     expect(capacityFactor(l2, new Set())).toBe(1);
-    expect(capacityFactor(l2, new Set(['L2-F1']))).toBeCloseTo(0.5, 9);
+    expect(capacityFactor(l2, new Set(['L2-F1']))).toBe(1); // standby twin filler takes over at full rate
+    expect(capacityFactor(l2, new Set(['L2-F1', 'L2-F2']))).toBe(0);
+    // half-rate twins in parallel: losing one halves the line
+    const half = { ...l2, machines: l2.machines.map((m) => (m.type === 'filler' ? { ...m, partsPerMin: 80 } : m)) };
+    expect(capacityFactor(half, new Set(['L2-F1']))).toBeCloseTo(0.5, 9);
   });
 
   it('a single-line config without hierarchy fields is one line', () => {

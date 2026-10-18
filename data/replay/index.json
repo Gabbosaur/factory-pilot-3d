@@ -9,14 +9,6 @@
   },
   {
     "agent": "copilota",
-    "scenarioId": "ask-142df90699788373",
-    "hash": "cc2d0630e92b082594189a4718a8e2c45e882957b7aea9a5fd1e2cd2f35c9d94",
-    "model": "DeepSeek-V4-Flash",
-    "content": "{\n  \"answer\": \"Plant OEE is 69.7% vs target, driven by performance (74.3%) not quality (FPY 98.9%). L2 is the main drag: OEE 59.9%, bottleneck Filling & capping at 4800 bottles/h (50% capacity), with L2-F1 bypassed to L2-F2 (INC-001, optical sensor clouded). L1 adds downtime: P1 protective trip 39s (vib 4.526 > 4.5, INC-002 bearing wear). Two quality holds: QH-L2-001 (112 bottles) and QH-L1-001 (91 bottles).\",\n  \"evidence\": [\n    \"OEE 69.7%, performance 74.3%, FPY 98.9%\",\n    \"L2 OEE 59.9%, bottleneck Filling & capping capacity 4800/9600\",\n    \"L2-F1 bypassed to L2-F2, INC-001\",\n    \"L1 P1 trip 39s, vib 4.526 > 4.5, INC-002\",\n    \"QH-L2-001 112 bottles, QH-L1-001 91 bottles\"\n  ],\n  \"next_step\": \"Approve INC-001 cleaning action (escalated, high risk) and schedule P1 bearing inspection per manual p.5/6.\",\n  \"sources\": [\n    {\"type\": \"manual\", \"ref\": \"L2-F1\", \"page\": 3},\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 5},\n    {\"type\": \"memory\", \"ref\": \"seed-l2f1-2026-10-01\"},\n    {\"type\": \"memory\", \"ref\": \"seed-p1-2026-09-22\"}\n  ]\n}",
-    "recordedAt": "2026-10-18T07:50:07.955Z"
-  },
-  {
-    "agent": "copilota",
     "scenarioId": "ask-164cec86d3b67ce9",
     "hash": "917cc014e1d100f21cbc1a7a98dd518c271c416becb872c4949c179d393f632c",
     "model": "Gemma-4-31B-IT",
@@ -25,35 +17,11 @@
   },
   {
     "agent": "copilota",
-    "scenarioId": "ask-2c9aefd11d668bec",
-    "hash": "92f5419ab5a1a4fd58ea66b0a0fc58582d013319689fb4b1f99d313aaedf0df8",
-    "model": "DeepSeek-V4-Flash",
-    "content": "{\n  \"fpyPct\": 99,\n  \"rejects\": 6,\n  \"qualityHolds\": [\n    {\n      \"lot\": \"QH-L2-001\",\n      \"line\": \"L2\",\n      \"suspectBottles\": 112,\n      \"status\": \"quarantined\"\n    }\n  ],\n  \"rejectPareto\": [\n    \"L2-F1 · Filler A: 1\",\n    \"F1 · Rotary filler: 1\",\n    \"L2-C1 · Capper: 1\",\n    \"C1 · Capper: 1\",\n    \"L2-F2 · Filler B: 1\"\n  ],\n  \"notes\": \"L2-F1 is red, bypassed to L2-F2; incident INC-001 open (optical sensor). L2 reject rate 1.09% > 0.7% normal threshold.\"\n}",
-    "recordedAt": "2026-10-18T07:47:54.232Z"
-  },
-  {
-    "agent": "copilota",
-    "scenarioId": "ask-2fbc418659a827e6",
-    "hash": "1e0a0623bd6384e123be0acc7e5ebbf808908020855a0b5574f14f7ce79a449a",
-    "model": "DeepSeek-V4-Flash",
-    "content": "{\n  \"answer\": \"Plant OEE is 92% vs target because Line 2 (L2) runs at 50% capacity: filler L2-F1 is bypassed to L2-F2 (red status), cutting Filling & capping capacity to 4800 b/h and performance to 88.8%. Open incident INC-001 (level probe sensor clouded) is causing fill rejects (1.39% vs 0.7% normal), with 112 bottles quarantined (QH-L2-001). Line 1 is fine (OEE 99.1%).\",\n  \"evidence\": [\n    \"Plant OEE 92%, target 15600 b/h, actual 13985 b/h\",\n    \"L2 OEE 87.5%, performance 88.8%, capacity 50%\",\n    \"L2-F1 status rosso, bypassed to L2-F2, capacity 4800 b/h\",\n    \"Reject % L2 Filling & capping 1.39%, manual threshold 1.5% investigate\",\n    \"Incident INC-001: level probe sensor clouded, risk alto\",\n    \"Quality hold QH-L2-001: 112 suspect bottles\"\n  ],\n  \"next_step\": \"Execute INC-001 action: clean L2-F1 level probe sensor lens with isopropyl alcohol and re-align laser bracket; if rejects persist, check valve seals.\",\n  \"sources\": [\n    {\"type\": \"manual\", \"ref\": \"L2-F1\", \"page\": 3},\n    {\"type\": \"memory\", \"ref\": \"seed-l2f1-2026-10-01\"},\n    {\"type\": \"memory\", \"ref\": \"seed-l2f1-2026-10-05\"}\n  ]\n}",
-    "recordedAt": "2026-10-18T07:47:23.727Z"
-  },
-  {
-    "agent": "copilota",
     "scenarioId": "ask-335414ee681b1ed7",
     "hash": "013ed07c01673623b5b8a709672a63b216deb447c2b4d9abecdf6e10fe80478e",
     "model": "Gemma-4-31B-IT",
     "content": "{\"answer\": \"Machine P1 is currently 'verde', but if trends continue, it will trip in 16.8 minutes due to Motor current reaching the trip limit of 16 A (current trend: 0.163 A/min). Vibration is also increasing and would trip in 72.2 minutes (trip limit: 4.5 mm/s). According to the manual, high motor current is caused by mechanical friction or a rubbing impeller. You should stop the machine and inspect it.\", \"evidence\": [\"Motor current trip in 16.8 min\", \"Current trip limit: 16 A\", \"Vibration trip in 72.2 min\", \"Vibration trip limit: 4.5 mm/s\"], \"next_step\": \"Stop machine P1 and inspect for mechanical friction or rubbing impeller.\", \"sources\": [{\"type\": \"manual\", \"ref\": \"P1\", \"page\": 6}]}",
     "recordedAt": "2026-10-18T07:43:55.353Z"
-  },
-  {
-    "agent": "copilota",
-    "scenarioId": "ask-3b7e51cd356ea8a5",
-    "hash": "acef87a19a9f162dd7faef583e7f36616580b125213f53fc7c79d2f467f78cbb",
-    "model": "DeepSeek-V4-Flash",
-    "content": "{\n  \"answer\": \"L1 is stopped by a protective trip on P1 (vibration 4.526 > 4.5 mm/s) for 72s; OEE 77%, availability 77.9%. P1 is in 'rosso' with open incident INC-002 (bearing wear, confidence 0.7, risk medio). Manual p.5: above 4.5 mm/s risk of damage, stop pump; p.6: rising vibration + bearing temp = worn bearing/lubrication; p.7: bearing replacement 60–90 min. L2 runs at 50% capacity, bottleneck Filling & capping; L2-F1 is bypassed to L2-F2 (INC-001, optical sensor clouded, confidence 0.6, risk alto). Quality holds: QH-L1-001 (91 bottles), QH-L2-001 (112 bottles).\",\n  \"sources\": [\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 5},\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 6},\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 7},\n    {\"type\": \"manual\", \"ref\": \"L2-F1\", \"page\": 3},\n    {\"type\": \"memory\", \"ref\": \"seed-p1-2026-09-22\"},\n    {\"type\": \"memory\", \"ref\": \"seed-l2f1-2026-10-01\"}\n  ]\n}",
-    "recordedAt": "2026-10-18T07:51:09.794Z"
   },
   {
     "agent": "copilota",
@@ -81,14 +49,6 @@
   },
   {
     "agent": "copilota",
-    "scenarioId": "ask-74afb4b43fa74ca4",
-    "hash": "02a9e77e770261d1a70e1b8426a281194e023932f16eb7b54991e62295d968d2",
-    "model": "DeepSeek-V4-Flash",
-    "content": "{\n  \"answer\": \"Line 2 is the issue: OEE 69% (target 9600 b/h, actual 4771), bottleneck Filling & capping at 50% capacity. Filler L2-F1 is in alarm (rosso) and bypassed to L2-F2; reject rate 1.11% (above 1.5% threshold per manual p.3). Incident INC-001 (high risk, escalated) suspects clouded level probe sensor; action: clean lens with isopropyl alcohol, re-align laser bracket, check valve seals. Quality hold QH-L2-001 quarantines 112 bottles. Line 1 is healthy (OEE 99.2%).\",\n  \"sources\": [\n    {\"type\": \"manual\", \"ref\": \"L2-F1\", \"page\": 3},\n    {\"type\": \"memory\", \"ref\": \"seed-l2f1-2026-10-01\"},\n    {\"type\": \"memory\", \"ref\": \"seed-l2f1-2026-10-05\"}\n  ]\n}",
-    "recordedAt": "2026-10-18T07:47:35.981Z"
-  },
-  {
-    "agent": "copilota",
     "scenarioId": "ask-7b134d0e8954c5d1",
     "hash": "9edde28f42fe126c577e85538aad998503bdd67abee3c766715540c68e3f8655",
     "model": "Gemma-4-31B-IT",
@@ -102,14 +62,6 @@
     "model": "Gemma-4-31B-IT",
     "content": "{\"answer\": \"All lines are running with high OEE (99.1%). However, the 'Filling & capping' cluster on L1 shows the worst relative quality with a rejectPct of 0.86%, primarily associated with the Capper (C1) and Rotary filler (F1) area, although current reject counts are 0. No critical alarms (rosso) or open incidents are reported.\", \"evidence\": [\"L1 OEE: 99.1%\", \"Filling & capping rejectPct: 0.86%\", \"Throughput: 3985/4020 bottles/h\"], \"next_step\": \"Monitor the Filling & capping cluster to identify the cause of the 0.86% reject rate.\", \"sources\": []}",
     "recordedAt": "2026-10-18T07:42:26.693Z"
-  },
-  {
-    "agent": "copilota",
-    "scenarioId": "ask-a489339876967900",
-    "hash": "ccb1318f0f03b565a3f06ab1f0a83493fbc81eef5517f92507637b7ed47ae276",
-    "model": "DeepSeek-V4-Flash",
-    "content": "{\"answer\": \"Look first at Line 1 (L1): it is stopped by a protective trip on pump P1 (vibration 4.526 > 4.5 mm/s) for 62s, with INC-002 open (bearing wear, confidence 0.7, cost 190 €/min). Per manual p.5, above 4.5 mm/s risk of damage — stop is correct. Then check Line 2 (L2): filler L2-F1 is bypassed to L2-F2, INC-001 open (optical sensor clouded, high risk, escalated), and quality hold QH-L2-001 quarantines 112 bottles. L1 is the priority because it is stopped; L2 is running at 50% capacity.\", \"sources\": [{\"type\": \"manual\", \"ref\": \"P1\", \"page\": 5}, {\"type\": \"manual\", \"ref\": \"L2-F1\", \"page\": 3}]}",
-    "recordedAt": "2026-10-18T07:50:18.518Z"
   },
   {
     "agent": "copilota",
@@ -158,78 +110,6 @@
     "model": "DeepSeek-V4-Flash",
     "content": "{\"thought\":\"Only one line is running and it is essentially on target with a 1-bottle gap, so no action is worth it.\",\"tool\":\"final\",\"args\":{\"summary\":\"Line 1 is running at 100% and projected to miss the shift target by only 1 bottle (€2). No repair, boost, or overtime action is economically justified.\",\"steps\":[]}}",
     "recordedAt": "2026-10-18T07:42:45.164Z"
-  },
-  {
-    "agent": "pianificatore",
-    "scenarioId": "recovery-milan-plant-L1-stop-P1_L2-L2-F1-step0",
-    "hash": "c83edaa6c79e3caa62b3bbf79d81d367898522a460b4ee60e784aceb3ad534f4",
-    "model": "DeepSeek-V4-Flash",
-    "content": "{\n  \"thought\": \"I need to see the current plant situation before deciding on recovery actions.\",\n  \"tool\": \"get_situation\",\n  \"args\": {}\n}",
-    "recordedAt": "2026-10-18T07:49:12.865Z"
-  },
-  {
-    "agent": "pianificatore",
-    "scenarioId": "recovery-milan-plant-L1-stop-P1_L2-L2-F1-step1",
-    "hash": "e37a2524993620ffde8f9f4c5a797b15bef3acb79b880681b147d8cb1d4fe830",
-    "model": "DeepSeek-V4-Flash",
-    "content": "{\"thought\":\"I need to evaluate recovery options for both lines, starting with repairing the faulty machines since both lines have output gaps.\",\"tool\":\"simulate\",\"args\":{\"type\":\"repair_now\",\"line\":\"L1\",\"machine\":\"P1\"}}",
-    "recordedAt": "2026-10-18T07:49:16.400Z"
-  },
-  {
-    "agent": "pianificatore",
-    "scenarioId": "recovery-milan-plant-L1-stop-P1_L2-L2-F1-step2",
-    "hash": "a9801f80c63d19c0a5c429a8eedd8cfa5282543a5136e6070fa6cda5b679d301",
-    "model": "DeepSeek-V4-Flash",
-    "content": "{\"thought\":\"Repairing L1-P1 now recovers the most output, but I should also check the impact of repairing L2-F1 and possibly boosting L2. Let me simulate repairing L2-F1 now.\",\"tool\":\"simulate\",\"args\":{\"type\":\"repair_now\",\"line\":\"L2\",\"machine\":\"F1\"}}",
-    "recordedAt": "2026-10-18T07:49:20.338Z"
-  },
-  {
-    "agent": "pianificatore",
-    "scenarioId": "recovery-milan-plant-L1-stop-P1_L2-L2-F1-step3",
-    "hash": "5de42498414db2a9c7a09ef63863c61ee8cd5c14cc23a0c6dc4db41673b8f8de",
-    "model": "DeepSeek-V4-Flash",
-    "content": "{\"thought\":\"I need to use the correct machine ID for L2's faulty machine, which is L2-F1)Skip. Let me simulate repairing L2-F1 now.\",\"tool\":\"simulate\",\"args\":{\"type\":\"repair_now\",\"line\":\"L2\",\"machine\":\"L2-F1\"}}",
-    "recordedAt": "2026-10-18T07:49:25.156Z"
-  },
-  {
-    "agent": "pianificatore",
-    "scenarioId": "recovery-milan-plant-L1-stop-P1_L2-L2-F1-step4",
-    "hash": "852ea4e55f60190b179063c1743626acb0b5fef3a85725aad0dd20f991ed4d58",
-    "model": "DeepSeek-V4-Flash",
-    "content": "{\"thought\":\"Repairing L2-F1 now recovers 52,844 € with no cost)Skip, which is better than L1-P1's 81,798 €? Actually L1-P1 recovered 81,798 €, so I should prioritize L1-P1. But I need to compare both options and possibly do both. Let me simulate repairing L1-P1 now to confirm its impact.\",\"tool\":\"simulate\",\"args\":{\"type\":\"repair_now\",\"line\":\"L1\",\"machine\":\"L1-P1\"}}",
-    "recordedAt": "2026-10-18T07:49:37.159Z"
-  },
-  {
-    "agent": "pianificatore",
-    "scenarioId": "recovery-milan-plant-L1-stop-P1_L2-L2-F1-step5",
-    "hash": "b594ecfec2280b509f3f749eb8eb08c7a91db6133d61f1450f1b715e5aaabe06",
-    "model": "DeepSeek-V4-Flash",
-    "content": "{\"thought\":\"The correct faulty machine on L1 is L1-P1 per the initial observation, but the simulation rejected it, so I must rely on the valid simulation results: repairing L1-P1 now recovers 81,798 € and repairing L2-F1 now recovers 52,844 €. Since both repairs are independent and have no cost, I will do both to maximize recovery.\",\"tool\":\"final\",\"args\":{\"summary\":\"Repair L1-P1 immediately (45 min) and repair L2-F1 immediately (35 min) to recover the most output by end of shift.\",\"steps\":[{\"line\":\"L1\",\"machine\":\"L1-P1\",\"action\":\"repair_now\"},{\"line\":\"L2\",\"machine\":\"L2-F1\",\"action\":\"repair_now\"}]}}",
-    "recordedAt": "2026-10-18T07:49:45.170Z"
-  },
-  {
-    "agent": "pianificatore",
-    "scenarioId": "recovery-milan-plant-L2-L2-F1-step0",
-    "hash": "845de129d7fd9aa82a2e5cc07d82ef2417a6616a5b195d6e0192431f033b4459",
-    "model": "DeepSeek-V4-Flash",
-    "content": "{\"thought\": \"I need to start by getting the current situation for all lines to understand the losses and available options.\", \"tool\": \"get_situation\", \"args\": {}}",
-    "recordedAt": "2026-10-18T07:45:55.695Z"
-  },
-  {
-    "agent": "pianificatore",
-    "scenarioId": "recovery-milan-plant-L2-L2-F1-step1",
-    "hash": "2cc9dcfbdd9c7cdbac20dece9f44f4b6fc82c3600986f857b5d45ea36b74f79d",
-    "model": "DeepSeek-V4-Flash",
-    "content": "{\"thought\":\"L2 is running at 50% due to filler F1 bypassed, causing a large gap. I should simulate repairing L2-F1 now to see the recovery impact.\",\"tool\":\"simulate\",\"args\":{\"type\":\"repair_now\",\"line\":\"L2\",\"machine\":\"L2-F1\"}}",
-    "recordedAt": "2026-10-18T07:46:01.350Z"
-  },
-  {
-    "agent": "pianificatore",
-    "scenarioId": "recovery-milan-plant-L2-L2-F1-step2",
-    "hash": "ca42febd922169b95a1c9162268aef6791ed6ba66aec9ef320afa4f5ad9ca0ef",
-    "model": "DeepSeek-V4-Flash",
-    "content": "{\"thought\":\"Repairing L2-F1 now recovers 35,501 bottles and €53,252 with no cost, which is a strong recovery. I'll proceed with this action.\",\"tool\":\"final\",\"args\":{\"summary\":\"Repair L2-F1 immediately on L2 to restore full capacity and recover 35,501 bottles (€53,252) by end of shift.\",\"steps\":[{\"line\":\"L2\",\"machine\":\"L2-F1\",\"action\":\"repair_now\"}]}}",
-    "recordedAt": "2026-10-18T07:46:06.468Z"
   },
   {
     "agent": "pianificatore",

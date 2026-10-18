@@ -1,8 +1,0 @@
-{
-  "agent": "pianificatore",
-  "scenarioId": "recovery-milan-plant-L1-stop-P1_L2-L2-F1-step4",
-  "hash": "852ea4e55f60190b179063c1743626acb0b5fef3a85725aad0dd20f991ed4d58",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\"thought\":\"Repairing L2-F1 now recovers 52,844 € with no cost)Skip, which is better than L1-P1's 81,798 €? Actually L1-P1 recovered 81,798 €, so I should prioritize L1-P1. But I need to compare both options and possibly do both. Let me simulate repairing L1-P1 now to confirm its impact.\",\"tool\":\"simulate\",\"args\":{\"type\":\"repair_now\",\"line\":\"L1\",\"machine\":\"L1-P1\"}}",
-  "recordedAt": "2026-10-18T07:49:37.159Z"
-}

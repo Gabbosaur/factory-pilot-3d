@@ -9,6 +9,7 @@
  *   npx tsx scripts/build-data.ts
  * Needs playwright-core (npm i --no-save playwright-core). Uses the installed Edge by default.
  */
+// Excluded from the app typecheck (tsconfig): playwright-core is a local-only tool, not a dependency of the deploy.
 import { chromium, type Page } from 'playwright-core';
 
 const BASE = process.argv[2] ?? 'http://localhost:3130';

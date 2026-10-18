@@ -1,8 +1,0 @@
-{
-  "agent": "copilota",
-  "scenarioId": "ask-2c9aefd11d668bec",
-  "hash": "92f5419ab5a1a4fd58ea66b0a0fc58582d013319689fb4b1f99d313aaedf0df8",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\n  \"fpyPct\": 99,\n  \"rejects\": 6,\n  \"qualityHolds\": [\n    {\n      \"lot\": \"QH-L2-001\",\n      \"line\": \"L2\",\n      \"suspectBottles\": 112,\n      \"status\": \"quarantined\"\n    }\n  ],\n  \"rejectPareto\": [\n    \"L2-F1 · Filler A: 1\",\n    \"F1 · Rotary filler: 1\",\n    \"L2-C1 · Capper: 1\",\n    \"C1 · Capper: 1\",\n    \"L2-F2 · Filler B: 1\"\n  ],\n  \"notes\": \"L2-F1 is red, bypassed to L2-F2; incident INC-001 open (optical sensor). L2 reject rate 1.09% > 0.7% normal threshold.\"\n}",
-  "recordedAt": "2026-10-18T07:47:54.232Z"
-}

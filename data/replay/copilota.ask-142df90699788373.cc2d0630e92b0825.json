@@ -1,8 +1,0 @@
-{
-  "agent": "copilota",
-  "scenarioId": "ask-142df90699788373",
-  "hash": "cc2d0630e92b082594189a4718a8e2c45e882957b7aea9a5fd1e2cd2f35c9d94",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\n  \"answer\": \"Plant OEE is 69.7% vs target, driven by performance (74.3%) not quality (FPY 98.9%). L2 is the main drag: OEE 59.9%, bottleneck Filling & capping at 4800 bottles/h (50% capacity), with L2-F1 bypassed to L2-F2 (INC-001, optical sensor clouded). L1 adds downtime: P1 protective trip 39s (vib 4.526 > 4.5, INC-002 bearing wear). Two quality holds: QH-L2-001 (112 bottles) and QH-L1-001 (91 bottles).\",\n  \"evidence\": [\n    \"OEE 69.7%, performance 74.3%, FPY 98.9%\",\n    \"L2 OEE 59.9%, bottleneck Filling & capping capacity 4800/9600\",\n    \"L2-F1 bypassed to L2-F2, INC-001\",\n    \"L1 P1 trip 39s, vib 4.526 > 4.5, INC-002\",\n    \"QH-L2-001 112 bottles, QH-L1-001 91 bottles\"\n  ],\n  \"next_step\": \"Approve INC-001 cleaning action (escalated, high risk) and schedule P1 bearing inspection per manual p.5/6.\",\n  \"sources\": [\n    {\"type\": \"manual\", \"ref\": \"L2-F1\", \"page\": 3},\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 5},\n    {\"type\": \"memory\", \"ref\": \"seed-l2f1-2026-10-01\"},\n    {\"type\": \"memory\", \"ref\": \"seed-p1-2026-09-22\"}\n  ]\n}",
-  "recordedAt": "2026-10-18T07:50:07.955Z"
-}

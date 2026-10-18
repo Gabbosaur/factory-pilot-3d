@@ -1,0 +1,8 @@
+{
+  "agent": "diagnosi",
+  "scenarioId": "f1-valve",
+  "hash": "582f34de28e43de66f7abe6a7ced82fbb777afb949691eb7a41eb3d05070975c",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\n  \"causa_probabile\": \"Level probe optical sensor clouded with syrup/liquid splashes\",\n  \"pagina_manuale\": 3,\n  \"citazione\": \"If rejects rise on ALL valves at the same time and the inlet flow oscillates, the cause is almost always upstream (unstable supply from the feed pump), not in the filler: check the feed pump before working on the valves.\",\n  \"confidenza\": 0.7,\n  \"azione_raccomandata\": \"Check the feed pump for stable supply. If the pump is stable, inspect the level probe optical sensor on the filler; clean the lens with isopropyl alcohol and re-align the sensor bracket. If rejects persist, open a ticket for further investigation.\",\n  \"codice_azione\": \"pianifica_ispezione\",\n  \"ricambi\": []\n}",
+  "recordedAt": "2026-10-18T08:10:48.104Z"
+}

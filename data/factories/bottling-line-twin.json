@@ -35,7 +35,7 @@
       "upstream": ["P1"],
       "downstream": ["C1"],
       "downtimeCostPerMin": 70,
-      "partsPerMin": 80,
+      "partsPerMin": 160,
       "manualRef": "filler-f1",
       "sensors": [
         { "id": "fill_rejects", "name": "Fill-level rejects", "unit": "%", "nominal": [0.3, 0.7], "warn": 1.5, "crit": 3.0, "noise": 0.1 },
@@ -52,7 +52,7 @@
       "upstream": ["P1"],
       "downstream": ["C1"],
       "downtimeCostPerMin": 70,
-      "partsPerMin": 80,
+      "partsPerMin": 160,
       "manualRef": "filler-f1",
       "sensors": [
         { "id": "fill_rejects", "name": "Fill-level rejects", "unit": "%", "nominal": [0.3, 0.7], "warn": 1.5, "crit": 3.0, "noise": 0.1 },

@@ -1,8 +1,0 @@
-{
-  "agent": "pianificatore",
-  "scenarioId": "recovery-milan-plant-L1-stop-P1_L2-L2-F1-step0",
-  "hash": "c83edaa6c79e3caa62b3bbf79d81d367898522a460b4ee60e784aceb3ad534f4",
-  "model": "DeepSeek-V4-Flash",
-  "content": "{\n  \"thought\": \"I need to see the current plant situation before deciding on recovery actions.\",\n  \"tool\": \"get_situation\",\n  \"args\": {}\n}",
-  "recordedAt": "2026-10-18T07:49:12.865Z"
-}

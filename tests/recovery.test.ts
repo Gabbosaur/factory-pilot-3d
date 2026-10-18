@@ -13,7 +13,9 @@ function load(raw: unknown): FactoryConfig {
   return r.config;
 }
 
-const factory = buildPlant('p', 'Plant', [load(bottling), load(twin)]);
+// Variant of line 2 with half-rate twin fillers in parallel, so a bypass halves the line (the demo line has a standby twin).
+const halfTwin = { ...twin, machines: twin.machines.map((m) => (m.type === 'filler' ? { ...m, partsPerMin: 80 } : m)) };
+const factory = buildPlant('p', 'Plant', [load(bottling), load(halfTwin)]);
 const plant = plantModel(factory);
 const run = (cfg: FactoryConfig, sec: number) => {
   let p = initProduction();
