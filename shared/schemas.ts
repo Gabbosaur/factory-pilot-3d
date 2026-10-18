@@ -10,7 +10,7 @@ const id = z.string().min(1).max(64);
 
 export const MachineStatusSchema = z.enum(['verde', 'giallo', 'rosso']);
 export const RiskLevelSchema = z.enum(['basso', 'medio', 'alto']);
-export const AutonomyLevelSchema = z.enum(['L0', 'L1', 'L2', 'L3']);
+export const AutonomyLevelSchema = z.enum(['L0', 'L1', 'L2']);
 export const ActionCodeSchema = z.enum([
   'riduci_velocita',
   'apri_ticket',
@@ -18,7 +18,7 @@ export const ActionCodeSchema = z.enum([
   'intervento_manutentivo',
 ]);
 
-/** Low-risk, reversible actions allowed for L2/L3 execution (Req 10.6). */
+/** Low-risk, reversible actions allowed for autonomous (L2) execution (Req 10.6). */
 export const WHITELIST = ['riduci_velocita', 'apri_ticket', 'pianifica_ispezione'] as const;
 
 // ---------- Samples and alarms (Req 4) ----------

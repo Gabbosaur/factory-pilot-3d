@@ -13,7 +13,7 @@ import { parseConfigValue } from '@/modules/monitoring/config/parser';
 
 const risk = fc.constantFrom<RiskLevel>('basso', 'medio', 'alto');
 const action = fc.constantFrom('riduci_velocita', 'apri_ticket', 'pianifica_ispezione', 'intervento_manutentivo' as const);
-const level = fc.constantFrom('L0', 'L1', 'L2', 'L3' as const);
+const level = fc.constantFrom('L0', 'L1', 'L2' as const);
 const text = fc.string({ minLength: 1 }).filter((s) => s.trim().length > 0);
 const diagnosisArb: fc.Arbitrary<Diagnosis> = fc.record({
   causa_probabile: text,

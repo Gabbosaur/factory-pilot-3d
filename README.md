@@ -62,7 +62,7 @@ Simulator → Anomaly engine (z-score warning, ISO trip) ─┐
                                                     ├─ Impact € + priority
                                                     ├─ /api/diagnose ───────────► AMD Token Factory · DeepSeek-V4-Flash
                                                     ├─ /api/safety  ────────────► AMD Token Factory · Gemma-4-31B-IT
-                                                    └─ Escalation rule (code, final word) → Autonomy L0–L3
+                                                    └─ Escalation rule (code, final word) → Autonomy L0–L2
 ```
 
 - **AI only where it matters**: detection, root cause, priority, escalation, line stops, bypass and quality holds are pure code; the LLM is called at most 3 times per incident.
@@ -83,7 +83,7 @@ npm test                     # unit + property-based tests (vitest + fast-check)
 
 **New plant in 5 minutes:** *+ New plant* → upload a manual PDF (text extracted in the browser) and a sensor CSV (`machine_id, sensor_name, unit[, machine_name]`, sample in `public/onboarding-sample.csv`) → the AI drafts machines, thresholds, links and 3D layout → edit and confirm.
 
-Demo script: the plant starts producing on load → **Inject fault** → *L1 · Pump P1 bearing wear* → P1 turns yellow at once (statistical early warning), F1 follows, the causal path P1 → F1 lights up, the diagnosis cites the pump manual and Gemma rates the risk. If nobody acts, P1 crosses the ISO vibration limit after ~70 s and line 1 stops while line 2 keeps producing (protective trip, downtime counter in €, plant OEE drops); closing the approved work order repairs the pump and restarts the line. Then *Conveyor K1 motor overheating* shows an autonomous L3 action (speed reduced, undoable). *L2 · Filler A valve drift* shows the bypass: the twin filler takes over and line 2 keeps running at 50 %. With a line degraded, **Plan recovery with AI** on the Overview runs the Recovery planner; **Ask FactoryPilot** answers "Why is the plant OEE below target?" with figures and manual pages.
+Demo script: the plant starts producing on load → **Inject fault** → *L1 · Pump P1 bearing wear* → P1 turns yellow at once (statistical early warning), F1 follows, the causal path P1 → F1 lights up, the diagnosis cites the pump manual and Gemma rates the risk. If nobody acts, P1 crosses the ISO vibration limit after ~70 s and line 1 stops while line 2 keeps producing (protective trip, downtime counter in €, plant OEE drops); closing the approved work order repairs the pump and restarts the line. Then *Conveyor K1 motor overheating* shows an autonomous L2 action (speed reduced, undoable). *L2 · Filler A valve drift* shows the bypass: the twin filler takes over and line 2 keeps running at 50 %. With a line degraded, **Plan recovery with AI** on the Overview runs the Recovery planner; **Ask FactoryPilot** answers "Why is the plant OEE below target?" with figures and manual pages.
 
 **Evolus knowledge library (optional):** upload the manuals and sample interventions to an existing Evolus memory with `npx tsx --env-file=.env.local scripts/evolus-upload-docs.ts` (idempotent). Closed repairs are uploaded automatically.
 
