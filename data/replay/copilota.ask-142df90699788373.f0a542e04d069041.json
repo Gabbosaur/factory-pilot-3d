@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-142df90699788373",
+  "hash": "f0a542e04d0690410e3944447af1cb3b4a2d17b1208d658eeeddac33b20c46bd",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\"answer\":\"Plant OEE is 69.6% vs target, driven by two issues:\\n- L1 stopped 40s by protective trip on P1 (vib 4.564 > 4.5, INC-002, bearing wear risk).\\n- L2 at 50% capacity: F1 bypassed to F2 (INC-001, unstable feed pump supply), bottleneck Filling & capping at 4800 b/h vs 9600 target.\\n- Quality holds: QH-L1-001 (92 bottles), QH-L2-001 (112 bottles) from fill rejects.\\n- Rejects: F1 3, C1 2, L2-C1 2, L2-F1 1, L2-F2 1.\\n- Actions: Check P1 bearing temp (p.5/7); check L2 feed pump inlet flow (p.3).\",\"sources\":[{\"type\":\"manual\",\"ref\":\"P1\",\"page\":5},{\"type\":\"manual\",\"ref\":\"P1\",\"page\":7},{\"type\":\"manual\",\"ref\":\"L2-F1\",\"page\":3},{\"type\":\"memory\",\"ref\":\"seed-p1-2026-09-12\"}]}",
+  "recordedAt": "2026-10-18T06:59:09.402Z"
+}

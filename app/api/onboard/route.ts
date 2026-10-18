@@ -7,6 +7,7 @@
  */
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import { overLimit } from '@/server/guard';
 import { callLLM, extractJson } from '@/server/llm/client';
 import { parseConfigValue } from '@/modules/monitoring/config/parser';
 import type { FactoryConfig } from '@/shared/types';
@@ -103,6 +104,7 @@ export async function POST(req: Request) {
   const manual = b.manualText.slice(0, 20_000);
   let errors: string[] = [];
 
+  const limited = overLimit(req);
   for (let attempt = 0; attempt < 2; attempt++) {
     const user = `FACTORY NAME: ${b.factoryName}
 SENSORS (CSV machine_id,sensor_name,unit[,machine_name]):
@@ -112,7 +114,7 @@ MANUAL
 <<<
 ${manual}
 >>>${errors.length ? `\n\nTHE PREVIOUS DRAFT WAS INVALID. Fix these errors:\n${errors.join('\n')}` : ''}`;
-    const res = await callLLM({ agent: 'onboarding', scenarioId: 'onboarding', system: SYSTEM, user, replay: b.replay, deadline });
+    const res = await callLLM({ agent: 'onboarding', scenarioId: 'onboarding', system: SYSTEM, user, replay: b.replay, limited, deadline });
     if (!res.ok) return NextResponse.json(res, { status: res.retryable ? 503 : 502 });
     let value: unknown;
     try {

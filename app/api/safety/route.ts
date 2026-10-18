@@ -6,6 +6,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { DiagnosisSchema, RiskAssessmentSchema } from '@/shared/schemas';
 import type { ApiResult, RiskAssessment } from '@/shared/types';
+import { overLimit } from '@/server/guard';
 import { callLLM, extractJson } from '@/server/llm/client';
 import { SAFETY_SYSTEM, safetyUser } from '@/server/llm/prompts';
 
@@ -37,6 +38,7 @@ export async function POST(req: Request): Promise<NextResponse<ApiResult<RiskAss
     system: SAFETY_SYSTEM,
     user: safetyUser(b),
     replay: b.replay,
+    limited: overLimit(req),
     deadline,
   });
   if (!res.ok) return NextResponse.json(res, { status: res.retryable ? 503 : 502 });

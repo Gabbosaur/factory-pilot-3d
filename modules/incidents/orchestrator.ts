@@ -184,7 +184,7 @@ async function runDiagnosis(id: string, alarm: Alarm, similar: MemoryEntry[]) {
       const parsed = DiagnosisSchema.safeParse(res.data);
       if (parsed.success) {
         diagnosis = verifyCitation(parsed.data, allPages); // Req 8.5
-        addLog(id, entry('llm', `Diagnosed by ${res.meta?.model ?? 'model'}${res.meta?.replay ? ' · replay' : ''} · ${((res.meta?.latencyMs ?? 0) / 1000).toFixed(1)}s`));
+        addLog(id, entry('llm', `AI diagnosis${res.meta?.replay ? ' · replay' : ''} · ${((res.meta?.latencyMs ?? 0) / 1000).toFixed(1)}s`));
         break;
       }
     }

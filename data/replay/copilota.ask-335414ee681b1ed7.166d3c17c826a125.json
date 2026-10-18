@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-335414ee681b1ed7",
+  "hash": "166d3c17c826a125997618e59e0aae4c021406a53adfa61fec55afa329b31acd",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\n  \"answer\": \"P1 is green and stable: vibration 1.31 mm/s (trip 4.5), bearing temp 54.75°C (trip 85), current 13.1 A (trip 16). No trip is forecast; minutesToTrip are null. No action needed now. Continue monitoring; if vibration or current trends accelerate, inspect for bearing wear or impeller issues per manual.\",\n  \"evidence\": [\n    \"P1 status verde, sensors in normal zone\",\n    \"vibration 1.31 mm/s, trend +0.004 mm/s/min, trip 4.5\",\n    \"bearing temp 54.75°C, trend -0.014°C/min, trip 85\",\n    \"current 13.1 A, trend +0.018 A/min, trip 16\",\n    \"minutesToTrip null for all sensors\"\n  ],\n  \"next_step\": \"No immediate action; keep routine monitoring and check vibration/current trends at next shift.\",\n  \"sources\": [\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 5},\n    {\"type\": \"manual\", \"ref\": \"P1\", \"page\": 6}\n  ]\n}",
+  "recordedAt": "2026-10-18T06:53:24.110Z"
+}

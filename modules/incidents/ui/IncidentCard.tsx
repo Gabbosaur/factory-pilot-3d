@@ -10,6 +10,7 @@ import { formatMemoryCitation } from '../memory/filter';
 import { causeOptions, OTHER_CAUSE } from '../causes';
 import { approve, canUndo, closeWorkOrder, executeAction, reject, undoAction } from '../orchestrator';
 import type { Incident } from '@/shared/types';
+import { PhotoEvidence } from '@/modules/vision/PhotoEvidence';
 
 /** One-line headline per state, so the operator understands the card at a glance. */
 function headline(inc: Incident): { icon: string; text: string; tone: string } {
@@ -169,6 +170,7 @@ export function IncidentCard({ inc }: { inc: Incident }) {
             ↩ Undo
           </button>
         )}
+        {inc.status !== 'chiuso' && inc.status !== 'rifiutato' && <PhotoEvidence inc={inc} />}
         {(inc.status === 'approvato' || inc.status === 'autonomo') && !closing && (
           <button type="button" className="btn" onClick={() => setClosing(true)}>
             Close intervention

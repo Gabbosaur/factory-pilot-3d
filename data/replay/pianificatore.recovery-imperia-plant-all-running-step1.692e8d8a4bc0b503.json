@@ -1,0 +1,8 @@
+{
+  "agent": "pianificatore",
+  "scenarioId": "recovery-imperia-plant-all-running-step1",
+  "hash": "692e8d8a4bc0b503d1e00e4a8a3b2c0973ba7d239f08ea6d124f11ef4cf399b6",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\"thought\":\"Only one line exists and it is running at 100% with no gap, so no action is needed.\",\"tool\":\"final\",\"args\":{\"summary\":\"Line L1 is on track to meet its shift target exactly; no recovery action required.\",\"steps\":[]}}",
+  "recordedAt": "2026-10-18T07:31:38.121Z"
+}

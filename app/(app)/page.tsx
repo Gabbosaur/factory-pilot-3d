@@ -13,6 +13,8 @@ import { STATUS_DOT } from '@/modules/incidents/labels';
 import { bottleneck, clusterMetrics, downtimePareto, plantKpis, rejectPareto, type ParetoItem } from '@/modules/plant/metrics';
 import { Breadcrumb } from '@/modules/shell/Breadcrumb';
 import { QualityHolds } from '@/modules/quality/QualityHolds';
+import { AskPanel } from '@/modules/copilot/AskPanel';
+import { RecoveryPanel } from '@/modules/agent/RecoveryPanel';
 
 const int = (n: number) => Math.round(n).toLocaleString('en-GB');
 const pct = (x: number) => `${(x * 100).toFixed(1)}%`;
@@ -148,6 +150,11 @@ export default function PlantPage() {
             title="Good output / ideal output over planned time (weighted by line capacity)"
           />
         </section>
+
+        <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
+          <AskPanel />
+          <RecoveryPanel />
+        </div>
 
         {/* Lines */}
         <section aria-label="Production lines" className="grid grid-cols-1 gap-3 lg:grid-cols-2">

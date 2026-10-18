@@ -109,10 +109,36 @@ export type ApiResult<T> =
   | { ok: false; retryable: boolean; retryAfterMs?: number; error: string };
 
 export interface LlmCallMeta {
-  agent: 'diagnosi' | 'sicurezza' | 'onboarding' | 'memoria';
+  agent: 'diagnosi' | 'sicurezza' | 'onboarding' | 'memoria' | 'copilota' | 'visione' | 'pianificatore';
   model: string;
   latencyMs: number;
   inTok: number;
   outTok: number;
   replay: boolean;
+}
+
+/** Answer of "Ask FactoryPilot" (copilot over the live plant data). */
+export interface AskAnswer {
+  answer: string;
+  evidence: string[];
+  next_step: string;
+  /** Documents cited (manual pages, past interventions); verified in the browser. */
+  sources: Array<{ type: 'manual' | 'memory'; ref: string; page?: number }>;
+}
+
+/** Visual inspection of a product photo (Gemma). */
+export interface InspectionResult {
+  verdict: 'ok' | 'defect' | 'uncertain';
+  defect_type: 'none' | 'cap_missing' | 'cap_crooked' | 'cap_loose' | 'fill_low' | 'fill_high' | 'label_defect' | 'container_damage' | 'foreign_object' | 'other';
+  confidence: number;
+  observations: string[];
+  affects_quality: boolean;
+  recommended_action: string;
+}
+
+/** One step of the Recovery planner agent. */
+export interface AgentStep {
+  thought: string;
+  tool: 'get_situation' | 'simulate' | 'final';
+  args: Record<string, unknown>;
 }

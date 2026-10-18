@@ -15,6 +15,7 @@ import { LineBanner } from '@/modules/monitoring/panels/LineBanner';
 interface Health {
   amdKey: boolean;
   replayDefault: boolean;
+  evolus?: boolean;
 }
 
 // Incidents, metrics and configuration live on each machine page (filtered to that machine);
@@ -81,7 +82,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     });
   }, [pathname, router]);
 
-  const memoryLabel = 'Local';
+  const memoryLabel = health?.evolus ? 'Evolus + local' : 'Local';
 
   return (
     <div className="flex h-dvh flex-col text-slate-100">

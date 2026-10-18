@@ -31,6 +31,8 @@ export interface FactoryLayout {
   props: Prop[];
   /** Ordered machine ids along the main serial flow (source → … → sink). */
   flow: string[];
+  /** Every source → sink path: parallel machines (twin fillers) get their own branch of conveyor. */
+  paths: string[][];
 }
 
 const ZONE_COLORS: Record<string, string> = {
@@ -58,6 +60,23 @@ export function mainFlow(config: FactoryConfig): string[] {
     seen.add(m.id);
     if (out.length > 50) break;
   }
+  return out;
+}
+
+/** All source → sink paths through the machine graph (parallel machines ⇒ one path each). Capped. */
+export function flowPaths(config: FactoryConfig, max = 12): string[][] {
+  const byId = new Map(config.machines.map((m) => [m.id, m]));
+  const out: string[][] = [];
+  const walk = (id: string, path: string[]) => {
+    if (out.length >= max || path.includes(id) || path.length > 50) return;
+    const m = byId.get(id);
+    if (!m) return;
+    const next = [...path, id];
+    const down = m.downstream.filter((d) => byId.has(d));
+    if (down.length === 0) out.push(next);
+    else for (const d of down) walk(d, next);
+  };
+  for (const m of config.machines.filter((x) => x.upstream.filter((u) => byId.has(u)).length === 0)) walk(m.id, []);
   return out;
 }
 
@@ -106,5 +125,5 @@ export function computeLayout(config: FactoryConfig): FactoryLayout {
     { kind: 'office', x: minX + 3, z: frontZ, rot: 0 },
   ];
 
-  return { hall: { w, d, wallH: 4 }, zones, props, flow: mainFlow(config) };
+  return { hall: { w, d, wallH: 4 }, zones, props, flow: mainFlow(config), paths: flowPaths(config) };
 }

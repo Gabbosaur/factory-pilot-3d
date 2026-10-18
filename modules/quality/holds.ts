@@ -22,6 +22,37 @@ export interface QualityHold {
   /** Good bottles produced inside the window (they passed inspection but come from an unstable process). */
   suspect: number;
   status: HoldStatus;
+  /** Sample bottles of the lot inspected from photos (Gemma). */
+  samples?: HoldSample[];
+}
+
+export interface HoldSample {
+  id: string;
+  verdict: 'ok' | 'defect' | 'uncertain';
+  defectType: string;
+  confidence: number;
+  affectsQuality: boolean;
+  /** Small JPEG data URL for the thumbnail. */
+  thumb: string;
+  model: string;
+  replay: boolean;
+}
+
+/** Minimum inspected samples before suggesting a disposition, and defect share that suggests scrapping. */
+export const MIN_SAMPLES = 3;
+export const SCRAP_DEFECT_SHARE = 0.2;
+
+export type Disposition = { suggest: 'release' | 'scrap' | 'inspect_more'; reason: string };
+
+/** Suggested decision on a quarantined lot from its inspected samples (the decision stays with quality). */
+export function suggestDisposition(samples: readonly HoldSample[] = []): Disposition {
+  const n = samples.length;
+  const bad = samples.filter((x) => x.verdict === 'defect' || x.affectsQuality).length;
+  const unsure = samples.filter((x) => x.verdict === 'uncertain' && !x.affectsQuality).length;
+  if (n < MIN_SAMPLES) return { suggest: 'inspect_more', reason: `Inspect at least ${MIN_SAMPLES} samples (${n} so far)` };
+  if (bad / n >= SCRAP_DEFECT_SHARE) return { suggest: 'scrap', reason: `${bad}/${n} samples defective (≥ ${SCRAP_DEFECT_SHARE * 100}%)` };
+  if (unsure > 0) return { suggest: 'inspect_more', reason: `${unsure}/${n} samples uncertain: inspect more` };
+  return { suggest: 'release', reason: `${n}/${n} samples OK` };
 }
 
 export interface HoldStep {

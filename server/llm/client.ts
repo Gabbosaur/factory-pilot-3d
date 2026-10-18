@@ -7,8 +7,9 @@
  */
 import OpenAI from 'openai';
 import { findRecording, isReplayDefault, requestHash, saveRecording } from './replay';
+import { LIMIT_MESSAGE } from '@/server/guard';
 
-export type Agent = 'diagnosi' | 'sicurezza' | 'onboarding';
+export type Agent = 'diagnosi' | 'sicurezza' | 'onboarding' | 'copilota' | 'visione' | 'pianificatore';
 
 interface ModelChoice {
   primary: string;
@@ -27,6 +28,12 @@ export const MODELS: Record<Agent, ModelChoice> = {
   // which keeps latency predictable ('low'/'medium' enable thinking and were measured at 16–45+ s).
   diagnosi: { primary: 'DeepSeek-V4-Flash', fallback: 'Qwen3.8-Flash-Next', fallbackReasoningEffort: 'none', maxTokens: 3000 },
   sicurezza: { primary: 'Gemma-4-31B-IT', fallback: 'DeepSeek-V4-Flash', maxTokens: 800 },
+  // Q&A over the live plant data (one call per question).
+  copilota: { primary: 'DeepSeek-V4-Flash', fallback: 'Qwen3.8-Flash-Next', fallbackReasoningEffort: 'none', maxTokens: 1200 },
+  // Visual inspection of a product photo: Gemma is the multimodal model of the catalog.
+  visione: { primary: 'Gemma-4-31B-IT', maxTokens: 800, timeoutMs: 45_000 },
+  // Recovery planner agent (Gemma: tool choice + plan), one short step per call; DeepSeek as fallback.
+  pianificatore: { primary: 'Gemma-4-31B-IT', fallback: 'DeepSeek-V4-Flash', maxTokens: 1000, timeoutMs: 40_000 },
   // A whole factory draft: one long attempt fits the 60 s route better than two short ones that both time out.
   onboarding: { primary: 'DeepSeek-V4-Flash', fallback: 'Qwen3.8-Flash-Next', fallbackReasoningEffort: 'none', maxTokens: 3000, timeoutMs: 50_000 },
 };
@@ -37,7 +44,11 @@ export interface CallInput {
   incidentId?: string;
   system: string;
   user: string;
+  /** Optional image (data URL) sent with the user message, for multimodal models. */
+  image?: string;
   replay?: boolean;
+  /** The caller is over the rate limit (server/guard.ts): serve a recording, never a live call. */
+  limited?: boolean;
   /** Absolute epoch ms by which we must return to the browser. */
   deadline: number;
 }
@@ -139,19 +150,39 @@ export async function callLLM(input: CallInput): Promise<CallResult> {
   const { agent, scenarioId, system, user } = input;
   const messages = [
     { role: 'system' as const, content: system },
-    { role: 'user' as const, content: user },
+    input.image
+      ? { role: 'user' as const, content: [{ type: 'text' as const, text: user }, { type: 'image_url' as const, image_url: { url: input.image } }] }
+      : { role: 'user' as const, content: user },
   ];
   const replay = input.replay ?? (isReplayDefault() || !hasApiKey());
-  let model = await pickModel(agent);
+  const model = await pickModel(agent);
   const hash = requestHash(agent, model ?? MODELS[agent].primary, messages);
 
-  if (replay) {
+  if (replay || input.limited) {
     const rec = findRecording(agent, scenarioId, hash);
-    if (!rec) return { ok: false, retryable: false, error: 'No replay recording for this agent and scenario' };
+    if (!rec) return { ok: false, retryable: false, error: input.limited && !replay ? LIMIT_MESSAGE : 'No replay recording for this agent and scenario' };
     const meta: CallMeta = { agent, model: rec.model, latencyMs: 0, inTok: 0, outTok: 0, replay: true };
-    log({ ...meta, outcome: 'replay', incidentId: input.incidentId });
+    log({ ...meta, outcome: input.limited ? 'replay_rate_limited' : 'replay', incidentId: input.incidentId });
     return { ok: true, content: rec.content, meta };
   }
+  const live = await callLive(input, messages, model, hash);
+  if (live.ok || live.retryable || agent === 'onboarding') return live;
+  // The live call failed for good (quota, key, outage): a recorded answer for the same scenario keeps the demo alive.
+  const rec = findRecording(agent, scenarioId, hash);
+  if (!rec) return live;
+  const meta: CallMeta = { agent, model: rec.model, latencyMs: 0, inTok: 0, outTok: 0, replay: true };
+  log({ ...meta, outcome: 'replay_fallback', incidentId: input.incidentId });
+  return { ok: true, content: rec.content, meta };
+}
+
+async function callLive(
+  input: CallInput,
+  messages: Parameters<OpenAI['chat']['completions']['create']>[0]['messages'],
+  startModel: string | null,
+  hash: string,
+): Promise<CallResult> {
+  const { agent, scenarioId } = input;
+  let model = startModel;
 
   const c = getClient();
   if (!c) return { ok: false, retryable: false, error: 'AMD API key missing on the server' };

@@ -6,6 +6,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { AlarmSchema, DiagnosisSchema, MemoryEntrySchema } from '@/shared/schemas';
 import type { ApiResult, Diagnosis } from '@/shared/types';
+import { overLimit } from '@/server/guard';
 import { callLLM, extractJson } from '@/server/llm/client';
 import { DIAGNOSIS_SYSTEM, diagnosisUser } from '@/server/llm/prompts';
 
@@ -41,6 +42,7 @@ export async function POST(req: Request): Promise<NextResponse<ApiResult<Diagnos
     system: DIAGNOSIS_SYSTEM,
     user: diagnosisUser(b),
     replay: b.replay,
+    limited: overLimit(req),
     deadline,
   });
   if (!res.ok) return NextResponse.json(res, { status: res.retryable ? 503 : 502 });

@@ -11,6 +11,61 @@
     "isSample": true
   },
   {
+    "id": "seed-l2p1-2026-09-15",
+    "machineId": "L2-P1",
+    "machineType": "centrifugal_pump",
+    "sensorIds": ["current"],
+    "realCause": "Impeller partially clogged by filter debris, high motor current",
+    "fix": "Cleaned the impeller and replaced the suction filter cartridge",
+    "durationMin": 55,
+    "closedAt": "2026-09-15T14:30:00.000Z",
+    "isSample": true
+  },
+  {
+    "id": "seed-c1-2026-09-18",
+    "machineId": "C1",
+    "machineType": "capper",
+    "sensorIds": ["rejections", "torque_drift"],
+    "realCause": "Magnetic clutch slipping on capping head 4, causing undertorqued bottle caps",
+    "fix": "Disassembled capping head 4, replaced worn permanent magnet clutch and verified torque calibration with torque meter",
+    "durationMin": 45,
+    "closedAt": "2026-09-18T11:30:00.000Z",
+    "isSample": true
+  },
+  {
+    "id": "seed-l2c1-2026-09-20",
+    "machineId": "L2-C1",
+    "machineType": "capper",
+    "sensorIds": ["rejections", "torque_drift"],
+    "realCause": "Magnetic clutch slipping on capping head 4, causing undertorqued bottle caps",
+    "fix": "Disassembled capping head 4, replaced worn permanent magnet clutch and verified torque calibration with torque meter",
+    "durationMin": 45,
+    "closedAt": "2026-09-20T10:00:00.000Z",
+    "isSample": true
+  },
+  {
+    "id": "seed-p1-2026-09-22",
+    "machineId": "P1",
+    "machineType": "centrifugal_pump",
+    "sensorIds": ["vib", "flow_var"],
+    "realCause": "Pump cavitation caused by air ingress through damaged suction flange gasket",
+    "fix": "Replaced suction flange PTFE gasket, torqued flange bolts to 45 Nm, and purged air from pump casing",
+    "durationMin": 35,
+    "closedAt": "2026-09-22T16:15:00.000Z",
+    "isSample": true
+  },
+  {
+    "id": "seed-l2p1-2026-09-25",
+    "machineId": "L2-P1",
+    "machineType": "centrifugal_pump",
+    "sensorIds": ["vib", "flow_var"],
+    "realCause": "Pump cavitation caused by air ingress through damaged suction flange gasket",
+    "fix": "Replaced suction flange PTFE gasket, torqued flange bolts to 45 Nm, and purged air from pump casing",
+    "durationMin": 35,
+    "closedAt": "2026-09-25T11:00:00.000Z",
+    "isSample": true
+  },
+  {
     "id": "seed-k1-2026-09-28",
     "machineId": "K1",
     "machineType": "conveyor",
@@ -22,6 +77,50 @@
     "isSample": true
   },
   {
+    "id": "seed-l2k1-2026-09-29",
+    "machineId": "L2-K1",
+    "machineType": "conveyor",
+    "sensorIds": ["motor_temp", "current"],
+    "realCause": "Motor cooling fan clogged with cardboard dust",
+    "fix": "Cleaned fan and grille, temporarily reduced conveyor speed",
+    "durationMin": 20,
+    "closedAt": "2026-09-29T16:10:00.000Z",
+    "isSample": true
+  },
+  {
+    "id": "seed-f1-2026-09-30",
+    "machineId": "F1",
+    "machineType": "filler",
+    "sensorIds": ["fill_rejects", "fill_level"],
+    "realCause": "Electro-pneumatic filling valve diaphragm hardened and cracked by CIP chemical residue",
+    "fix": "Replaced EPDM valve diaphragm on station 8, flushed CIP rinse circuit, and ran 50-bottle tare calibration cycle",
+    "durationMin": 50,
+    "closedAt": "2026-09-30T09:20:00.000Z",
+    "isSample": true
+  },
+  {
+    "id": "seed-l2f1-2026-10-01",
+    "machineId": "L2-F1",
+    "machineType": "filler",
+    "sensorIds": ["fill_rejects", "fill_level"],
+    "realCause": "Electro-pneumatic filling valve diaphragm hardened and cracked by CIP chemical residue",
+    "fix": "Replaced EPDM valve diaphragm on station 8, flushed CIP rinse circuit, and ran 50-bottle tare calibration cycle",
+    "durationMin": 50,
+    "closedAt": "2026-10-01T10:15:00.000Z",
+    "isSample": true
+  },
+  {
+    "id": "seed-l2f2-2026-10-02",
+    "machineId": "L2-F2",
+    "machineType": "filler",
+    "sensorIds": ["fill_rejects", "fill_level"],
+    "realCause": "Electro-pneumatic filling valve diaphragm hardened and cracked by CIP chemical residue",
+    "fix": "Replaced EPDM valve diaphragm on station 8, flushed CIP rinse circuit, and ran 50-bottle tare calibration cycle",
+    "durationMin": 50,
+    "closedAt": "2026-10-02T16:45:00.000Z",
+    "isSample": true
+  },
+  {
     "id": "seed-f1-2026-10-03",
     "machineId": "F1",
     "machineType": "filler",
@@ -30,6 +129,105 @@
     "fix": "Replaced the filling valve seal",
     "durationMin": 40,
     "closedAt": "2026-10-03T08:45:00.000Z",
+    "isSample": true
+  },
+  {
+    "id": "seed-l2f1-2026-10-05",
+    "machineId": "L2-F1",
+    "machineType": "filler",
+    "sensorIds": ["fill_rejects", "flow_var"],
+    "realCause": "Worn seal on filling valve no. 14",
+    "fix": "Replaced the filling valve seal",
+    "durationMin": 40,
+    "closedAt": "2026-10-05T09:30:00.000Z",
+    "isSample": true
+  },
+  {
+    "id": "seed-l2f2-2026-10-06",
+    "machineId": "L2-F2",
+    "machineType": "filler",
+    "sensorIds": ["fill_rejects", "flow_var"],
+    "realCause": "Worn seal on filling valve no. 14",
+    "fix": "Replaced the filling valve seal",
+    "durationMin": 40,
+    "closedAt": "2026-10-06T11:20:00.000Z",
+    "isSample": true
+  },
+  {
+    "id": "seed-k1-2026-10-08",
+    "machineId": "K1",
+    "machineType": "conveyor",
+    "sensorIds": ["current", "motor_temp"],
+    "realCause": "Excessive belt tension and seized return roller bearing loading drive motor",
+    "fix": "Replaced 6204-2RS roller bearing, lubricated chain guide rails, and adjusted conveyor belt tension to 1.2% elongation",
+    "durationMin": 30,
+    "closedAt": "2026-10-08T15:45:00.000Z",
+    "isSample": true
+  },
+  {
+    "id": "seed-l2k1-2026-10-09",
+    "machineId": "L2-K1",
+    "machineType": "conveyor",
+    "sensorIds": ["current", "motor_temp"],
+    "realCause": "Excessive belt tension and seized return roller bearing loading drive motor",
+    "fix": "Replaced 6204-2RS roller bearing, lubricated chain guide rails, and adjusted conveyor belt tension to 1.2% elongation",
+    "durationMin": 30,
+    "closedAt": "2026-10-09T14:15:00.000Z",
+    "isSample": true
+  },
+  {
+    "id": "seed-f1-2026-10-10",
+    "machineId": "F1",
+    "machineType": "filler",
+    "sensorIds": ["fill_rejects"],
+    "realCause": "Level probe optical sensor clouded with syrup/liquid splashes",
+    "fix": "Cleaned optical sensor lens with isopropyl alcohol and re-aligned laser sensor bracket",
+    "durationMin": 15,
+    "closedAt": "2026-10-10T14:00:00.000Z",
+    "isSample": true
+  },
+  {
+    "id": "seed-l2f1-2026-10-12",
+    "machineId": "L2-F1",
+    "machineType": "filler",
+    "sensorIds": ["fill_rejects"],
+    "realCause": "Level probe optical sensor clouded with syrup/liquid splashes",
+    "fix": "Cleaned optical sensor lens with isopropyl alcohol and re-aligned laser sensor bracket",
+    "durationMin": 15,
+    "closedAt": "2026-10-12T13:10:00.000Z",
+    "isSample": true
+  },
+  {
+    "id": "seed-l2f2-2026-10-13",
+    "machineId": "L2-F2",
+    "machineType": "filler",
+    "sensorIds": ["fill_rejects"],
+    "realCause": "Level probe optical sensor clouded with syrup/liquid splashes",
+    "fix": "Cleaned optical sensor lens with isopropyl alcohol and re-aligned laser sensor bracket",
+    "durationMin": 15,
+    "closedAt": "2026-10-13T15:30:00.000Z",
+    "isSample": true
+  },
+  {
+    "id": "seed-l2c1-2026-10-14",
+    "machineId": "L2-C1",
+    "machineType": "capper",
+    "sensorIds": ["rejections"],
+    "realCause": "Cap chute feed photo-eye sensor misaligned, reporting intermittent cap starvation",
+    "fix": "Realignment of cap chute optical sensor bracket and secured vibration-dampening mount",
+    "durationMin": 20,
+    "closedAt": "2026-10-14T10:05:00.000Z",
+    "isSample": true
+  },
+  {
+    "id": "seed-c1-2026-10-15",
+    "machineId": "C1",
+    "machineType": "capper",
+    "sensorIds": ["rejections"],
+    "realCause": "Cap chute feed photo-eye sensor misaligned, reporting intermittent cap starvation",
+    "fix": "Realignment of cap chute optical sensor bracket and secured vibration-dampening mount",
+    "durationMin": 20,
+    "closedAt": "2026-10-15T09:40:00.000Z",
     "isSample": true
   }
 ]

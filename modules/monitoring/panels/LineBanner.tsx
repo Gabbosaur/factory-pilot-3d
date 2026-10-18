@@ -28,11 +28,14 @@ export function LineBanner() {
           return (
             <div key={id} className="flex flex-wrap items-center gap-x-4 gap-y-1 px-3 py-1.5">
               <strong className="text-amber-300">↪ {b.lineId} REROUTED</strong>
+              <span className="pill bg-emerald-500/15 text-emerald-300 ring-1 ring-inset ring-emerald-500/30" title="Rerouting to a healthy twin is a protection rule in code, like the protective stop: it runs without waiting for approval, whatever the autonomy level">
+                ⚡ Automatic · full autonomy
+              </span>
               <span>
                 <strong>{id}</strong> {machine?.name} bypassed ({sensor?.name ?? b.sensorId} {b.value} {sensor?.unit} above {b.threshold}): flow diverted to <strong>{b.sibling}</strong>
               </span>
               <span className="font-mono text-amber-300">line at {pct}% capacity</span>
-              <span className="ml-auto text-xs text-amber-200/80">Close the repair on {id} to put it back in the flow.</span>
+              <span className="ml-auto text-xs text-amber-200/80">Done automatically, no approval needed. Close the repair on {id} to put it back in the flow.</span>
             </div>
           );
         })}

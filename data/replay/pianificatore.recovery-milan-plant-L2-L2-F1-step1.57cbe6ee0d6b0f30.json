@@ -1,0 +1,8 @@
+{
+  "agent": "pianificatore",
+  "scenarioId": "recovery-milan-plant-L2-L2-F1-step1",
+  "hash": "57cbe6ee0d6b0f301864e7239457b019f3537e6fba24fbc3427e4c9a4bf16cf9",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\"thought\":\"L2 is running at 50% with filler F1 bypassed for 35 minutes, causing a large gap. I'll simulate repairing F1 now to see the recovery.\",\"tool\":\"simulate\",\"args\":{\"type\":\"repair_now\",\"line\":\"L2\",\"machine\":\"L2-F1\"}}",
+  "recordedAt": "2026-10-18T07:33:47.359Z"
+}

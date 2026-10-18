@@ -1,0 +1,8 @@
+{
+  "agent": "diagnosi",
+  "scenarioId": "p1-bearing",
+  "hash": "051202e89b3127dd4cdf884ef49297d389a0ccc6fe4614609f4cc2ea64e287c8",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\n  \"causa_probabile\": \"Bearing wear or damage due to insufficient lubrication\",\n  \"pagina_manuale\": 5,\n  \"citazione\": \"A progressive increase in vibration together with a rising coupling-side bearing temperature indicates bearing wear or damage (raceways or rolling elements), often caused by insufficient lubrication.\",\n  \"confidenza\": 0.7,\n  \"azione_raccomandata\": \"Check bearing temperature trend; if rising, plan a maintenance intervention to replace the bearing (see p. 7) and check coupling alignment. If temperature is stable, monitor vibration and schedule inspection for impeller imbalance or cavitation.\",\n  \"codice_azione\": \"pianifica_ispezione\",\n  \"ricambi\": [\"Bearing 6309-2Z/C3 coupling side – code PC80-B01\", \"Bearing 6308-2Z/C3 non-drive side – code PC80-B02\", \"NLGI 3 lithium grease, 400 g cartridge – code LUB-L3\"]\n}",
+  "recordedAt": "2026-10-18T06:58:00.173Z"
+}

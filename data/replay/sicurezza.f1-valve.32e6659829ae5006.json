@@ -1,0 +1,8 @@
+{
+  "agent": "sicurezza",
+  "scenarioId": "f1-valve",
+  "hash": "32e6659829ae5006a1db810d51e01cd350b2d97590ccb894008ff66b54e38600",
+  "model": "Gemma-4-31B-IT",
+  "content": "{\"livello_rischio\": \"alto\", \"motivazione\": \"Maintenance intervention on a filler involves potential contact with rotating parts and energized machinery.\"}",
+  "recordedAt": "2026-10-18T07:25:12.528Z"
+}

@@ -1,0 +1,8 @@
+{
+  "agent": "sicurezza",
+  "scenarioId": "p1-bearing",
+  "hash": "9e0a27a0523c885c4500165a906f74cb31a0009465ddfd2228e4c31376696519",
+  "model": "Gemma-4-31B-IT",
+  "content": "{\"livello_rischio\": \"basso\", \"motivazione\": \"The action is only to schedule an inspection and does not involve immediate physical intervention on the running machine.\"}",
+  "recordedAt": "2026-10-18T06:58:05.453Z"
+}

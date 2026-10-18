@@ -1,0 +1,8 @@
+{
+  "agent": "copilota",
+  "scenarioId": "ask-74afb4b43fa74ca4",
+  "hash": "6ebcf44d93bf4630920f0377389abacc56230874415ff1370a23ed6c1722f106",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\n  \"answer\": \"Look first at Line 2 (L2), specifically filler L2-F1. It is in red alarm, bypassed to L2-F2, and is the bottleneck (capacity 4800 vs 9600 target). OEE is 69.6% vs L1's 99.2%. Incident INC-001 (confidence 0.7) and quality hold QH-L2-001 (112 suspect bottles) are open. Manual says check feed pump first, not valves.\",\n  \"evidence\": [\n    \"L2 OEE 69.6%, performance 70.4%, bottleneck 'Filling & capping'\",\n    \"L2-F1 status rosso, bypassed to L2-F2, capacity 4800\",\n    \"INC-001: cause 'Unstable supply from feed pump', action check pump\",\n    \"QH-L2-001: 112 suspect bottles quarantined\",\n    \"Manual p.3: rejects >1.5% investigate, >3% stop; check feed pump if all valves\"\n  ],\n  \"next_step\": \"Check L2 feed pump L2-P1 inlet flow stability; if unstable, schedule maintenance per INC-001.\",\n  \"sources\": [\n    {\"type\": \"manual\", \"ref\": \"L2-F1\", \"page\": 3},\n    {\"type\": \"memory\", \"ref\": \"seed-l2f1-2026-10-12\"}\n  ]\n}",
+  "recordedAt": "2026-10-18T06:56:26.816Z"
+}

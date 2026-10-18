@@ -1,0 +1,8 @@
+{
+  "agent": "sicurezza",
+  "scenarioId": "p1-bearing",
+  "hash": "9f41b5849a7d92b0d48f3e9f1e9a1fd960c61337bd8d99b5b3f3e5fc43fe3e95",
+  "model": "DeepSeek-V4-Flash",
+  "content": "{\"livello_rischio\": \"medio\", \"motivazione\": \"Vibration above threshold but action is non-invasive inspection; no immediate danger, though bearing wear risk warrants scheduling.\"}",
+  "recordedAt": "2026-10-18T07:27:46.999Z"
+}

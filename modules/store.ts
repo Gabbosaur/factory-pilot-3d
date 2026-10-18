@@ -12,7 +12,7 @@ import { Simulator } from '@/modules/monitoring/simulator/simulator';
 import { AnomalyEngine } from '@/modules/monitoring/anomaly/engine';
 import { initProduction, kpis, REDUCED_SPEED, stepProduction, type ProductionState } from '@/modules/monitoring/production/production';
 import { buildPlant, capacityFactor, plantModel, siblingsOf, type PlantModel } from '@/modules/plant/plant';
-import { isQualitySensor, stepHolds, type QualityHold } from '@/modules/quality/holds';
+import { isQualitySensor, stepHolds, type HoldSample, type QualityHold } from '@/modules/quality/holds';
 import type { Alarm, FactoryConfig, Incident, LlmCallMeta, MachineStatus, Sample } from '@/shared/types';
 
 function load(raw: unknown): FactoryConfig {
@@ -26,7 +26,7 @@ function load(raw: unknown): FactoryConfig {
  * lines live inside the plant. Factories created with onboarding are added as single-line plants.
  */
 export const BUILTIN_FACTORIES: FactoryConfig[] = [
-  buildPlant('milan-plant', 'Milan plant – 2 water lines', [load(bottling), load(twin)]),
+  buildPlant('milan-plant', 'Genova plant – 2 water lines', [load(bottling), load(twin)]),
   buildPlant('imperia-plant', 'Imperia plant – juice line', [load(juice)]),
 ];
 /** Kept for backwards compatibility; prefer useStore(s => s.factories). */
@@ -122,7 +122,7 @@ interface State {
   selectedIncident: string | null;
   replay: boolean;
   aiReachable: boolean;
-  memorySource: 'locale' | null;
+  memorySource: 'evolus' | 'locale' | null;
   notifications: Notification[];
   llmLog: LlmCallMeta[];
   activeFaultIds: string[];
@@ -159,7 +159,7 @@ interface Actions {
   dismiss(id: string): void;
   logLlm(meta: LlmCallMeta): void;
   setAiReachable(ok: boolean): void;
-  setMemorySource(s: 'locale'): void;
+  setMemorySource(s: 'evolus' | 'locale'): void;
   setError(e: string | null): void;
   setDriftFactor(machineId: string, factor: number): number;
   /** Restart a line after a protective trip (all stopped lines when omitted); it trips again if the fault is still there. */
@@ -168,6 +168,8 @@ interface Actions {
   repairMachine(machineId: string): void;
   /** Quality decision on a quarantined lot: released after inspection, or scrapped (counted as rejects). */
   decideHold(id: string, decision: 'released' | 'scrapped'): void;
+  /** A sample bottle of a quarantined lot inspected from a photo. */
+  addHoldSample(id: string, sample: HoldSample): void;
   setAutonomy(machineType: string, action: string, level: string): void;
   effectiveFactory(): FactoryConfig;
   onAlarms(cb: (alarms: Alarm[]) => void): () => void;
@@ -458,6 +460,9 @@ export const useStore = create<State & Actions>((set, get) => {
       const lineId = get().plant.lineOf[machineId];
       const tripped = lineId ? get().lines[lineId]?.trippedBy?.machineId : undefined;
       if (lineId && tripped && !sim?.affectedMachines().includes(tripped)) get().restartLine(lineId);
+    },
+    addHoldSample(id, sample) {
+      set((st) => ({ holds: st.holds.map((h) => (h.id === id ? { ...h, samples: [...(h.samples ?? []), sample] } : h)) }));
     },
     decideHold(id, decision) {
       const h = get().holds.find((x) => x.id === id);

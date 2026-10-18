@@ -35,3 +35,15 @@ describe('Quality holds', () => {
     expect(r.opened?.id).toBe('QH-L2-002');
   });
 });
+
+describe('Lot disposition from inspected samples', () => {
+  const s = (verdict: 'ok' | 'defect' | 'uncertain', affectsQuality = verdict === 'defect') =>
+    ({ id: Math.random().toString(), verdict, defectType: verdict === 'ok' ? 'none' : 'cap_crooked', confidence: 0.9, affectsQuality, thumb: '', model: 'Gemma', replay: false }) as const;
+  it('asks for at least 3 samples, then suggests scrap at ≥20% defects, release when all OK', async () => {
+    const { suggestDisposition } = await import('@/modules/quality/holds');
+    expect(suggestDisposition([s('ok'), s('ok')]).suggest).toBe('inspect_more');
+    expect(suggestDisposition([s('ok'), s('ok'), s('ok')]).suggest).toBe('release');
+    expect(suggestDisposition([s('ok'), s('ok'), s('ok'), s('ok'), s('defect')]).suggest).toBe('scrap');
+    expect(suggestDisposition([s('ok'), s('ok'), s('uncertain')]).suggest).toBe('inspect_more');
+  });
+});

@@ -168,8 +168,8 @@ function CausalPath({ points, moving }: { points: THREE.Vector3[]; moving: boole
   return <Line ref={ref as never} points={points} color="#f97316" lineWidth={6} dashed dashSize={0.6} gapSize={0.3} />;
 }
 
-function Bottles({ path, speed }: { path: THREE.Vector3[]; speed: number }) {
-  const N = 24;
+function Bottles({ path, speed, count = 24 }: { path: THREE.Vector3[]; speed: number; count?: number }) {
+  const N = count;
   const mesh = useRef<THREE.InstancedMesh>(null);
   const curve = useMemo(() => (path.length > 1 ? new THREE.CatmullRomCurve3(path, false, 'catmullrom', 0) : null), [path]);
   const offsets = useMemo(() => Array.from({ length: N }, (_, i) => i / N), []);
@@ -279,13 +279,15 @@ export default function FactoryMap({ machineIds }: { machineIds?: string[] } = {
   const causal = inc && inc.causalPath.length > 1 ? inc.causalPath : null;
   const onPath = new Set(inc?.causalPath ?? []);
 
-  // Bottles take the twin of a bypassed machine (automatic reroute).
-  const flow = useMemo(
+  // One conveyor per branch (twin fillers run in parallel); a branch through a bypassed machine carries no bottles.
+  const branches = useMemo(
     () =>
-      layout.flow
-        .map((id) => bypassed[id]?.sibling ?? id)
-        .filter((id) => byId.has(id))
-        .map((id) => new THREE.Vector3(byId.get(id)!.position[0], 1, byId.get(id)!.position[2])),
+      layout.paths.map((p) => ({
+        key: p.join('>'),
+        first: p[0] ?? '',
+        off: p.some((id) => bypassed[id]),
+        points: p.filter((id) => byId.has(id)).map((id) => new THREE.Vector3(byId.get(id)!.position[0], 1, byId.get(id)!.position[2])),
+      })),
     [layout, byId, bypassed],
   );
   const span = Math.max(layout.hall.w, layout.hall.d) / 2;
@@ -335,13 +337,19 @@ export default function FactoryMap({ machineIds }: { machineIds?: string[] } = {
 
         <Hall layout={layout} />
         <FloorPlan layout={layout} />
-        <Conveyor points={flow} />
+        {branches.map((b) => (
+          <Conveyor key={b.key} points={b.points} />
+        ))}
         {layout.props.map((p, i) => (
           <SceneProp key={i} prop={p} />
         ))}
 
         {causal && <CausalPath points={causal.map((id) => center(id).add(new THREE.Vector3(0, 0.8, 0)))} moving={running && lineRunning(causal[0]!)} />}
-        <Bottles path={flow} speed={running && lineRunning(layout.flow[0] ?? '') ? 1 : 0} />
+        {branches
+          .filter((b) => !b.off)
+          .map((b) => (
+            <Bottles key={b.key} path={b.points} speed={running && lineRunning(b.first) ? 1 : 0} count={Math.max(8, Math.round(24 / branches.length))} />
+          ))}
 
         {factory.machines.map((m) => (
           <MachineMesh
